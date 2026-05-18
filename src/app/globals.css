@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── 8pt Spacing Scale ──────────────────────────────── */
+  --spacing-xs:   0.5rem;   /* 8px  */
+  --spacing-sm:   1rem;     /* 16px */
+  --spacing-md:   1.5rem;   /* 24px */
+  --spacing-lg:   2rem;     /* 32px */
+  --spacing-xl:   3rem;     /* 48px */
+  --spacing-2xl:  4rem;     /* 64px */
+  --spacing-3xl:  6rem;     /* 96px */
+  --spacing-hero: 8rem;     /* 128px */
+
+  /* ── Font Families ──────────────────────────────────── */
+  --font-sans:    var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-dm-serif), Georgia, serif;
+  --font-mono:    var(--font-jetbrains-mono), monospace;
+
+  /* ── Border Radius Tokens ───────────────────────────── */
+  --radius-none: 0px;
+  --radius-hair: 2px;
+  --radius-card: 4px;
+  --radius-full: 9999px;
+
+  /* ── Animation Tokens ───────────────────────────────── */
+  --ease-mobem:        cubic-bezier(0.25, 0.1, 0.25, 1);
+  --duration-micro:    200ms;
+  --duration-standard: 300ms;
+  --duration-macro:    400ms;
+}
+
+/* ── Light Mode Design Tokens ───────────────────────────── */
+:root {
+  --background:          oklch(0.973 0.003 80);    /* Paper ivory    */
+  --foreground:          oklch(0.07 0 0);           /* Ink charcoal   */
+  --primary:             oklch(0.07 0 0);
+  --primary-foreground:  oklch(0.973 0.003 80);
+  --secondary:           oklch(0.95 0 0);
+  --secondary-foreground: oklch(0.07 0 0);
+  --muted:               oklch(0.95 0 0);
+  --muted-foreground:    oklch(0.46 0 0);           /* WCAG AA        */
+  --accent:              oklch(0.95 0 0);
+  --accent-foreground:   oklch(0.07 0 0);
+  --signal:              oklch(0.605 0.203 27.5);   /* Signal red     */
+  --signal-foreground:   oklch(0.973 0.003 80);
+  --border:              oklch(0.90 0 0);           /* Rule gray      */
+  --input:               oklch(0.90 0 0);
+  --ring:                oklch(0.07 0 0);
+  --radius:              0rem;
+
+  /* Persistent dark band — not theme-dependent */
+  --inverted:            oklch(0.07 0 0);
+  --inverted-foreground: oklch(0.973 0.003 80);
+}
+
+/* ── Dark Mode Tokens ────────────────────────────────────── */
+.dark {
+  --background:          oklch(0.115 0.010 55);    /* Charbon warm   */
+  --foreground:          oklch(0.965 0.005 80);    /* Cream          */
+  --primary:             oklch(0.965 0.005 80);
+  --primary-foreground:  oklch(0.115 0.010 55);
+  --secondary:           oklch(0.20 0.008 55);
+  --secondary-foreground: oklch(0.965 0.005 80);
+  --muted:               oklch(0.20 0.008 55);
+  --muted-foreground:    oklch(0.65 0 0);
+  --accent:              oklch(0.20 0.008 55);
+  --accent-foreground:   oklch(0.965 0.005 80);
+  --border:              oklch(0.25 0.008 55);
+  --input:               oklch(0.25 0.008 55);
+  --ring:                oklch(0.965 0.005 80);
+}
+
+/* ── Base Resets ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  border-color: var(--border);
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* ── Typography Defaults ─────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-hair);
+}
+
+/* ── Utility Classes ─────────────────────────────────────── */
+.inverted {
+  background-color: var(--inverted);
+  color: var(--inverted-foreground);
+}
+
+.rule-top    { border-top: 1px solid var(--border); }
+.rule-bottom { border-bottom: 1px solid var(--border); }
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-fade-in  { animation: fade-in  var(--duration-standard) var(--ease-mobem); }
+.animate-slide-up { animation: slide-up var(--duration-standard) var(--ease-mobem); }
+.animate-marquee  { animation: marquee 30s linear infinite; }
+
+/* ── Reduced Motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
