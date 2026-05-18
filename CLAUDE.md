@@ -7,12 +7,28 @@ Stack : Next.js 16 App Router · React 19 · TypeScript strict · Tailwind CSS 4
 
 Cible clients : artisans, TPE/PME locales françaises. Jamais de look SaaS ou dashboard générique.
 
+## Priorité de lecture — Résolution de conflits
+
+Quand deux sources sont en conflit, la plus spécifique l'emporte :
+
+1. `docs/design.md` *(client spécifique)* **>** `SKILL.md` *(stack générique)*
+2. `docs/product.md` *(client spécifique)* **>** `CLAUDE.md` *(règles générales)*
+
+Exemple : si `docs/design.md` précise `radius: 4px`, appliquer 4px même si SKILL.md indique 0px.
+
 ## Documentation — Logique Impeccable
 
 **Avant chaque changement majeur :** lire `docs/product.md` + `docs/design.md`
 **Après chaque changement majeur :** synchroniser ces fichiers avec le code
 
 Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 · 64 · 96 · 128px
+
+## Contenu — Règle de réalisme
+
+- **Zéro placeholder générique** : aucun "Lorem ipsum", aucune image de chat, aucun "John Doe"
+- Tout le contenu doit être cohérent avec le secteur et le brief dans `docs/product.md`
+- CTAs spécifiques au métier : `"Demander un devis plomberie"` plutôt que `"En savoir plus"`
+- Noms de sections ancrés dans le réel : `"Mes chantiers"` plutôt que `"Réalisations"`
 
 ## Design System — Standard TasteSkill
 
@@ -35,6 +51,10 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 - `next/font/google` avec `display: 'swap'`
 - Metadata complète (`title`, `description`, `openGraph`) dans chaque `page.tsx`
 - JSON-LD LocalBusiness sur les pages artisans
+
+**Cibles Lighthouse avant livraison client (build de production) :**
+- Performance ≥ 90 · Accessibility ≥ 90 · Best Practices ≥ 90 · SEO ≥ 90
+- `pnpm build` sans warning TypeScript · aucun `console.log` en production
 
 ## Sécurité — Référentiel OWASP Mobem
 

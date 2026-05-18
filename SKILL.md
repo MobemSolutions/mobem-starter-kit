@@ -184,17 +184,21 @@ signal  → Signal accent bg — THE primary CTA (max 1-2 per page)
 - `font-bold` on body text without semantic reason — BANNED
 - ALL CAPS in body text — BANNED (only JetBrains Mono labels use uppercase)
 - Multiple font weights on the same line without hierarchy purpose — BANNED
+- More than 2 font families per page — BANNED (DM Serif + Inter = the maximum)
 
 ### Layout
 - Every section wrapped in a `<Card>` — BANNED
 - Nested cards (card > card) — BANNED
 - `grid grid-cols-3` for everything regardless of content — BANNED
 - `flex justify-between` with no breathing room — BANNED
+- Border width > 1px without an explicit design justification — BANNED
+- `overflow-x: hidden` on `<body>` to hide layout bugs — BANNED (fix the root cause)
 
 ### Content
 - Placeholder lorem ipsum in commits — replace with realistic client content
-- Generic CTA text ("Click here", "Learn more") — replace with specific actions
+- Generic CTA text ("Click here", "Learn more", "En savoir plus") — replace with specific actions
 - Icon-only buttons without aria-label — BANNED
+- Placeholder images (cat photos, picsum, lorempixel) — BANNED in any commit
 
 ---
 

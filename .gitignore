@@ -43,3 +43,11 @@ pnpm-debug.log*
 # Tests
 /playwright-report/
 /test-results/
+
+# Client briefs (confidential — never commit)
+docs/context/*
+!docs/context/README.md
+
+# Lighthouse reports
+lighthouse.json
+lighthouse-report.html
