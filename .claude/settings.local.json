@@ -8,7 +8,8 @@
       "Bash(grep -E \"\\\\.\\(md|json\\)$\")",
       "Bash(git remote *)",
       "Bash(Remove-Item *)",
-      "Bash(node .agents/scripts/check-docs.mjs)"
+      "Bash(node .agents/scripts/check-docs.mjs)",
+      "Bash(git push *)"
     ]
   },
   "hooks": {

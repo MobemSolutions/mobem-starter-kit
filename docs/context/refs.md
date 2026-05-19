@@ -15,7 +15,7 @@
 1.
 2.
 
-## Ambiance en un mot
+## Ambiance en quelques mots
 
 (sobre · chaleureux · premium · dynamique · artisanal · technique · ludique…)
 
