@@ -38,7 +38,7 @@ Lis dans cet ordre exact avant de proposer quoi que ce soit :
 3. `docs/context/brief.md` — ton, positionnement, audience
 4. `SKILL.md` — conventions techniques Mobem
 5. `.agents/skills/impeccable/SKILL.md` — règles design (typography, color, spatial)
-6. `.agents/skills/taste-skill/SKILL.md` — anti-slop frontend
+6. `.agents/skills/design-taste-frontend/SKILL.md` — anti-slop frontend
 
 ## Mission
 

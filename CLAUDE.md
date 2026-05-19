@@ -21,6 +21,22 @@ Exemple : si `docs/design.md` précise `radius: 4px`, appliquer 4px même si SKI
 **Avant chaque changement majeur :** lire `docs/product.md` + `docs/design.md`
 **Après chaque changement majeur :** synchroniser ces fichiers avec le code
 
+## Feedback continu — Amélioration du template
+
+**Règle systématique :** après chaque commande majeure (`/strategy`, `/design`, `/build`, `/impeccable`), ajouter une entrée dans `docs/feedback.md` si l'une de ces situations s'est produite :
+
+- 🔴 Quelque chose a cassé ou forcé un contournement → section **Bugs**
+- 🟡 Une étape a été confuse, lente ou mal documentée → section **Frictions workflow**
+- 🟢 Un pattern manquait et a dû être créé from scratch → section **Améliorations**
+- ✅ Une décision ou règle a clairement accéléré le projet → section **Ce qui a bien fonctionné**
+
+Format d'une entrée :
+```
+- YYYY-MM-DD · [fichier ou commande concernée] · [description en 1-2 phrases] · Fix/suggestion si connu
+```
+
+Ne pas attendre la fin du projet pour remplir ce fichier — noter au moment où ça arrive.
+
 Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 · 64 · 96 · 128px
 
 ## Contenu — Règle de réalisme
@@ -92,7 +108,7 @@ Pour chaque finding, indique la criticité et le fix exact.
 |-------|------|-------|
 | `SKILL.md` (Mobem) | Conventions techniques, anti-patterns, grille, motion | Toujours |
 | `.agents/skills/impeccable/` | Règles design — typography, color, spatial, UX writing | Toujours, relu avant chaque composant |
-| `.agents/skills/taste-skill/` | Anti-slop frontend — patterns à éviter | Toujours |
+| `.agents/skills/design-taste-frontend/` | Anti-slop frontend — Three Dials | Toujours |
 
 **En cas de conflit entre les skills :**
 - `SKILL.md` Mobem prime pour les conventions techniques (grille, motion, tokens CSS)

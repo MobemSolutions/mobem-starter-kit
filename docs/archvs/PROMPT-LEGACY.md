@@ -101,6 +101,7 @@ Une fois la stratégie et la palette validées par le client :
 3. Synchronise `src/lib/constants/colors.ts` avec les mêmes valeurs
 4. Adapte `src/components/layout/header.tsx` et `footer.tsx` — nom réel, navigation réelle
 5. Présente le **plan de développement section par section** avec ordre et complexité estimée
+6. Ouvre `docs/feedback.md` et remplis les infos projet (client, secteur, date de début, développeur) — puis note immédiatement toute friction ou insight rencontré pendant cette session d'initialisation
 
 ---
 

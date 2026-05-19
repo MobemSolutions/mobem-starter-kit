@@ -69,6 +69,7 @@ Relisez `docs/product.md` et vérifiez :
 - [ ] Les objectifs business sont corrects
 - [ ] L'audience est bien décrite
 - [ ] Les ⚠️ sont résolus ou acceptés
+- [ ] `docs/feedback.md` mis à jour si friction ou insight notable durant cette phase
 
 **STOP. Ne lancez pas `/design` avant d'avoir validé ce fichier.**
 
@@ -95,6 +96,8 @@ Claude écrit ensuite :
 - `docs/design.md`
 - `src/app/globals.css` (tokens OKLCH)
 - `src/lib/constants/colors.ts`
+
+- [ ] `docs/feedback.md` mis à jour si friction ou insight notable durant cette phase
 
 **STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
 Lancez `pnpm dev` et vérifiez visuellement que les couleurs sont correctes.
@@ -149,6 +152,8 @@ Dans Claude Code :
 **Commandes :** `/impeccable audit` · `/impeccable polish` · `/impeccable harden`
 
 ### Checklist technique avant livraison
+- [ ] `docs/feedback.md` complété — bugs, frictions, améliorations, ce qui a bien fonctionné
+- [ ] `docs/feedback.md` remonté au template Mobem (PR ou message à l'équipe)
 - [ ] `pnpm dlx impeccable detect src/` — zéro erreur
 - [ ] Lighthouse ≥ 90 (Performance · Accessibilité · SEO · Best Practices)
 - [ ] Mobile 375px — pas d'overflow horizontal
