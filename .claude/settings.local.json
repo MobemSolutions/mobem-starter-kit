@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jeanm\\\\Desktop\\\\arnaud temp\\\\code\\\\pro\\\\mobem-starter-kit\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Sort-Object Mode -Descending)",
+      "Bash(grep -E \"\\\\.\\(md|json\\)$\")"
+    ]
+  }
+}

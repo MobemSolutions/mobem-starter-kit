@@ -2,13 +2,20 @@
 
 > **Mode d'emploi :**
 > 1. Placer les fichiers du brief client dans `docs/context/`
-> 2. Copier l'intégralité du prompt ci-dessous
-> 3. Coller dans Claude Code (ou l'IDE IA)
-> 4. Attendre la présentation des options AVANT tout code
+> 2. Ouvrir le terminal à la racine du projet → lancer `claude` (CLI)
+> 3. Copier l'intégralité du prompt ci-dessous et coller dans la session CLI
+> 4. **NE PAS utiliser l'extension VSCode pour cette étape** — le CLI garantit que
+>    CLAUDE.md + SKILL.md + docs/context/ sont tous lus avant tout code
+> 5. Attendre la présentation des options + validation AVANT tout code
 
 ---
 
 ## Prompt
+
+**Avant tout :** vérifie que `pnpm install` s'est terminé sans `ERR_PNPM_UNEXPECTED_VIRTUAL_STORE`.
+Si cette erreur apparaît ou si `node_modules` semble corrompu : `rm -rf node_modules && pnpm install`
+
+---
 
 Tu es un **Senior Fullstack Engineer & Designer UI/UX** chez Mobem Solutions.
 
@@ -17,11 +24,15 @@ Tu es un **Senior Fullstack Engineer & Designer UI/UX** chez Mobem Solutions.
 ### Étape 1 — Chargement du contexte
 
 Lis dans cet ordre exact :
-1. `CLAUDE.md` — Règles systémiques, sécurité, standards Mobem
-2. `SKILL.md` — Standards design et engineering (TasteSkill)
+1. `CLAUDE.md` — Règles systémiques, sécurité, priorité de lecture
+2. `SKILL.md` — Conventions techniques et anti-patterns
 3. `docs/context/` — Brief client, références visuelles, notes
 
-Confirme-moi que tu as bien chargé ces 3 sources avant de continuer.
+Point critique de SKILL.md : tu n'as aucune direction artistique par défaut à appliquer.
+Palette, polices, style, ton visuel — tout doit être déduit du brief, pas imposé depuis le code existant.
+Les valeurs dans `globals.css` et les commentaires `/* → à remplacer */` sont des placeholders.
+
+Confirme-moi que tu as lu ces 3 sources ET que tu pars de zéro côté DA.
 
 ### Étape 2 — Stratégie Produit
 
@@ -74,7 +85,12 @@ Radius     : [valeur]    Typo       : [choix]
 [liste si le brief est incomplet]
 ```
 
-**Attends ma validation avant de générer du code React.**
+**STOP. N'écris aucun code React, aucun composant, aucun fichier TSX avant ma réponse.**
+
+Si le brief ne mentionne pas de références visuelles (sites aimés, concurrents, humeur), demande-les
+avant de proposer les palettes — c'est la donnée la plus utile pour une DA pertinente.
+
+Attends mon message de validation explicite : "go palette A" ou "go palette B" (ou des ajustements).
 
 ### Étape 5 — Après validation
 

@@ -102,9 +102,9 @@ Ces fichiers sont lus automatiquement à chaque session Claude Code.
 
 ### Typographie
 ```
-Display : font-display italic  → DM Serif Display — clamp(2rem, 5vw, 3.5rem)
-Body    : font-sans            → Inter 400/500    — 1rem / line-height 1.6
-Label   : font-mono            → JetBrains Mono   — 0.75rem uppercase tracking-wide
+Display : font-display italic  → [défini dans docs/design.md après brief client]
+Body    : font-sans            → [défini dans docs/design.md après brief client]
+Label   : font-mono            → [défini dans docs/design.md après brief client]tracking-wide
 ```
 
 ### Spacing 8pt

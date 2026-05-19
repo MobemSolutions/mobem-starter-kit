@@ -6,14 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { MOTION } from '@/lib/constants'
-import type { NavItem } from '@/types'
-
-// Remplacer par les pages réelles du client via le prompt d'initialisation
-const NAV_ITEMS: NavItem[] = [
-  { label: '[Page 1]', href: '/#services' },
-  { label: '[Page 2]', href: '/#realisations' },
-  { label: '[Page 3]', href: '/a-propos' },
-]
+import { siteConfig } from '@/lib/config/site'
 
 export function Header() {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -30,11 +23,11 @@ export function Header() {
           href="/"
           className="font-mono text-sm font-medium tracking-widest hover:text-[--muted-foreground] transition-colors"
         >
-          [NOM CLIENT]
+          {siteConfig.name}
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          {NAV_ITEMS.map((item) => (
+          {siteConfig.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -45,14 +38,16 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex">
-          <Link
-            href="/#contact"
-            className="inline-flex items-center justify-center h-9 px-5 font-mono text-xs font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90"
-          >
-            [CTA principal]
-          </Link>
-        </div>
+        {siteConfig.cta.label && (
+          <div className="hidden md:flex">
+            <Link
+              href={siteConfig.cta.href}
+              className="inline-flex items-center justify-center h-9 px-5 font-mono text-xs font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90"
+            >
+              {siteConfig.cta.label}
+            </Link>
+          </div>
+        )}
 
         <button
           className="md:hidden p-2 text-[--foreground]"
@@ -73,7 +68,7 @@ export function Header() {
             className="border-t border-[--border] bg-[--background] md:hidden"
           >
             <nav className="flex flex-col px-6 py-4 gap-4">
-              {NAV_ITEMS.map((item) => (
+              {siteConfig.nav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -83,13 +78,15 @@ export function Header() {
                   {item.label}
                 </Link>
               ))}
-              <Link
-                href="/#contact"
-                onClick={() => setIsOpen(false)}
-                className="inline-flex items-center justify-center h-10 px-6 font-mono text-sm font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90 mt-2"
-              >
-                [CTA principal]
-              </Link>
+              {siteConfig.cta.label && (
+                <Link
+                  href={siteConfig.cta.href}
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex items-center justify-center h-10 px-6 font-mono text-sm font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90 mt-2"
+                >
+                  {siteConfig.cta.label}
+                </Link>
+              )}
             </nav>
           </motion.div>
         )}

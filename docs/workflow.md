@@ -1,478 +1,244 @@
-# Workflow Mobem Solutions — Guide complet
+# Mobem — Workflow de création client
 
-> Commande par commande, outil par outil. De zéro à production.
-
-```
-Brief client → prompt.md → product.md + design.md → [validation] → code → audit → livraison
-```
+> Guide opérationnel complet. Une section = une étape = un livrable avant de passer à la suite.
 
 ---
 
-## 0. Setup machine — Une seule fois
+## Vue d'ensemble
 
-### Prérequis
-
-```bash
-node --version   # ≥ 20 LTS (https://nodejs.org)
-pnpm --version   # ≥ 9
+```
+Brief client
+    ↓
+[Vous] Constituer docs/context/          ← étape humaine, bloquante
+    ↓
+/strategy   → docs/product.md validé     ← session CLI #1
+    ↓
+/design     → docs/design.md validé      ← session CLI #2
+    ↓
+/build      → composant par composant    ← session CLI #3+
+    ↓
+/impeccable audit  → corrections
+    ↓
+/impeccable polish → livraison
 ```
 
-```bash
-# Installer pnpm si absent
-npm install -g pnpm
-```
-
-### Extensions VSCode (installer une par une)
-
-| Extension | ID | Pourquoi |
-|-----------|-----|----------|
-| Claude Code | `anthropic.claude-code` | IA principale |
-| Tailwind CSS IntelliSense | `bradlc.vscode-tailwindcss` | Autocomplétion classes |
-| Pretty TypeScript Errors | `yoavbls.pretty-ts-errors` | Erreurs lisibles |
-| Error Lens | `usernamehw.errorlens` | Erreurs inline |
-
-### Configuration Figma MCP (optionnel)
-
-1. Aller sur figma.com → Account Settings → Personal access tokens
-2. Créer un token avec scope `File content: Read`
-3. Copier la valeur `figd_xxxx`
-4. L'ajouter dans `.env.local` après la création du projet :
-   ```
-   FIGMA_API_KEY=figd_xxxxxxxxxxxxxxxxxxxx
-   ```
-
-Le fichier `.mcp.json` à la racine du projet configure automatiquement le serveur Figma dans Claude Code.
+**Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
+Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la même session.
 
 ---
 
-## 1. Créer un nouveau projet client
+## Phase 0 — Brief (vous, avant Claude)
 
-```bash
-# Cloner le boilerplate
-git clone <URL_DU_BOILERPLATE> nom-du-client
-cd nom-du-client
+Avant d'ouvrir Claude Code, constituez `docs/context/` avec ces fichiers :
 
-# Supprimer l'historique git du boilerplate
-# Windows (PowerShell) :
-Remove-Item -Recurse -Force .git
-# macOS / Linux :
-# rm -rf .git
-
-# Initialiser un nouveau repo propre
-git init
-git add .
-git commit -m "init: boilerplate Mobem Solutions"
-
-# Installer les dépendances
-pnpm install
-
-# Audit de sécurité immédiat
-pnpm audit
-
-# Configurer l'environnement
-cp .env.local.example .env.local
-# Éditer .env.local — mettre la vraie URL du projet
-
-# Vérifier que tout compile
-pnpm type-check
-
-# Lancer le serveur de dev
-pnpm dev
-# → http://localhost:3001
 ```
+docs/context/
+├── brief.md (ou brief.pdf)     — objectifs, audience, ton, fonctionnalités
+├── refs.md                     — 2-5 URLs de sites aimés + 1-2 sites à éviter
+└── contraintes.md              — budget, délai, RGAA requis, contraintes techniques
+```
+
+**`refs.md` est la donnée la plus critique.** Sans références visuelles réelles,
+Claude revient à ses defaults génériques. Si le client n'en a pas, posez-lui ces questions :
+
+- "3 sites que vous aimez, même hors de votre secteur ?"
+- "1 site que vous ne voulez absolument pas ressembler ?"
+- "Un mot pour décrire l'ambiance souhaitée : sobre, chaleureux, premium, dynamique ?"
+
+Ne lancez pas `/design` sans ces réponses.
 
 ---
 
-## 2. Initialisation stratégie (Phase Analyse)
+## Phase 1 — Stratégie produit
 
-> **Règle absolue :** AUCUN code React avant validation de product.md + design.md.
+**Outil :** Claude Code CLI
+**Commande :** `/strategy`
+**Durée estimée :** 15–20 min
+**Livrable :** `docs/product.md` complété
 
-### Étape 2.1 — Déposer le brief client
+### Ce que fait la commande
+- Lit `docs/context/` en entier
+- Prouve sa lecture (cite 3 informations clés du brief)
+- Remplit `docs/product.md` : présentation, problème, objectifs, audience, périmètre, ton, métriques
+- Note `⚠️ À confirmer` pour chaque information manquante
+- Propose une arborescence de 3 à 7 pages adaptée au secteur
 
-Placer dans `docs/context/` :
-- Le brief (PDF, Word, ou `notes.md` avec les échanges emails)
-- Screenshots de références visuelles ou concurrents
-- Logo brut si déjà fourni
+### Votre validation
+Relisez `docs/product.md` et vérifiez :
+- [ ] L'arborescence correspond à ce que le client attend
+- [ ] Les objectifs business sont corrects
+- [ ] L'audience est bien décrite
+- [ ] Les ⚠️ sont résolus ou acceptés
 
-```bash
-# Exemple avec un fichier PDF
-# Copier le brief dans docs/context/brief.pdf
-# Copier les refs dans docs/context/references/
-```
-
-### Étape 2.2 — Lancer le prompt d'initialisation
-
-1. Ouvrir Claude Code dans le projet (`cmd+shift+p` → "Claude Code: Open")
-2. Ouvrir `docs/prompt.md`
-3. Copier l'intégralité du prompt (section "## Prompt" jusqu'à la fin)
-4. Coller dans Claude Code
-5. Remplacer `[NOM DU CLIENT]` par le vrai nom
-6. Si le brief est texte : coller après `[COLLER LE BRIEF CLIENT ICI]`
-7. Si le brief est un fichier : écrire `Le brief est dans docs/context/brief.pdf` à la place
-
-**Claude va produire :**
-- `docs/product.md` — Stratégie produit complète
-- `docs/design.md` — Design system + 2 options de palettes OKLCH
-
-### Étape 2.3 — Validation client (avant tout code)
-
-Présenter au client :
-- [ ] Arborescence de pages proposée
-- [ ] Palette A vs Palette B (partager les valeurs OKLCH)
-- [ ] Typographie + radius retenus
-- [ ] Fonctionnalités incluses / exclues du périmètre
-
-**→ Obtenir une validation écrite (email ou message) avant de continuer.**
+**STOP. Ne lancez pas `/design` avant d'avoir validé ce fichier.**
 
 ---
 
-## 3. Configuration du design system (Phase Design)
+## Phase 2 — Direction artistique
 
-> Après validation client.
+**Outil :** Claude Code CLI
+**Commande :** `/design`
+**Durée estimée :** 20–30 min
+**Livrable :** `docs/design.md` complété + tokens dans `globals.css`
 
-### Étape 3.1 — Appliquer la palette choisie
+### Ce que fait la commande
+- Vérifie que `docs/product.md` est rempli — sinon refuse de continuer
+- Vérifie que `docs/context/refs.md` existe — sinon demande les références et s'arrête
+- Lit les skills Impeccable (typography, color, spatial) avant de proposer quoi que ce soit
+- Propose 2 palettes OKLCH distinctes avec justification secteur
+- Présente le résumé structuré (palettes + typographie + radius)
+- Attend votre validation explicite avant d'écrire un seul fichier
 
-Dans Claude Code :
-```
-Applique la Palette [A ou B] validée dans src/app/globals.css.
-Synchronise ensuite src/lib/constants/colors.ts.
-Confirme les valeurs OKLCH appliquées.
-```
+### Votre validation
+Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
+Claude écrit ensuite :
+- `docs/design.md`
+- `src/app/globals.css` (tokens OKLCH)
+- `src/lib/constants/colors.ts`
 
-### Étape 3.2 — Vérification visuelle
-
-```bash
-pnpm dev
-# → http://localhost:3001
-```
-
-Dans Chrome DevTools :
-- F12 → Elements → `:root` → vérifier les custom properties CSS
-- Toggle dark mode : cliquer le bouton dans le header
-- Passer en mode responsive 375px : F12 → icône mobile → "375 × 812"
+**STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
+Lancez `pnpm dev` et vérifiez visuellement que les couleurs sont correctes.
 
 ---
 
-## 4. Développement par section (Phase Build)
+## Phase 3 — Développement
 
-> **Règle :** une section = un commit. Approche incrémentale obligatoire.
+**Outil :** Claude Code CLI
+**Commande :** `/build [section]`
+**Durée estimée :** selon complexité
+**Livrable :** composants codés, un par commit
 
-### Ordre recommandé
-
-1. Header + navigation
-2. Hero (premier écran visible)
-3. Section cœur de métier (services / prestations)
-4. Preuves sociales (réalisations, témoignages, stats)
-5. Confiance / À propos
+### Ordre de développement recommandé
+```
+1. globals.css + layout.tsx (tokens, polices, structure)
+2. header.tsx + footer.tsx (navigation réelle, NAP, CTA)
+3. Hero section (section la plus critique visuellement)
+4. Sections de contenu (dans l'ordre de l'arborescence)
+5. Pages secondaires
 6. Formulaire de contact
-7. Footer
-
-### Cycle par section
-
-**1 — Demander à Claude Code**
-```
-Crée la section [NOM] selon docs/product.md section [X] et docs/design.md.
-Utilise les tokens CSS custom properties (var(--...)), jamais de couleurs hardcodées.
-Respecte la grille 8pt et les règles de SKILL.md.
+7. SEO + Schema JSON-LD
 ```
 
-**2 — Vérifier TypeScript**
+### Ce que fait la commande
+Pour chaque composant :
+- Vérifie la présence des tokens dans `docs/design.md`
+- Cite la règle Impeccable la plus pertinente avant de coder
+- Cite l'anti-pattern le plus probable à éviter
+- Code le composant
+- Vérifie la checklist SKILL.md mentalement
+
+**Un composant = un commit.** Ne jamais accumuler plusieurs composants dans la même session
+sans commit intermédiaire — vous perdez la traçabilité et le contrôle.
+
+### Après chaque page complète
 ```bash
-pnpm type-check
-# Doit retourner : "Found 0 errors"
+pnpm dlx impeccable detect src/
 ```
-
-**3 — Vérifier le build**
-```bash
-pnpm build
-# Doit se terminer sans erreur TypeScript ni erreur Next.js
-```
-
-**4 — Tester visuellement**
-```bash
-pnpm dev
-```
-Checklist par section :
-- [ ] Mobile 375px — aucun overflow horizontal
-- [ ] Tablette 768px — grille correcte
-- [ ] Dark mode — tous les tokens résolus
-- [ ] Navigation clavier (Tab) — focus visible
-
-**5 — Commiter**
-```bash
-git add src/components/sections/ma-section.tsx
-git commit -m "feat: section [NOM] — [description 1 ligne]"
-```
-
----
-
-## 5. Intégration Figma MCP (optionnel)
-
-> Permet la synchronisation bidirectionnelle design ↔ code.
-
-### Setup (si pas fait à l'étape 0)
-
-```bash
-# Vérifier que le token est dans .env.local
-# FIGMA_API_KEY=figd_xxxx
-
-# Relancer Claude Code — le serveur MCP se charge automatiquement
-# via .mcp.json à la racine du projet
-```
-
-### Design → Code (implémenter une maquette Figma)
+Corrigez tous les problèmes détectés avant de passer à la page suivante.
 
 Dans Claude Code :
 ```
-Implémente le composant Hero tel que défini dans ce fichier Figma :
-[URL DU FICHIER FIGMA]
-Respecte les tokens de docs/design.md et les règles de SKILL.md.
-Adapte les couleurs pour utiliser les CSS custom properties (var(--...)).
-```
-
-### Code → Figma (exporter la palette pour le client)
-
-Dans Claude Code :
-```
-Crée un fichier Figma contenant :
-- La palette OKLCH de docs/design.md sous forme de color styles
-- Les espacements 8pt sous forme de styles de grille
-- Les variantes de typographie (Display, Body, Label)
-```
-
-### Partager avec le client
-
-Le fichier Figma généré peut être partagé avec le client en lecture seule :
-- Figma → Share → "Anyone with the link" → "can view"
-- Le client peut commenter directement sur les designs
-
----
-
-## 6. Contrôle qualité (Phase Audit)
-
-> À faire avant toute livraison client — dans l'ordre.
-
-### 6.1 TypeScript
-
-```bash
-pnpm type-check
-# Cible : 0 erreur
-```
-
-### 6.2 Build de production
-
-```bash
-pnpm build
-# Cible : aucune erreur, aucun warning critique
-```
-
-### 6.3 Sécurité
-
-```bash
-pnpm audit
-# Cible : 0 vulnérabilité high/critical
-```
-
-Dans Claude Code — lancer le prompt d'audit sécurité :
-```
-[Copier le prompt depuis CLAUDE.md § "Prompt d'audit prédéploiement"]
-```
-
-### 6.4 Lighthouse
-
-```bash
-# Démarrer le serveur de production
-pnpm build && pnpm start
-# → http://localhost:3001
-
-# Option A : Chrome DevTools
-# F12 → Lighthouse → "Analyze page load"
-# Sélectionner : Performance · Accessibility · Best Practices · SEO
-# Mode : Desktop + Mobile
-
-# Option B : CLI
-npx lighthouse http://localhost:3001 --output=html --output-path=./lighthouse-report.html
-# Ouvrir lighthouse-report.html dans le navigateur
-```
-
-**Cibles minimum avant livraison :**
-| Métrique | Cible |
-|----------|-------|
-| Performance | ≥ 90 |
-| Accessibility | ≥ 90 |
-| Best Practices | ≥ 90 |
-| SEO | ≥ 90 |
-
-### 6.5 Checklist visuelle finale
-
-```
-Mobile 375px
-  [ ] Aucun overflow horizontal (inspecter body width)
-  [ ] Textes lisibles (taille ≥ 16px, contraste WCAG AA)
-  [ ] CTAs touchables (min 44×44px)
-  [ ] Images non coupées, aspect-ratio correct
-
-Dark mode
-  [ ] Toggle fonctionne (bouton header)
-  [ ] Tous les éléments visibles
-  [ ] Signal accent visible sur fond sombre
-  [ ] Aucun texte blanc sur fond blanc
-
-Accessibilité
-  [ ] Navigation au clavier complète (Tab, Shift+Tab, Enter)
-  [ ] Focus ring visible sur tous les interactifs
-  [ ] Toutes les images ont un alt text
-  [ ] Formulaires avec labels explicites
-  [ ] Pas de contenu uniquement par la couleur
-
-SEO
-  [ ] Title et description dans chaque page.tsx
-  [ ] OG image présente (/public/og-image.png — 1200×630px)
-  [ ] JSON-LD LocalBusiness si artisan/PME
-  [ ] robots.ts et sitemap.ts à jour
+/impeccable audit [nom de la page]
+/impeccable critique [nom de la page]
 ```
 
 ---
 
-## 7. Livraison (Phase Production)
+## Phase 4 — Audit & livraison
 
-### Déploiement Vercel (recommandé)
+**Commandes :** `/impeccable audit` · `/impeccable polish` · `/impeccable harden`
 
-```bash
-# Installer Vercel CLI (une seule fois)
-pnpm add -g vercel
+### Checklist technique avant livraison
+- [ ] `pnpm dlx impeccable detect src/` — zéro erreur
+- [ ] Lighthouse ≥ 90 (Performance · Accessibilité · SEO · Best Practices)
+- [ ] Mobile 375px — pas d'overflow horizontal
+- [ ] Dark mode testé — tous les tokens résolus
+- [ ] `tsc --noEmit` passe propre
+- [ ] Aucune couleur hardcodée — uniquement `var(--...)`
+- [ ] Toutes les images ont `alt` + `width` + `height`
+- [ ] Focus visible sur tous les éléments interactifs
+- [ ] Schema JSON-LD validé (Google Rich Results Test)
+- [ ] NAP cohérent sur toutes les pages
 
-# Première mise en ligne
-vercel
-# Suivre le wizard :
-# → Link to existing project? N
-# → Project name: nom-du-client
-# → Directory: ./ (défaut)
-# → Override settings? N
+### Checklist RGAA (niveau AA minimum)
+- [ ] Contraste texte : 4.5:1 minimum (vérifier avec OKLCH Contrast Checker)
+- [ ] Contraste UI (boutons, inputs) : 3:1 minimum
+- [ ] Balises sémantiques — pas de div soup (`<main>`, `<nav>`, `<article>`, `<section>`)
+- [ ] Ordre de lecture logique dans le DOM
+- [ ] Aria uniquement si le HTML natif ne suffit pas
+- [ ] Formulaires : labels visibles, messages d'erreur explicites
+- [ ] Navigation au clavier complète
 
-# Déploiements suivants
-vercel --prod
+### Commande finale
 ```
-
-### Variables d'environnement Vercel
-
-Dashboard Vercel → Project → Settings → Environment Variables :
-
-| Variable | Environnement | Valeur |
-|----------|---------------|--------|
-| `NEXT_PUBLIC_SITE_URL` | Production | `https://nomduclient.fr` |
-| `RESEND_API_KEY` | Production | `re_xxxx` (si email activé) |
-| `FIGMA_API_KEY` | Production | `figd_xxxx` (si Figma MCP activé) |
-
-### Checklist de livraison
-
+/impeccable polish
 ```
-Technique
-  [ ] pnpm type-check → 0 erreur
-  [ ] pnpm build → success
-  [ ] pnpm audit → 0 high/critical
-  [ ] Lighthouse ≥ 90 sur toutes les métriques (build prod)
-  [ ] Aucun console.log en production
-
-Domaine & SSL
-  [ ] Domaine custom configuré dans Vercel
-  [ ] HTTPS actif (automatique Vercel)
-  [ ] Redirects www → non-www (ou inverse)
-
-Contenu
-  [ ] Zéro placeholder [NOM CLIENT] restant dans le code
-  [ ] Formulaire de contact testé (vraie réception d'email)
-  [ ] OG image testée sur opengraph.xyz
-  [ ] Toutes les images en production chargent correctement
-
-Documentation
-  [ ] docs/product.md à jour avec les choix finaux
-  [ ] docs/design.md à jour avec la palette retenue
-  [ ] README.md mis à jour si besoin
-```
+Passe de cohérence globale avant de livrer — alignement typographique, espacement,
+hiérarchie visuelle, micro-interactions.
 
 ---
 
-## 8. Activer les fonctionnalités optionnelles
+## Référence rapide — Commandes Claude Code
 
-### CMS Sanity (blog, portfolio, catalogue)
-
-```bash
-pnpm add sanity next-sanity @sanity/image-url
-```
-
-Décommenter dans `.env.local` :
-```
-NEXT_PUBLIC_SANITY_PROJECT_ID=xxxx
-NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_READ_TOKEN=skxxxx
-```
-
-### Email transactionnel Resend
-
-```bash
-pnpm add resend @react-email/components @react-email/render
-```
-
-Créer `src/app/api/contact/route.ts` avec validation Zod + `import 'server-only'`.
-
-### Analytics Vercel
-
-```bash
-pnpm add @vercel/analytics @vercel/speed-insights
-```
-
-Dans `src/app/layout.tsx` :
-```tsx
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-// Ajouter <Analytics /> et <SpeedInsights /> dans le JSX
-```
-
-### Rate limiting (endpoints API publics)
-
-```bash
-pnpm add @upstash/ratelimit @upstash/redis
-```
-
-Créer `src/middleware.ts`. Variables requises :
-```
-UPSTASH_REDIS_REST_URL=https://xxxx.upstash.io
-UPSTASH_REDIS_REST_TOKEN=AXxxxx
-```
+| Commande | Phase | Ce qu'elle fait |
+|----------|-------|-----------------|
+| `/strategy` | 1 | Lit le brief, remplit product.md |
+| `/design` | 2 | Propose palettes, remplit design.md |
+| `/build [section]` | 3 | Code un composant selon la DA validée |
+| `/impeccable shape [section]` | 3 | Planifie UX/UI avant de coder |
+| `/impeccable audit [page]` | 3-4 | Audit technique post-génération |
+| `/impeccable critique [page]` | 3-4 | Review design et hiérarchie |
+| `/impeccable polish` | 4 | Passe finale avant livraison |
+| `/impeccable harden` | 4 | Edge cases, erreurs, i18n |
 
 ---
 
-## 9. Référence rapide des commandes
+## Installation initiale (une fois, dans la template)
 
-| Commande | Description |
-|----------|-------------|
-| `pnpm dev` | Serveur de développement → http://localhost:3001 |
-| `pnpm build` | Build de production |
-| `pnpm start` | Serveur de production local |
-| `pnpm type-check` | TypeScript strict — doit passer clean |
-| `pnpm lint` | ESLint |
-| `pnpm audit` | Audit des vulnérabilités npm |
-| `vercel --prod` | Déploiement en production |
+```bash
+# Installer Impeccable pour Claude Code
+pnpm dlx impeccable install --tool claude-code
+
+# Installer TasteSkill
+pnpm dlx skills add Leonxlnx/taste-skill
+
+# Vérifier l'installation
+ls .agents/skills/
+# → impeccable/  taste-skill/
+```
+
+Ces deux dossiers doivent être commités dans la template GitHub.
+Ils seront présents sur chaque nouveau projet client dès le clone.
 
 ---
 
-## 10. Commandes Claude Code utiles (dans l'IDE)
+## Erreurs fréquentes à éviter
 
-```
-# Initialisation
-"Lis CLAUDE.md, SKILL.md et docs/context/ puis lance l'initialisation"
+**Déplacer le dossier projet après `pnpm install`**
+→ pnpm stocke les modules avec des chemins absolus dans le virtual store. Si le dossier est déplacé ou renommé, les imports cassent silencieusement.
+→ Fix : `Remove-Item node_modules -Recurse -Force && pnpm install` (PowerShell) ou `rm -rf node_modules && pnpm install` (bash) depuis le nouveau chemin.
 
-# Design
-"Applique la Palette A de docs/design.md dans globals.css et constants/colors.ts"
+**`pnpm install` se termine avec `ERR_PNPM_UNEXPECTED_VIRTUAL_STORE`**
+→ Le virtual store est corrompu ou pointe vers un ancien chemin.
+→ Fix : `rm -rf node_modules && pnpm install`
 
-# Build
-"Crée la section [NOM] selon docs/product.md et docs/design.md — respecte SKILL.md"
+**Tout faire dans une seule session CLI**
+→ Le contexte des skills se dilue. Résultat : composants génériques.
+→ Fix : 3 sessions distinctes, une par phase.
 
-# Audit
-"Audite le repo selon le prompt d'audit de CLAUDE.md"
+**Lancer `/design` sans références visuelles**
+→ Claude génère une palette "plausible" mais déconnectée du client.
+→ Fix : `docs/context/refs.md` obligatoire avant `/design`.
 
-# Figma
-"Implémente ce composant Figma [URL] en respectant docs/design.md"
-"Exporte la palette de docs/design.md vers un nouveau fichier Figma"
-```
+**Valider la palette sans lancer `pnpm dev`**
+→ Les valeurs OKLCH sur papier ne donnent pas la même impression que dans le navigateur.
+→ Fix : toujours vérifier visuellement avant de passer au code.
+
+**Accumuler des composants sans audit intermédiaire**
+→ Les anti-patterns s'accumulent et deviennent coûteux à corriger.
+→ Fix : `pnpm dlx impeccable detect src/` après chaque page.
+
+**Utiliser les polices "par défaut" mentionnées dans le README**
+→ DM Serif / Inter / JetBrains Mono apparaissent dans trop de fichiers et deviennent
+   la réponse par défaut de Claude même sans justification client.
+→ Fix : les polices doivent être déduites du brief et justifiées dans `docs/design.md`.

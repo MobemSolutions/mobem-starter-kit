@@ -85,3 +85,19 @@ est en dur, (2) une route API manque de validation serveur, (3) une route admin 
 pas le rôle, (4) un package npm n'existe pas ou semble suspect.
 Pour chaque finding, indique la criticité et le fix exact.
 ```
+
+## Skills actifs — rôles
+
+| Skill | Rôle | Quand |
+|-------|------|-------|
+| `SKILL.md` (Mobem) | Conventions techniques, anti-patterns, grille, motion | Toujours |
+| `.agents/skills/impeccable/` | Règles design — typography, color, spatial, UX writing | Toujours, relu avant chaque composant |
+| `.agents/skills/taste-skill/` | Anti-slop frontend — patterns à éviter | Toujours |
+
+**En cas de conflit entre les skills :**
+- `SKILL.md` Mobem prime pour les conventions techniques (grille, motion, tokens CSS)
+- Impeccable prime pour les décisions de design (typographie, composition, hiérarchie)
+- TasteSkill prime pour détecter les patterns génériques à éviter
+
+**Priorité de lecture pour les décisions visuelles :**
+`docs/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem 
