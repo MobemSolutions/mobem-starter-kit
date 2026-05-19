@@ -75,6 +75,18 @@ Relisez `docs/product.md` et vérifiez :
 
 ---
 
+## Phase 1.5 — Figma (optionnel)
+
+> À utiliser si le client a besoin de voir un visuel avant de valider la palette.
+
+**Commande :** `/figma` → Usage A
+**Prérequis :** `.mcp.json` configuré avec `FIGMA_API_KEY` (copier `.mcp.json.example`)
+
+Crée une maquette simplifiée dans Figma depuis `docs/design.md` validé.
+Le client commente directement dans Figma → retours structurés, pas de malentendus.
+
+---
+
 ## Phase 2 — Direction artistique
 
 **Outil :** Claude Code CLI
@@ -94,13 +106,14 @@ Relisez `docs/product.md` et vérifiez :
 Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
 Claude écrit ensuite :
 - `docs/design.md`
-- `src/app/globals.css` (tokens OKLCH)
-- `src/lib/constants/colors.ts`
+- `src/app/globals.css` (tokens OKLCH + polices chargées)
+- `src/app/layout.tsx` (polices Google Fonts)
+- `src/lib/constants/colors.ts` (THEME_META)
 
 - [ ] `docs/feedback.md` mis à jour si friction ou insight notable durant cette phase
 
 **STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
-Lancez `pnpm dev` et vérifiez visuellement que les couleurs sont correctes.
+Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
 
 ---
 
@@ -113,13 +126,12 @@ Lancez `pnpm dev` et vérifiez visuellement que les couleurs sont correctes.
 
 ### Ordre de développement recommandé
 ```
-1. globals.css + layout.tsx (tokens, polices, structure)
-2. header.tsx + footer.tsx (navigation réelle, NAP, CTA)
-3. Hero section (section la plus critique visuellement)
-4. Sections de contenu (dans l'ordre de l'arborescence)
-5. Pages secondaires
-6. Formulaire de contact
-7. SEO + Schema JSON-LD
+1. header.tsx + footer.tsx (navigation réelle, NAP, CTA)
+2. Hero section (section la plus critique visuellement)
+3. Sections de contenu (dans l'ordre de l'arborescence)
+4. Pages secondaires
+5. Formulaire de contact
+6. SEO + Schema JSON-LD
 ```
 
 ### Ce que fait la commande
@@ -135,7 +147,7 @@ sans commit intermédiaire — vous perdez la traçabilité et le contrôle.
 
 ### Après chaque page complète
 ```bash
-pnpm dlx impeccable detect src/
+pnpm run impeccable
 ```
 Corrigez tous les problèmes détectés avant de passer à la page suivante.
 
@@ -154,7 +166,7 @@ Dans Claude Code :
 ### Checklist technique avant livraison
 - [ ] `docs/feedback.md` complété — bugs, frictions, améliorations, ce qui a bien fonctionné
 - [ ] `docs/feedback.md` remonté au template Mobem (PR ou message à l'équipe)
-- [ ] `pnpm dlx impeccable detect src/` — zéro erreur
+- [ ] `pnpm run impeccable` — zéro erreur
 - [ ] Lighthouse ≥ 90 (Performance · Accessibilité · SEO · Best Practices)
 - [ ] Mobile 375px — pas d'overflow horizontal
 - [ ] Dark mode testé — tous les tokens résolus
@@ -187,33 +199,16 @@ hiérarchie visuelle, micro-interactions.
 
 | Commande | Phase | Ce qu'elle fait |
 |----------|-------|-----------------|
-| `/strategy` | 1 | Lit le brief, remplit product.md |
-| `/design` | 2 | Propose palettes, remplit design.md |
+| `/strategy` | 1 | Lit le brief, remplit docs/product.md |
+| `/design` | 2 | Propose palettes, remplit docs/design.md + globals.css |
 | `/build [section]` | 3 | Code un composant selon la DA validée |
+| `/figma` | 1.5 ou 3 | **Usage A** : maquette Figma pour validation client après `/design`. **Usage B** : implémentation depuis specs Figma pendant `/build`. **Usage C** : Code Connect pour lier composants code ↔ Figma. |
+| `/impeccable teach` | 1–2 ou reprise | Crée/rafraîchit le contexte impeccable (PRODUCT.md + DESIGN.md). Inutile si `/strategy` + `/design` ont été faits — impeccable lit `docs/product.md` et `docs/design.md` automatiquement. Utile pour reprendre un projet existant sans contexte. |
 | `/impeccable shape [section]` | 3 | Planifie UX/UI avant de coder |
-| `/impeccable audit [page]` | 3-4 | Audit technique post-génération |
-| `/impeccable critique [page]` | 3-4 | Review design et hiérarchie |
+| `/impeccable audit [page]` | 3–4 | Audit technique post-génération |
+| `/impeccable critique [page]` | 3–4 | Review design et hiérarchie |
 | `/impeccable polish` | 4 | Passe finale avant livraison |
 | `/impeccable harden` | 4 | Edge cases, erreurs, i18n |
-
----
-
-## Installation initiale (une fois, dans la template)
-
-```bash
-# Installer Impeccable pour Claude Code
-pnpm dlx impeccable install --tool claude-code
-
-# Installer TasteSkill
-pnpm dlx skills add Leonxlnx/taste-skill
-
-# Vérifier l'installation
-ls .agents/skills/
-# → impeccable/  taste-skill/
-```
-
-Ces deux dossiers doivent être commités dans la template GitHub.
-Ils seront présents sur chaque nouveau projet client dès le clone.
 
 ---
 
@@ -241,9 +236,4 @@ Ils seront présents sur chaque nouveau projet client dès le clone.
 
 **Accumuler des composants sans audit intermédiaire**
 → Les anti-patterns s'accumulent et deviennent coûteux à corriger.
-→ Fix : `pnpm dlx impeccable detect src/` après chaque page.
-
-**Utiliser les polices "par défaut" mentionnées dans le README**
-→ DM Serif / Inter / JetBrains Mono apparaissent dans trop de fichiers et deviennent
-   la réponse par défaut de Claude même sans justification client.
-→ Fix : les polices doivent être déduites du brief et justifiées dans `docs/design.md`.
+→ Fix : `pnpm run impeccable` après chaque page.

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../src/**/*.{ts,tsx}";
 
 @theme {
   /* ── 8pt Spacing Scale ──────────────────────────────── */
@@ -11,10 +12,10 @@
   --spacing-3xl:  6rem;     /* 96px */
   --spacing-hero: 8rem;     /* 128px */
 
-  /* ── Font Families ──────────────────────────────────── */
-  --font-sans:    var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-dm-serif), Georgia, serif;
-  --font-mono:    var(--font-jetbrains-mono), monospace;
+  /* ── Font Families — définis par /design dans layout.tsx ── */
+  --font-sans:    system-ui, sans-serif;
+  --font-display: Georgia, serif;
+  --font-mono:    monospace;
 
   /* ── Border Radius Tokens ───────────────────────────── */
   --radius-none: 0px;
@@ -30,9 +31,8 @@
 }
 
 /* ── Light Mode Design Tokens ───────────────────────────── */
-/* !! PLACEHOLDER — À REMPLACER via le prompt d'initialisation (docs/prompt.md) !!  */
-/* Ces valeurs sont des exemples neutres. La palette client est définie dans         */
-/* docs/design.md et appliquée ici par Claude après validation.                      */
+/* !! PLACEHOLDER — À REMPLACER via /design après validation de la palette !!        */
+/* La palette client est définie dans docs/design.md et appliquée ici.               */
 :root {
   --background:          oklch(0.973 0.003 80);    /* → à remplacer  */
   --foreground:          oklch(0.07 0 0);           /* → à remplacer  */
@@ -128,14 +128,8 @@ p {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes marquee {
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-
 .animate-fade-in  { animation: fade-in  var(--duration-standard) var(--ease); }
 .animate-slide-up { animation: slide-up var(--duration-standard) var(--ease); }
-.animate-marquee  { animation: marquee 30s linear infinite; }
 
 /* ── Reduced Motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

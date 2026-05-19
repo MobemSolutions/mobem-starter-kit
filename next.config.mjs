@@ -2,6 +2,14 @@
 const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig = {
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        ignored: ['**/node_modules/**', '**/.next/**', '**/.agents/**'],
+      }
+    }
+    return config
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

@@ -9,7 +9,7 @@ export function Footer() {
       <div className="mx-auto max-w-[1280px] px-6 py-[--spacing-2xl]">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="max-w-xs">
-            <p className="font-mono text-sm font-medium tracking-widest">{siteConfig.name}</p>
+            <p className="text-sm font-medium">{siteConfig.name}</p>
             {siteConfig.tagline && (
               <p className="mt-3 text-sm text-[--muted-foreground] leading-relaxed">
                 {siteConfig.tagline}
@@ -19,7 +19,7 @@ export function Footer() {
 
           {siteConfig.nav.length > 0 && (
             <nav className="flex flex-col gap-2" aria-label="Navigation principale">
-              <p className="font-mono text-xs font-medium tracking-widest text-[--muted-foreground] uppercase mb-1">
+              <p className="text-xs font-medium text-[--muted-foreground] uppercase mb-1">
                 Navigation
               </p>
               {siteConfig.nav.map((item) => (
@@ -37,19 +37,19 @@ export function Footer() {
 
         {siteConfig.name && (
           <div className="mt-[--spacing-2xl] border-t border-[--border] pt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <p className="font-mono text-xs text-[--muted-foreground]">
+            <p className="text-xs text-[--muted-foreground]">
               © {YEAR} {siteConfig.name}. Tous droits réservés.
             </p>
             <div className="flex gap-4">
               <Link
                 href={siteConfig.legal.mentionsLegales}
-                className="font-mono text-xs text-[--muted-foreground] hover:text-[--foreground] transition-colors"
+                className="text-xs text-[--muted-foreground] hover:text-[--foreground] transition-colors"
               >
                 Mentions légales
               </Link>
               <Link
                 href={siteConfig.legal.confidentialite}
-                className="font-mono text-xs text-[--muted-foreground] hover:text-[--foreground] transition-colors"
+                className="text-xs text-[--muted-foreground] hover:text-[--foreground] transition-colors"
               >
                 Confidentialité
               </Link>

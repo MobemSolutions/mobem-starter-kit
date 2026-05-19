@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port 3001 --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "audit": "pnpm audit",
-    "impeccable": "impeccable detect src/",
-    "impec-audit": "impeccable detect src/ --json"
+    "impeccable": "pnpm dlx impeccable detect src/",
+    "impec-audit": "pnpm dlx impeccable detect src/ --json"
   },
   "dependencies": {
     "next": "16.2.0",
@@ -23,13 +23,7 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.3.1",
     "lucide-react": "^0.564.0",
-    "zod": "^3.24.1",
-    "// — dépendances optionnelles, ajouter selon le projet :": "",
-    "// forms": "pnpm add react-hook-form @hookform/resolvers",
-    "// toasts": "pnpm add sonner",
-    "// radix-dialog": "pnpm add @radix-ui/react-dialog",
-    "// radix-nav": "pnpm add @radix-ui/react-navigation-menu",
-    "// radix-tooltip": "pnpm add @radix-ui/react-tooltip"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "typescript": "5.7.3",

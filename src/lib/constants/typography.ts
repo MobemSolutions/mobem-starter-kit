@@ -1,20 +1,10 @@
-/**
- * Mobem Typography System
- * Three-font hierarchy: DM Serif (display) · Inter (body) · JetBrains Mono (labels)
- * Reference: docs/design.md#typography
- */
-
 export const TYPOGRAPHY = {
   fonts: {
-    /** DM Serif Display italic — headlines, pull quotes, hero text */
-    display: 'var(--font-dm-serif)',
-    /** Inter Regular/Medium — body text, UI labels, descriptions */
-    body: 'var(--font-inter)',
-    /** JetBrains Mono — section numbers, tags, metadata, code */
-    mono: 'var(--font-jetbrains-mono)',
+    display: 'var(--font-display)',
+    body:    'var(--font-sans)',
+    mono:    'var(--font-mono)',
   },
 
-  /** clamp(min, preferred, max) — responsive without media queries */
   scale: {
     hero: 'clamp(2.5rem, 6vw, 5rem)',
     h1:   'clamp(2rem, 5vw, 3.5rem)',
@@ -50,7 +40,6 @@ export const TYPOGRAPHY = {
 
 export type TypographyScale = keyof typeof TYPOGRAPHY.scale
 
-/** Framer Motion animation constants — keep co-located with typography for DX */
 export const MOTION = {
   ease: [0.25, 0.1, 0.25, 1] as const,
   duration: {

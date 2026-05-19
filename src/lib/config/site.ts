@@ -9,6 +9,16 @@ export const siteConfig = {
     label: '',
     href: '/#contact',
   },
+  contact: {
+    phone: '',
+    phoneHref: 'tel:+33',
+    address: '',
+    postalCode: '',
+    city: '',
+    hours: '',
+    emergency: '',
+    zone: '',
+  },
   legal: {
     mentionsLegales: '/mentions-legales',
     confidentialite: '/confidentialite',

@@ -18,8 +18,9 @@ Exemple : si `docs/design.md` précise `radius: 4px`, appliquer 4px même si SKI
 
 ## Documentation — Logique Impeccable
 
-**Avant chaque changement majeur :** lire `docs/product.md` + `docs/design.md`
-**Après chaque changement majeur :** synchroniser ces fichiers avec le code
+**Avant tout fichier dans `src/` :** lire `docs/product.md` + `docs/design.md`
+Un hook PreToolUse (`check-docs.mjs`) avertit si `docs/design.md` est encore vide.
+**Après chaque changement majeur :** synchroniser ces fichiers avec le code si un token, composant ou pattern a été ajouté.
 
 ## Feedback continu — Amélioration du template
 
@@ -46,14 +47,14 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 - CTAs spécifiques au métier : `"Demander un devis plomberie"` plutôt que `"En savoir plus"`
 - Noms de sections ancrés dans le réel : `"Mes chantiers"` plutôt que `"Réalisations"`
 
-## Design System — Standard TasteSkill
+## Design System — Règles permanentes
 
-**Typographie :** DM Serif Italic (display) · Inter 400/500 (body) · JetBrains Mono (labels/meta)
-**Couleurs OKLCH :** Ink `oklch(0.07 0 0)` · Paper `oklch(0.973 0.003 80)` · Signal `oklch(0.605 0.203 27.5)`
 **Motion :** ease `[0.25, 0.1, 0.25, 1]` · 200ms micro · 300ms standard · 400ms macro
-**Radius :** 0px (default) · 2px (hair) · 4px (card) · choisir UN par projet
+**Radius :** 0px · 2px · 4px — choisir UN seul par projet via `/design`
 
 **JAMAIS :** gradients · glassmorphism · pure black · gray-on-color · cartes imbriquées · bounce/elastic
+
+Typographie et palette : définis exclusivement par `/design`, écrits dans `docs/design.md` et `src/app/globals.css`.
 
 ## TypeScript
 

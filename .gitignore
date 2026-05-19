@@ -13,6 +13,9 @@ build/
 # Environment files
 .env
 .env.local
+
+# MCP config (contient les clés API — chaque dev crée le sien depuis .mcp.json.example)
+.mcp.json
 .env.development.local
 .env.test.local
 .env.production.local
@@ -47,6 +50,7 @@ pnpm-debug.log*
 # Client briefs (confidential — never commit)
 docs/context/*
 !docs/context/README.md
+!docs/context/refs.md
 
 # Lighthouse reports
 lighthouse.json

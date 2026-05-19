@@ -17,11 +17,11 @@ export function Header() {
   }, [isMobile])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[--border] bg-[--background]/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-[--border] bg-[--background]">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
         <Link
           href="/"
-          className="font-mono text-sm font-medium tracking-widest hover:text-[--muted-foreground] transition-colors"
+          className="text-sm font-medium hover:text-[--muted-foreground] transition-colors"
         >
           {siteConfig.name}
         </Link>
@@ -31,7 +31,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="font-mono text-xs font-medium tracking-wide text-[--muted-foreground] transition-colors hover:text-[--foreground]"
+              className="text-xs text-[--muted-foreground] transition-colors hover:text-[--foreground]"
             >
               {item.label}
             </Link>
@@ -42,7 +42,7 @@ export function Header() {
           <div className="hidden md:flex">
             <Link
               href={siteConfig.cta.href}
-              className="inline-flex items-center justify-center h-9 px-5 font-mono text-xs font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90"
+              className="inline-flex items-center justify-center h-9 px-5 text-xs font-medium bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90"
             >
               {siteConfig.cta.label}
             </Link>
@@ -73,7 +73,7 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="font-mono text-sm text-[--muted-foreground] hover:text-[--foreground] transition-colors"
+                  className="text-sm text-[--muted-foreground] hover:text-[--foreground] transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -82,7 +82,7 @@ export function Header() {
                 <Link
                   href={siteConfig.cta.href}
                   onClick={() => setIsOpen(false)}
-                  className="inline-flex items-center justify-center h-10 px-6 font-mono text-sm font-medium tracking-wide bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90 mt-2"
+                  className="inline-flex items-center justify-center h-10 px-6 text-sm font-medium bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90 mt-2"
                 >
                   {siteConfig.cta.label}
                 </Link>

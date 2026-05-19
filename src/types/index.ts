@@ -1,3 +1,5 @@
+// Types de base — à étendre ou remplacer selon le projet client.
+// Ces interfaces sont des points de départ, pas des prescriptions de sections.
 export type { ClassValue } from 'clsx'
 
 /** Site-level metadata — used in layout.tsx and page-level metadata exports */
