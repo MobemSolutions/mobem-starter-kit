@@ -63,6 +63,7 @@ Typographie et palette : définis exclusivement par `/design`, écrits dans `doc
 - `strict: true` systématique — aucun `any` implicite
 - Server Components par défaut — `'use client'` uniquement si nécessaire
 - Valider les données externes avec Zod
+- Validation TypeScript : utiliser `pnpm build` — Next.js intègre tsc dans le pipeline. `pnpm tsc --noEmit` n'est pas disponible comme commande standalone.
 
 ## Performance & SEO
 
@@ -81,6 +82,11 @@ Typographie et palette : définis exclusivement par `/design`, écrits dans `doc
 - Secrets → `.env.local` exclusivement, jamais `.env` ni en dur dans le code
 - Jamais le préfixe `NEXT_PUBLIC_` sur un secret
 - `import 'server-only'` en tête de tout fichier avec logique sensible (clés API, BDD)
+
+**MCP servers `.mcp.json` :**
+- `.mcp.json` ne doit jamais contenir de clé API directement — utiliser le wrapper `scripts/mcp-figma.js` qui lit `.env.local` au runtime
+- `.mcp.json` reste gitignored — le commiter même "sans clé" crée une surface d'attaque
+- Ce pattern s'applique à tout MCP nécessitant une auth (Figma, Resend, Sanity, etc.)
 
 **Validation (A05:2025) :**
 - Zod sur **chaque** endpoint API — rejeter tout ce qui ne matche pas le schéma exact
@@ -104,6 +110,14 @@ est en dur, (2) une route API manque de validation serveur, (3) une route admin 
 pas le rôle, (4) un package npm n'existe pas ou semble suspect.
 Pour chaque finding, indique la criticité et le fix exact.
 ```
+
+## Validation client — Vercel Preview + MarkUp.io
+
+La validation client se fait via **Vercel Preview Deployments + MarkUp.io**. Pas de Figma MCP dans le workflow standard, pas de `output: 'export'` (incompatible avec les Server Components et routes API).
+
+Workflow : `git push origin review/[branche]` → URL preview Vercel auto → coller dans MarkUp.io → lien client sans compte requis.
+
+Le skill `/figma` reste disponible uniquement si le client fournit des maquettes Figma existantes à implémenter (design-to-code). Dans ce cas : utiliser le mode OAuth `mcp__claude_ai_Figma__*` (compte Figma lié dans Intégrations claude.ai). Vérifier le compte actif avec `mcp__claude_ai_Figma__whoami` en début de session.
 
 ## Skills actifs — rôles
 
@@ -134,15 +148,20 @@ Pour chaque finding, indique la criticité et le fix exact.
 | `performance-optimization` | 4 | Audit Core Web Vitals, bundle, assets |
 | `security-baseline` | 4 | Audit HTTPS, headers, CSP, secrets |
 | `seo-aeo-geo` | 4 | Optimisation SEO + AI search (Perplexity, ChatGPT) |
+| `legal-pages` | 4.5 | Pages légales françaises — mentions légales, confidentialité, CGV |
 | `launch-runbook` | 5 | Procédures de mise en production |
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile (si PWA ou app native) |
+| `ui-ux-pro-max` | 4 | Audit UX/accessibilité — 10 catégories de règles (React Native orienté). **Outil d'audit, pas de génération visuelle.** Ne pas utiliser en Phase 2–3. |
 
 **En cas de conflit entre les skills :**
 - `SKILL.md` Mobem prime pour les conventions techniques (grille, motion, tokens CSS)
 - Impeccable prime pour les décisions de design (typographie, composition, hiérarchie)
 - TasteSkill prime pour détecter les patterns génériques à éviter
-- Un seul skill d'esthétique par projet (minimalist-ui OU high-end-visual-design OU gpt-taste OU industrial-brutalist-ui) — jamais plusieurs en simultané
+- Un seul skill d'esthétique **par type de contenu** — pas nécessairement par projet entier. Mélanger est autorisé si les sections ont des natures différentes (ex : gpt-taste sur les pages d'impact visuel, industrial-brutalist sur les pages data-dense comme tarifs ou listes de prestations). Ne jamais mélanger deux skills sur la **même** section.
+
+**Phase 2 — Choix du skill d'esthétique :**
+Pour les projets avec ambiguïté esthétique, tester 2–3 skills sur le hero avant de l'appliquer aux autres sections. Le test in-situ vaut mieux que la description abstraite.
 
 **Priorité de lecture pour les décisions visuelles :**
 `docs/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem

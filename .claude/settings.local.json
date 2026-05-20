@@ -12,9 +12,15 @@
       "Bash(git push *)",
       "Bash(git show-ref *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jeanm\\\\Desktop\\\\arnaud temp\\\\code\\\\pro\\\\mobem-starter-kit\\\\.agents\\\\skills\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(gh api *)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
+  "enabledMcpjsonServers": [
+    "figma"
+  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -27,5 +33,6 @@
         ]
       }
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

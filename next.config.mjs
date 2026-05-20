@@ -2,6 +2,7 @@
 const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig = {
+  turbopack: {},
   webpack: (config, { dev }) => {
     if (dev) {
       config.watchOptions = {
@@ -40,6 +41,8 @@ const nextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self'",
+              // frame-src : Google Maps embed obligatoire sur sites artisans
+              "frame-src https://maps.google.com https://www.google.com",
               "frame-ancestors 'none'",
             ].join('; '),
           },

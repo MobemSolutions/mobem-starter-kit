@@ -1,5 +1,5 @@
 ---
-description: Phase 2 — Direction artistique. Lit le brief + les skills, propose 2 palettes OKLCH, remplit docs/design.md après validation. Aucun fichier src/ avant confirmation.
+description: Phase 2 — Direction artistique. Lit le brief + les skills, propose 3-4 palettes OKLCH, remplit docs/design.md après validation. Aucun fichier src/ avant confirmation.
 ---
 
 # /design — Direction Artistique
@@ -29,19 +29,26 @@ Demande exactement ceci :
 
 Ne génère aucune palette sans cette réponse.
 
-## Skill d'esthétique — choix avant tout
+## Skills d'esthétique — 1 par type de section
 
-Avant de lire quoi que ce soit, demande :
+Avant de lire quoi que ce soit, propose un mapping skill → type de section :
 
-> "Quel skill d'esthétique utiliser pour ce projet ?
-> - `minimalist-ui` — éditorial, monochrome chaud (artisans, cabinets, consultants)
-> - `high-end-visual-design` — premium/agence, bento asymétrique (marques haut de gamme)
-> - `gpt-taste` — Awwwards, éditorial large (agences créatives, portfolios ambitieux)
-> - `industrial-brutalist-ui` — brutalism industriel, grille suisse (BTP, industrie, technique)
-> - aucun — continuer avec impeccable + taste-skill uniquement"
+> "Quel skill pour chaque type de section ?
+>
+> **Pages d'impact visuel** (hero, about, CTA) :
+> - `minimalist-ui` — éditorial, monochrome chaud
+> - `high-end-visual-design` — premium/agence, bento asymétrique
+> - `gpt-taste` — Awwwards, éditorial large
+> - `industrial-brutalist-ui` — brutalism industriel
+>
+> **Pages data-dense** (tarifs, prestations détaillées, listes) :
+> - `industrial-brutalist-ui` — grille suisse, compartimentage razor-thin
+> - `minimalist-ui` — épuré, hiérarchie typographique
+>
+> Tu peux utiliser un skill différent par type de section. Ne jamais mélanger deux skills sur la même section."
 
-Si l'utilisateur répond avec un skill : lis `.agents/skills/[skill-choisi]/SKILL.md` en étape 4b ci-dessous.
-Si l'utilisateur répond "aucun" ou ne sait pas : continuer sans skill supplémentaire.
+Si l'utilisateur choisit un seul skill pour tout : l'appliquer partout.
+Lis le SKILL.md de chaque skill retenu avant de proposer quoi que ce soit.
 
 ## Ordre de lecture obligatoire
 
@@ -58,9 +65,12 @@ Lis dans cet ordre exact avant de proposer quoi que ce soit :
 ## Mission
 
 ### Palettes
-Propose **2 palettes OKLCH distinctes** adaptées au secteur et au positionnement :
+Propose **3 à 4 palettes OKLCH distinctes** adaptées au secteur et au positionnement.
+Chaque palette doit incarner une direction visuelle clairement différente — pas de variations mineures :
 - Palette A : option premium / contrastée
 - Palette B : option chaleureuse / accessible
+- Palette C : option inattendue / décalée — sortir du register évident du secteur
+- Palette D (optionnel) : option minimaliste / épurée — si le brief le justifie
 
 Pour chaque palette, fournis le tableau complet :
 
@@ -118,15 +128,72 @@ Radius     : [valeur]     Typo       : [choix justifié]
 ━━━ PALETTE B — [Nom évocateur] ━━━
 [même format]
 
+━━━ PALETTE C — [Nom évocateur] ━━━
+[même format]
+
+━━━ PALETTE D — [Nom évocateur, si pertinent] ━━━
+[même format]
+
 ━━━ QUESTIONS ⚠️ ━━━
 [liste si informations manquantes]
 ```
+
+## Écrire docs/design-proposals.json
+
+Immédiatement après la présentation des palettes, avant tout STOP, écris `docs/design-proposals.json` :
+
+```json
+{
+  "proposals": [
+    {
+      "id": "A",
+      "name": "[Nom évocateur]",
+      "ambiance": "[1 phrase]",
+      "tokens": {
+        "--background": "oklch(...)",
+        "--foreground": "oklch(...)",
+        "--primary": "oklch(...)",
+        "--primary-foreground": "oklch(...)",
+        "--secondary": "oklch(...)",
+        "--secondary-foreground": "oklch(...)",
+        "--muted": "oklch(...)",
+        "--muted-foreground": "oklch(...)",
+        "--signal": "oklch(...)",
+        "--signal-foreground": "oklch(...)",
+        "--border": "oklch(...)",
+        "--input": "oklch(...)",
+        "--ring": "oklch(...)",
+        "--radius": "[0rem | 0.125rem | 0.25rem]"
+      },
+      "dark": {
+        "--background": "oklch(...)",
+        "--foreground": "oklch(...)",
+        "--secondary": "oklch(...)",
+        "--secondary-foreground": "oklch(...)",
+        "--muted": "oklch(...)",
+        "--muted-foreground": "oklch(...)",
+        "--border": "oklch(...)",
+        "--input": "oklch(...)",
+        "--ring": "oklch(...)"
+      },
+      "typography": {
+        "display": "[Nom Google Font ou system font]",
+        "body": "[Nom Google Font ou system font]",
+        "mono": "[Nom Google Font ou system font]"
+      },
+      "radius": "[0px | 2px | 4px]"
+    }
+  ]
+}
+```
+
+Ce fichier alimente la page `/_design` (dev-only) qui affiche un onglet par proposition pour la validation client.
 
 ## STOP
 
 **N'écris aucun fichier `src/`. Aucun `globals.css`. Aucun composant.**
 
-Attends la validation explicite : "go palette A" ou "go palette B" (ou ajustements demandés).
+Attends la validation explicite : "go palette A" / "go palette B" / "go palette C" / "go palette D" (ou ajustements demandés).
 
 ## Après validation
 
@@ -135,7 +202,7 @@ Une fois la palette confirmée :
 1. Remplis `docs/design.md` avec les choix retenus
 2. Mets à jour `src/app/globals.css` — tokens OKLCH + `@source` déjà présent, remplacer les valeurs placeholder dans `:root` et `.dark`
 3. Mets à jour `src/app/globals.css` — remplacer les fallbacks système dans `--font-display/sans/mono` par les `var(--font-xyz)` des polices choisies
-4. Charge les polices dans `src/app/layout.tsx` via `next/font/google` — ajouter les imports, créer les variables CSS, les injecter dans `className` de `<html>`
+4. Charge les polices dans `src/app/layout.tsx` via `next/font/google` — ajouter les imports, créer les variables CSS, les injecter dans `className` de `<html>`. Pour les polices display : toujours inclure `style: ['normal', 'italic']` — sans ça, les `font-style: italic` en CSS génèrent un "faux italique" par synthèse navigateur (distorsion oblique visible)
 5. Mets à jour `src/lib/constants/colors.ts` — compléter `THEME_META.light` et `THEME_META.dark` avec les approximations hex des couleurs background (utilisées pour les meta tags)
 6. Adapte `src/components/layout/header.tsx` — nom réel, navigation réelle, CTA réel
 7. Adapte `src/components/layout/footer.tsx` — NAP réel, liens réels

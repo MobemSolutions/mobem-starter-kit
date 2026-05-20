@@ -99,6 +99,18 @@ Règles techniques (indépendantes du style choisi) :
 Si le brief client justifie d'autres polices, les définir dans `docs/design.md` et les charger dans `layout.tsx`.
 
 ### Motion — Timing standard
+
+Définir la constante ease **localement dans chaque composant** — pas d'import depuis constants.
+Ça rend chaque composant autonome et lisible sans navigation vers un autre fichier.
+
+```typescript
+// Ease standard Mobem
+const EASE = [0.25, 0.1, 0.25, 1] as const
+
+// Expo Out — pour grands éléments (hero H1, titres H2 massifs) : animation plus "settled"
+// const EASE = [0.22, 1, 0.36, 1] as const
+```
+
 ```typescript
 const EASE = [0.25, 0.1, 0.25, 1] as const
 
@@ -169,11 +181,115 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 - Pas d'imbrication card-dans-card
 - Hover : légère transition de fond vers `var(--secondary)`, pas de scale ni d'ombre
 
+### Grille compartimentée sans border
+
+Pour les listes et grilles où chaque cellule doit être visuellement séparée sans CSS de bordure sur les enfants :
+
+```tsx
+{/* Parent : background = couleur de bordure */}
+<div
+  className="grid grid-cols-2 gap-px"
+  style={{ background: 'var(--border)' }}
+>
+  {/* Enfants : background = fond de page */}
+  {items.map(item => (
+    <div key={item.id} style={{ background: 'var(--background)' }} className="p-6">
+      {/* ... */}
+    </div>
+  ))}
+</div>
+```
+
+Produit des dividers razor-thin parfaits (1px réel) sans aucune bordure sur les enfants. Maintenable : changer `--border` suffit pour tout mettre à jour.
+
+### Compteurs séquentiels
+
+Pour les listes structurées (tarifs, étapes, services détaillés) — crée une hiérarchie de section plus lisible que des H2 seuls :
+
+```tsx
+<samp className="font-mono text-[11px] uppercase tracking-[0.14em] text-(--muted-foreground) flex items-center gap-4">
+  01
+  <span className="flex-1 h-px bg-(--border)" />
+</samp>
+```
+
 ### Pattern Formulaire
 - Inputs : `border border-(--input) bg-transparent` — pas de remplissage, juste la bordure
 - Messages d'erreur : `font-mono text-xs text-(--signal)` sous le champ
 - Labels : TOUJOURS visibles (pas de labels placeholder-only pour l'accessibilité)
 - Submit : bouton `variant="signal"` — le seul CTA sur le formulaire
+
+---
+
+## TAILWIND V4 — RÈGLES SPÉCIFIQUES
+
+### Syntaxe CSS custom properties
+```
+✅ bg-(--signal)          ← Tailwind v4 : parenthèses pour les CSS vars
+❌ bg-[--signal]          ← v3 arbitrary syntax : ne s'applique PAS silencieusement en v4
+```
+Toutes les classes utilisant des custom properties : `bg-`, `text-`, `border-`, `ring-`, `fill-`, `stroke-`, `outline-` → parenthèses obligatoires.
+
+### Nommage des tokens `@theme { --spacing-* }`
+Les noms natifs Tailwind (`xl`, `2xl`, `3xl`...) entrent en collision silencieuse avec les utilitaires de dimension :
+```
+❌ @theme { --spacing-2xl: 4rem }
+   → max-w-2xl = var(--spacing-2xl) = 4rem (64px) au lieu de 42rem
+   → w-xl, h-3xl, etc. : toutes les dimensions cassées silencieusement
+```
+```
+✅ Utiliser des noms métier : --spacing-section, --spacing-hero-v, --spacing-component
+   → max-w-[40rem] pour les max-widths dans les composants (bracket explicite = bypass token)
+```
+
+---
+
+## LAYOUTS — PATTERNS STRUCTURELS
+
+### Hero image plein écran — Texte ancré en bas
+
+```tsx
+{/* Conteneur hero : hauteur définie */}
+<section className="relative min-h-[100dvh]">
+  {/* Image en fond */}
+  <Image fill className="object-cover" ... />
+
+  {/* Overlay vignette */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+  {/* Contenu ancré en bas — TOUJOURS absolute, JAMAIS mt-auto */}
+  <div className="absolute inset-x-0 bottom-0 px-6 py-16">
+    <div className="mx-auto max-w-[1280px]">
+      {/* ... */}
+    </div>
+  </div>
+</section>
+```
+
+**Règles :**
+- `absolute inset-x-0 bottom-0` sur le wrapper de contenu — JAMAIS `mt-auto` ni `flex justify-end` (instables quand parent a `min-height` mais pas `height`)
+- `max-w-[40rem]` pour le texte (bracket explicite) — JAMAIS `max-w-2xl` (collision token @theme)
+- `min-h-[100dvh]` sur le container (dvh pour iOS Safari correctness)
+
+### Maps — URL embed vs standard
+
+Google bloque le framing des URLs de vue standard :
+
+```
+❌ https://www.google.com/maps/place/MonEntreprise...  ← vue standard, bloqué
+✅ https://maps.google.com/maps?q=Adresse%2C+Ville%2C+France&output=embed
+```
+
+Conversion :
+```tsx
+<iframe
+  src="https://maps.google.com/maps?q=12%20Rue%20de%20la%20Paix%2C%2075001%20Paris%2C%20France&output=embed"
+  width="100%" height="400" style={{ border: 0 }} loading="lazy"
+  title="Localisation"
+/>
+```
+
+Pré-requis CSP dans `next.config.mjs` : `frame-src https://maps.google.com https://www.google.com` (déjà dans le template).
 
 ---
 
@@ -204,6 +320,7 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 ### Contenu
 - Lorem ipsum dans les commits — remplacer par du contenu métier réaliste
 - CTAs génériques ("En savoir plus", "Click here", "Learn more") — INTERDIT, utiliser des formulations spécifiques au métier
+- Eyebrow pills (petite capsule `text-xs uppercase` au-dessus du H2) — INTERDIT par défaut. Le H2 seul suffit. Réserver aux rares cas où le contexte de section ne peut pas s'établir sans label explicite.
 - Boutons icon-only sans aria-label — INTERDIT
 - Images placeholder (chat photos, picsum, lorempixel) dans un commit — INTERDIT
 

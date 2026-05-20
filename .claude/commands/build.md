@@ -31,6 +31,20 @@ Si incertain : demander avant de coder.
 3. `SKILL.md` — grille, motion, anti-patterns techniques
 4. `.agents/skills/impeccable/reference/craft.md` — avant chaque composant
 5. `.agents/skills/full-output-enforcement/SKILL.md` — règles de sortie complète (aucun placeholder, aucune troncature)
+6. `docs/context/discovery-report.md` — si le fichier existe : lire pour enrichir le contenu (voix de marque, positionnement, CTAs)
+
+## Photo workflow Unsplash
+
+Quand une image est requise (hero, illustration de section) :
+
+1. Rechercher avec des termes précis : `[sujet] [ambiance] [éclairage]` — ex: `plumber workshop warm lighting`
+2. Vérifier que la photo n'est pas Unsplash+ (badge "Premium" = payant, interdit)
+3. Ouvrir la page individuelle de la photo sur unsplash.com
+4. Extraire l'URL CDN longue via WebFetch (format `https://images.unsplash.com/photo-XXXX?...`)
+5. Vérifier visuellement : télécharger avec WebFetch → lire via Read (vision) → confirmer ambiance et cadrage
+6. Sauvegarder l'ID photo (ex: `photo-1234567890`) dans un commentaire ou dans `docs/design.md` pour référence
+
+**Ne jamais écrire une URL Unsplash non vérifiée dans le code.** Les URLs courtes ou construites à la main renvoient des 404.
 
 ## Règles d'animation
 
@@ -90,6 +104,28 @@ const item = {
 - `cn()` depuis `@/lib/utils` pour la fusion className
 - Aucun style inline sauf valeurs dynamiques Framer Motion
 
+## Analytics — Plausible (systématique)
+
+Installer sur tout projet avant la livraison. Privacy-first, pas de bandeau CNIL requis, données EU.
+
+Dans `src/app/layout.tsx` :
+
+```tsx
+import Script from 'next/script'
+
+// Dans le <body>, après les children :
+<Script
+  defer
+  data-domain="[domaine-client].fr"  // TODO: remplacer
+  src="https://plausible.io/js/script.js"
+  strategy="afterInteractive"
+/>
+```
+
+Vérifier en production (pas en localhost — Plausible ignore les requêtes locales) : ouvrir le dashboard Plausible et confirmer que les pages vues remontent.
+
+---
+
 ## Checklist mentale par composant
 
 Avant de valider chaque composant :
@@ -106,16 +142,182 @@ Avant de valider chaque composant :
 - [ ] Accent `--signal` : max 1-2 occurrences par section
 - [ ] Pas de `console.log`
 
+## Fichiers systématiques — à créer avant les sections
+
+Ces 4 fichiers sont toujours créés, quel que soit le projet. Infrastructure SEO/partage de base.
+
+### OG Image — `src/app/opengraph-image.tsx`
+
+Affichée lors du partage WhatsApp / Facebook / LinkedIn. Sans elle, le partage donne un aperçu vide.
+
+```tsx
+import { ImageResponse } from 'next/og'
+
+export const runtime = 'edge'
+export const size = { width: 1200, height: 630 }
+export const contentType = 'image/png'
+
+export default function OgImage() {
+  return new ImageResponse(
+    <div style={{
+      width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+      justifyContent: 'flex-end', padding: '64px',
+      background: 'oklch(0.12 0.01 55)', color: 'oklch(0.97 0.003 80)',
+    }}>
+      <div style={{ fontSize: 56, fontWeight: 700, lineHeight: 1.1, marginBottom: 16 }}>
+        {/* TODO: Nom du client */}
+      </div>
+      <div style={{ fontSize: 28, opacity: 0.7 }}>
+        {/* TODO: Tagline ou secteur */}
+      </div>
+    </div>
+  )
+}
+```
+
+Adapter les couleurs et le contenu aux tokens de `docs/design.md`.
+
+### Sitemap — `src/app/sitemap.ts`
+
+```typescript
+import { MetadataRoute } from 'next'
+
+const BASE = 'https://[domaine-client].fr' // TODO: remplacer
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return [
+    { url: BASE,               lastModified: new Date(), changeFrequency: 'monthly', priority: 1.0 },
+    { url: `${BASE}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE}/contact`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.6 },
+    // Ajouter toutes les pages de l'arborescence docs/product.md
+  ]
+}
+```
+
+### Robots — `src/app/robots.ts`
+
+```typescript
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: { userAgent: '*', allow: '/', disallow: ['/api/'] },
+    sitemap: 'https://[domaine-client].fr/sitemap.xml', // TODO: remplacer
+  }
+}
+```
+
+### Métadonnées layout — `src/app/layout.tsx`
+
+Vérifier que le `metadata` object est complet :
+
+```typescript
+export const metadata: Metadata = {
+  metadataBase: new URL('https://[domaine-client].fr'), // TODO
+  title: { default: '[Nom] — [Métier] à [Ville]', template: '%s | [Nom]' },
+  description: '[Description 150-160 car — inclure métier + ville + proposition de valeur]',
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: '[Nom du client]',
+  },
+  twitter: { card: 'summary_large_image' },
+}
+```
+
+---
+
+## Schema JSON-LD — sections qui l'exigent
+
+### LocalBusiness (page d'accueil)
+
+```typescript
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness', // ou 'Plumber', 'Electrician', 'HomeAndConstructionBusiness'…
+  name: siteConfig.name,
+  description: siteConfig.description,
+  url: siteConfig.url,
+  telephone: siteConfig.phone,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: siteConfig.address.street,
+    addressLocality: siteConfig.address.city,
+    postalCode: siteConfig.address.zip,
+    addressCountry: 'FR',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: siteConfig.geo.lat,   // TODO: ajouter dans siteConfig
+    longitude: siteConfig.geo.lng,
+  },
+  areaServed: siteConfig.zones, // tableau de villes couvertes
+  // Si avis hardcodés présents → ajouter AggregateRating
+  ...(siteConfig.reviews.length > 0 && {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: String(
+        siteConfig.reviews.reduce((s, r) => s + r.rating, 0) / siteConfig.reviews.length
+      ),
+      reviewCount: String(siteConfig.reviews.length),
+      bestRating: '5',
+    },
+  }),
+}
+```
+
+`AggregateRating` affiche les étoiles directement dans les SERPs Google — ne jamais l'omettre si des avis sont présents.
+
+### FAQPage (section FAQ — à créer sur tout site artisan)
+
+La section FAQ est **systématique** sur les sites artisans : capte les requêtes longue traîne, déclenche les rich snippets Google, et alimente directement les réponses IA (GEO).
+
+```typescript
+// Minimum 4-6 questions réelles du secteur
+const faqs = [
+  { q: 'Quel est le délai d\'intervention pour une urgence ?', a: '...' },
+  { q: 'Intervenez-vous le week-end ?', a: '...' },
+  // ...
+]
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+}
+```
+
+Questions à déduire du secteur dans `docs/product.md` — jamais génériques.
+
+---
+
 ## Ordre de développement recommandé
 
+0. Fichiers systématiques (OG image · sitemap · robots · metadata layout)
 1. Layout (header + footer) — squelette de navigation réelle
 2. Hero — première impression, CTA principal
 3. Services / Prestations — cœur du métier
 4. Réalisations / Chantiers — preuves sociales
 5. À propos — humanisation
-6. Contact / Devis — conversion finale
+6. FAQ — rich snippets + GEO (systématique sur sites artisans)
+7. Contact / Devis — conversion finale
 
 ## Après chaque section
 
 Indique : `Section [nom] terminée — lancer pnpm dev pour valider visuellement avant de continuer.`
 Ne pas enchaîner plusieurs sections sans validation intermédiaire.
+
+## Migration de constante globale (ex : renommer EASE, MOTION, etc.)
+
+Après un `replace_all`, toujours faire un grep final sur tout `src/` avant de déclarer terminé :
+les occurrences multi-lignes et les fichiers non-sections (button.tsx, header.tsx) sont manquées par un replace single-line.
+
+```
+grep -r "NOM_ANCIENNE_CONSTANTE" src/
+```
+
+Si des résultats apparaissent : les corriger avant de continuer. Une occurrence manquée → erreur runtime silencieuse en production.

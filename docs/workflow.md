@@ -16,10 +16,17 @@ Brief client
 /design     → docs/design.md validé      ← session CLI #2
     ↓
 /build      → composant par composant    ← session CLI #3+
+            → OG image · sitemap · robots · FAQ schema (systématiques)
+    ↓
+/contact-setup → route API + Resend + honeypot   ← session CLI #3.5
     ↓
 /impeccable audit  → corrections
     ↓
-/impeccable polish → livraison
+/legal      → pages légales adaptées au statut
+    ↓
+/impeccable polish → passe finale
+    ↓
+[Vous] PageSpeed Insights sur URL prod · Plausible vérifié
     ↓
 [launch-runbook]   → mise en ligne
 ```
@@ -90,20 +97,29 @@ Relisez `docs/product.md` et vérifiez :
 
 > À utiliser si le client a besoin de voir un visuel avant de valider la direction artistique.
 
-Deux approches disponibles, non exclusives :
+### Option A — Vercel Preview + MarkUp.io *(recommandé)*
 
-### Option A — Maquette Figma
-**Commande :** `/figma` → Usage A
-**Prérequis :** `.mcp.json` configuré avec `FIGMA_API_KEY` (copier `.mcp.json.example`)
+Vercel crée automatiquement une URL de preview pour chaque branche Git. Pas d'export manuel — les Server Components, routes API et Server Actions fonctionnent normalement.
 
-Crée une maquette simplifiée dans Figma depuis `docs/design.md` validé.
-Le client commente directement dans Figma → retours structurés, pas de malentendus.
+**Étapes :**
+```bash
+git checkout -b review/[section-ou-phase]
+git push origin review/[section-ou-phase]
+# → Vercel génère automatiquement : https://[projet]-git-review-[...].vercel.app
+```
+
+1. Copier l'URL de preview Vercel (visible dans le dashboard ou dans le commentaire GitHub/PR)
+2. Ouvrir [markup.io](https://markup.io) → coller l'URL → partager le lien de review au client
+3. Le client clique sur n'importe quel élément pour laisser un commentaire épinglé — sans compte requis
+4. Intégrer les retours, pousser sur la même branche → la preview se met à jour automatiquement
+
+**Prérequis :** projet connecté à Vercel (`vercel link` ou import depuis le dashboard Vercel).
 
 ### Option B — Images de référence
 **Skills :** `imagegen-frontend-web` · `image-to-code`
 
 Génère une image de référence par section (hero, features, footer) avant de coder.
-Utile pour aligner le client sans Figma, et pour casser les defaults IA dès le départ.
+Utile pour aligner le client visuellement dès la Phase 2, avant d'écrire du code.
 
 **Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
 
@@ -203,6 +219,33 @@ Dans Claude Code :
 
 ---
 
+## Phase 3.5 — Formulaire de contact production-ready
+
+**Commande :** `/contact-setup`
+**Durée estimée :** 20–30 min
+**Livrable :** route `/api/contact` + honeypot + emails Resend + gestion d'états UI
+
+À lancer après la section contact visuelle, avant `/impeccable`. Sans cette phase, les leads ne partent nulle part.
+
+### Ce que fait la commande
+
+1. Installe `resend` + `zod`
+2. Crée la route `src/app/api/contact/route.ts` avec validation Zod stricte + `import 'server-only'`
+3. Ajoute le champ honeypot dans le formulaire HTML (`aria-hidden`, invisible, détecte les bots)
+4. Configure 2 emails via Resend : notification au professionnel + confirmation au visiteur
+5. Gère les états UI : idle / sending / success / error avec fallback téléphone
+6. (Optionnel) Rate limiting via `@upstash/ratelimit` si compte Upstash disponible
+
+### Votre validation
+
+- [ ] `RESEND_API_KEY` + `CONTACT_EMAIL_TO` dans `.env.local`
+- [ ] `.env.example` mis à jour sans valeur
+- [ ] Test soumission normale → 2 emails reçus (pro + visiteur)
+- [ ] Test honeypot rempli → aucun email, réponse silencieuse `{ ok: true }`
+- [ ] Bouton désactivé pendant l'envoi
+
+---
+
 ## Phase 4 — Audit & livraison
 
 **Commandes :** `/impeccable audit` · `/impeccable polish` · `/impeccable harden`
@@ -219,18 +262,48 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 | `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
 
 ### Checklist technique avant livraison
-- [ ] `docs/feedback.md` complété — bugs, frictions, améliorations, ce qui a bien fonctionné
-- [ ] `docs/feedback.md` remonté au template Mobem (PR ou message à l'équipe)
+
+#### Build & TypeScript
+- [ ] `pnpm build` sans warning TypeScript ni erreur
 - [ ] `pnpm run impeccable` — zéro erreur
-- [ ] Lighthouse ≥ 90 (Performance · Accessibilité · SEO · Best Practices)
+- [ ] Aucun `console.log` en production
+
+#### Performance — mesurer sur URL de prod, pas en local
+- [ ] PageSpeed Insights sur l'URL Vercel de prod (pas Lighthouse CLI) — [pagespeed.web.dev](https://pagespeed.web.dev)
+- [ ] LCP < 2.5s (hero image : `priority` sur `next/image`, sinon c'est la cause n°1)
+- [ ] INP < 200ms
+- [ ] CLS < 0.1 (polices : vérifier `size-adjust` sur fallback ; images : vérifier dimensions explicites)
+- [ ] Score global ≥ 90 Performance · Accessibilité · SEO · Best Practices
+
+#### SEO & Schema
+- [ ] Schema JSON-LD validé — [Google Rich Results Test](https://search.google.com/test/rich-results)
+- [ ] `AggregateRating` présent dans le JSON-LD si des avis sont affichés (étoiles dans les SERPs)
+- [ ] `FAQPage` schema présent si section FAQ — vérifier dans Rich Results Test
+- [ ] Sitemap accessible : `/sitemap.xml` répond 200 avec du XML valide
+- [ ] Robots accessible : `/robots.txt` répond 200
+- [ ] OG image vérifiée — [opengraph.xyz](https://www.opengraph.xyz) ou partage WhatsApp de test
+- [ ] NAP (nom · adresse · téléphone) cohérent sur toutes les pages
+
+#### Analytics
+- [ ] Plausible (ou Umami) installé et recevant des events — tester en production (pas en localhost)
+- [ ] Aucun Google Analytics sans bandeau cookie CNIL (préférer Plausible)
+
+#### Formulaire de contact
+- [ ] Soumission réelle testée sur URL de prod → email reçu par le professionnel
+- [ ] Email de confirmation reçu par le visiteur
+- [ ] Test honeypot → aucun email envoyé
+
+#### Accessibilité & UX
 - [ ] Mobile 375px — pas d'overflow horizontal
 - [ ] Dark mode testé — tous les tokens résolus
-- [ ] `tsc --noEmit` passe propre
-- [ ] Aucune couleur hardcodée — uniquement `var(--...)`
+- [ ] Focus visible sur tous les éléments interactifs (tab navigation)
 - [ ] Toutes les images ont `alt` + `width` + `height`
-- [ ] Focus visible sur tous les éléments interactifs
-- [ ] Schema JSON-LD validé (Google Rich Results Test)
-- [ ] NAP cohérent sur toutes les pages
+- [ ] Aucune couleur hardcodée — uniquement `var(--...)`
+
+#### Contenu & Legal
+- [ ] `docs/feedback.md` complété — bugs, frictions, améliorations
+- [ ] Pages légales liées dans le footer (`/mentions-legales` · `/confidentialite` · `/cgv`)
+- [ ] Aucun `TODO: [BLOQUANT]` restant dans les pages légales
 
 ### Checklist RGAA (niveau AA minimum)
 - [ ] Contraste texte : 4.5:1 minimum (vérifier avec OKLCH Contrast Checker)
@@ -247,6 +320,38 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 ```
 Passe de cohérence globale avant de livrer — alignement typographique, espacement,
 hiérarchie visuelle, micro-interactions.
+
+---
+
+## Phase 4.5 — Pages légales
+
+**Commande :** `/legal`
+**Durée estimée :** 15–20 min
+**Livrable :** 3 pages légales adaptées au statut juridique + liens footer + checklist conformité
+
+À lancer avant toute mise en ligne. Obligatoire dès qu'un formulaire de contact est présent.
+
+### Ce que fait la commande
+
+1. **Extrait** depuis `docs/product.md` : statut juridique, secteur, B2C/B2B, zone
+2. **Applique le mapping** statut → contenu obligatoire :
+
+   | Statut | TVA | Décennale | CGV |
+   |--------|-----|-----------|-----|
+   | Micro-entrepreneur | Franchise 293 B si < seuil | Oui si BTP | Oui (B2C) |
+   | SARL / SAS | Assujetti → 10 % ou 20 % | Oui si BTP | Oui (B2C) |
+   | Profession libérale | Variable | Non | Conditions d'honoraires |
+
+3. **Génère** les 3 pages adaptées au statut (mentions légales · confidentialité · CGV ou honoraires)
+4. **Checklist de conformité** adaptée au statut (micro-entrepreneur vs SARL vs profession libérale)
+5. **Liste les TODO bloquants** — à résoudre avant mise en ligne (SIRET, médiateur, assureur décennale…)
+6. **Met à jour le footer** avec les liens légaux
+
+### Votre validation
+
+- [ ] Tous les `TODO: [BLOQUANT]` résolus
+- [ ] Date "Dernière mise à jour" renseignée dans les 3 pages
+- [ ] Recommandation de relecture avocat transmise au client (obligatoire pour les CGV B2C)
 
 ---
 
@@ -269,7 +374,8 @@ monitoring post-lancement, critères de rollback.
 |----------|-------|-----------------|
 | `/strategy` | 1 | Lit le brief, remplit docs/product.md |
 | `/design` | 2 | Propose palettes, remplit docs/design.md + globals.css |
-| `/build [section]` | 3 | Code un composant selon la DA validée |
+| `/build [section]` | 3 | Code un composant selon la DA validée — inclut OG image, sitemap, robots, FAQ schema |
+| `/contact-setup` | 3.5 | Route API contact + Resend + honeypot + emails + états UI |
 | `/impeccable audit [page]` | 3–4 | Audit technique post-génération — à lancer après chaque page |
 | `/impeccable polish` | 4 | Passe finale avant livraison |
 
@@ -277,11 +383,12 @@ monitoring post-lancement, critères de rollback.
 
 | Commande | Quand l'utiliser |
 |----------|-----------------|
-| `/figma` | **Usage A** : maquette Figma pour validation client après `/design`. **Usage B** : implémentation depuis specs Figma pendant `/build`. **Usage C** : Code Connect pour lier composants code ↔ Figma. |
+| `/figma` | Implémentation depuis specs Figma pendant `/build` si le client fournit des maquettes Figma. La validation client se fait désormais via export HTML + outil de commentaires en ligne (voir Phase 1.5). |
 | `/impeccable shape [section]` | Sections complexes (landing multi-blocs, formulaire avancé) — planifie l'UX avant de coder. Inutile sur un site vitrine simple. |
 | `/impeccable critique [page]` | Second regard design si `/impeccable audit` ne suffit pas. |
 | `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
 | `/impeccable teach` | Reprise d'un projet existant sans historique de session. Inutile si `/strategy` + `/design` ont déjà été faits dans ce projet. |
+| `/legal` | Génère mentions légales, politique de confidentialité, CGV — avant mise en ligne. |
 
 ---
 
@@ -309,6 +416,7 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 | `launch-runbook` | 5 | Procédures de mise en production |
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile iOS/Android (si PWA ou app) |
+| `legal-pages` | 4.5 | Pages légales françaises — mentions légales, confidentialité, CGV |
 | `skill-creation-walkthrough` | meta | Créer un nouveau skill Claude |
 
 ---
@@ -335,10 +443,18 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 → Les valeurs OKLCH sur papier ne donnent pas la même impression que dans le navigateur.
 → Fix : toujours vérifier visuellement avant de passer au code.
 
+**Mesurer Lighthouse en local plutôt que sur l'URL de prod**
+→ Lighthouse CLI / DevTools en localhost donne des scores 10-20 points supérieurs à la réalité (pas de réseau, pas de CDN cold start, pas de vraie connexion mobile).
+→ Fix : toujours mesurer via PageSpeed Insights sur l'URL Vercel de production.
+
+**Hero image sans `priority` sur `<Image />`**
+→ Le LCP (Largest Contentful Paint) sera > 2.5s. C'est systématiquement la cause n°1 d'un mauvais score Performance.
+→ Fix : `<Image priority />` obligatoire sur toute image above-the-fold (hero, logo si grand).
+
 **Accumuler des composants sans audit intermédiaire**
 → Les anti-patterns s'accumulent et deviennent coûteux à corriger.
 → Fix : `pnpm run impeccable` après chaque page.
 
-**Activer plusieurs skills d'esthétique en même temps**
+**Activer plusieurs skills d'esthétique en même temps sur la même section**
 → Les directives se contredisent et Claude produit un résultat hybride sans cohérence.
-→ Fix : choisir UN seul skill d'esthétique par projet, l'activer dès la Phase 2, s'y tenir.
+→ Fix : un seul skill par type de contenu (ex : gpt-taste sur les pages visuelles, industrial-brutalist sur les pages data-dense). Ne jamais en mélanger deux sur la même section.

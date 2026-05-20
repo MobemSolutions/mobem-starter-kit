@@ -74,6 +74,17 @@
   --ring:                oklch(0.965 0.005 80);
 }
 
+/* ── Sections dark-always (hero, bandes inversées) ──────── */
+/* Indépendants de :root et .dark — fond sombre quelle que soit la préférence.  */
+/* !! PLACEHOLDER — remplir via /design en même temps que :root !!              */
+.section-dark {
+  --hero-bg:      oklch(0.07 0 0);         /* → à remplacer */
+  --hero-text:    oklch(0.97 0.003 80);    /* → à remplacer */
+  --hero-signal:  oklch(0.605 0.203 27.5); /* → même que --signal */
+  --hero-muted:   oklch(0.75 0 0);         /* Texte secondaire sur fond sombre */
+  --hero-overlay: oklch(0 0 0 / 0.55);    /* Vignette overlay */
+}
+
 /* ── Base Resets ─────────────────────────────────────────── */
 *,
 *::before,

@@ -13,6 +13,7 @@ Demande : "Pouvez-vous déposer le brief client dans docs/context/ avant de cont
 ## Preuve de lecture obligatoire
 
 Lis `docs/context/` en entier (tous les fichiers présents).
+Si `docs/context/discovery-report.md` existe : le lire en priorité — il contient les audiences, la concurrence et les territoires de marque qui alimentent directement `docs/product.md`.
 
 Puis, avant de remplir quoi que ce soit, réponds à ces 3 questions en une phrase chacune :
 
@@ -46,9 +47,30 @@ Format attendu :
 Justifie chaque page par rapport aux objectifs business identifiés.
 Ne propose pas de pages "standard" sans lien avec le brief.
 
-## Livrable
+## Livrables
 
-`docs/product.md` complété.
+### 1. docs/product.md complété
+
+### 2. Tableau "Skill par section"
+
+En fin de `/strategy`, avant tout `/design`, produire ce tableau pour éviter les rewrites post-code :
+
+```
+| Section     | Skill esthétique recommandé  | Justification                              |
+|-------------|-----------------------------|--------------------------------------------|
+| Hero        | gpt-taste / high-end        | Impact visuel prioritaire                  |
+| Services    | gpt-taste / minimalist      | ...                                        |
+| Prestations | industrial-brutalist         | Data-dense, liste structurée               |
+| Contact     | même que hero               | Cohérence                                  |
+```
+
+Justifier par la nature du contenu (impact visuel vs data-dense) et le secteur client. Ce tableau évite 30–60 min de rewrite si le skill est changé après le code.
+
+### 3. Décision reviews — hardcodé vs API
+
+Documenter dans `docs/product.md` § Reviews :
+- Artisans / TPE avec < 150 avis et budget < 150€/mois → **copier les vrais avis en dur** (coût zéro, SEO direct, fiabilité maximale)
+- Cas avec besoin de mise à jour régulière → API Google Places ou Trustpilot
 
 ## STOP
 
