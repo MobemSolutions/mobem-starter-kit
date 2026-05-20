@@ -9,7 +9,10 @@
       "Bash(git remote *)",
       "Bash(Remove-Item *)",
       "Bash(node .agents/scripts/check-docs.mjs)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git show-ref *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jeanm\\\\Desktop\\\\arnaud temp\\\\code\\\\pro\\\\mobem-starter-kit\\\\.agents\\\\skills\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   },
   "hooks": {

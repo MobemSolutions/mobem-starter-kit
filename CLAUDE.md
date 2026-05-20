@@ -54,6 +54,8 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 
 **JAMAIS :** gradients · glassmorphism · pure black · gray-on-color · cartes imbriquées · bounce/elastic
 
+**Polices interdites (signature IA trop reconnaissable) :** JetBrains Mono · Inter · Geist · Outfit · DM Sans — ces polices signalent immédiatement une génération IA et trahissent l'identité client. Choisir une police avec une vraie personnalité typographique via `/design`.
+
 Typographie et palette : définis exclusivement par `/design`, écrits dans `docs/design.md` et `src/app/globals.css`.
 
 ## TypeScript
@@ -105,16 +107,42 @@ Pour chaque finding, indique la criticité et le fix exact.
 
 ## Skills actifs — rôles
 
+### Skills chargés automatiquement (toujours actifs)
+
 | Skill | Rôle | Quand |
 |-------|------|-------|
 | `SKILL.md` (Mobem) | Conventions techniques, anti-patterns, grille, motion | Toujours |
 | `.agents/skills/impeccable/` | Règles design — typography, color, spatial, UX writing | Toujours, relu avant chaque composant |
 | `.agents/skills/design-taste-frontend/` | Anti-slop frontend — Three Dials | Toujours |
 
+### Skills passifs (activation manuelle par phase)
+
+| Skill | Phase | Activer quand |
+|-------|-------|---------------|
+| `brand-discovery` | 0 | Brief vague, client sans positionnement clair |
+| `brand-voice` | 0–1 | Client sans ligne éditoriale définie |
+| `minimalist-ui` | 2 | Direction éditorial/monochrome (artisans, cabinets) |
+| `high-end-visual-design` | 2 | Direction premium/agence (marques haut de gamme) |
+| `gpt-taste` | 2 | Direction Awwwards/éditorial large (agences créatives) |
+| `industrial-brutalist-ui` | 2 | Direction industriel/brutalist (BTP, industrie) |
+| `stitch-design-taste` | 2 | Validation via Google Stitch |
+| `imagegen-frontend-web` | 1.5–3 | Générer images de référence par section avant code |
+| `image-to-code` | 3 | Générer image de référence puis implémenter |
+| `full-output-enforcement` | 3 | Prévenir troncature et placeholders — activer en début de `/build` |
+| `redesign-existing-projects` | 3 | Client avec site existant à refondre |
+| `accessibility-audit` | 4 | Audit WCAG 2.1 AA avant livraison |
+| `performance-optimization` | 4 | Audit Core Web Vitals, bundle, assets |
+| `security-baseline` | 4 | Audit HTTPS, headers, CSP, secrets |
+| `seo-aeo-geo` | 4 | Optimisation SEO + AI search (Perplexity, ChatGPT) |
+| `launch-runbook` | 5 | Procédures de mise en production |
+| `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
+| `imagegen-frontend-mobile` | 2–3 | Écrans app mobile (si PWA ou app native) |
+
 **En cas de conflit entre les skills :**
 - `SKILL.md` Mobem prime pour les conventions techniques (grille, motion, tokens CSS)
 - Impeccable prime pour les décisions de design (typographie, composition, hiérarchie)
 - TasteSkill prime pour détecter les patterns génériques à éviter
+- Un seul skill d'esthétique par projet (minimalist-ui OU high-end-visual-design OU gpt-taste OU industrial-brutalist-ui) — jamais plusieurs en simultané
 
 **Priorité de lecture pour les décisions visuelles :**
-`docs/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem 
+`docs/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem

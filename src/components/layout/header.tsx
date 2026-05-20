@@ -17,11 +17,11 @@ export function Header() {
   }, [isMobile])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[--border] bg-[--background]">
+    <header className="sticky top-0 z-40 border-b border-(--border) bg-(--background)">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
         <Link
           href="/"
-          className="text-sm font-medium hover:text-[--muted-foreground] transition-colors"
+          className="text-sm font-medium hover:text-(--muted-foreground) transition-colors"
         >
           {siteConfig.name}
         </Link>
@@ -31,7 +31,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-xs text-[--muted-foreground] transition-colors hover:text-[--foreground]"
+              className="text-xs text-(--muted-foreground) transition-colors hover:text-(--foreground)"
             >
               {item.label}
             </Link>
@@ -42,7 +42,7 @@ export function Header() {
           <div className="hidden md:flex">
             <Link
               href={siteConfig.cta.href}
-              className="inline-flex items-center justify-center h-9 px-5 text-xs font-medium bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90"
+              className="inline-flex items-center justify-center h-9 px-5 text-xs font-medium bg-(--signal) text-(--signal-foreground) transition-colors hover:bg-(--signal)/90"
             >
               {siteConfig.cta.label}
             </Link>
@@ -50,7 +50,7 @@ export function Header() {
         )}
 
         <button
-          className="md:hidden p-2 text-[--foreground]"
+          className="md:hidden p-2 text-(--foreground)"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
         >
@@ -65,7 +65,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ ease: MOTION.ease, duration: MOTION.duration.micro }}
-            className="border-t border-[--border] bg-[--background] md:hidden"
+            className="border-t border-(--border) bg-(--background) md:hidden"
           >
             <nav className="flex flex-col px-6 py-4 gap-4">
               {siteConfig.nav.map((item) => (
@@ -73,7 +73,7 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-sm text-[--muted-foreground] hover:text-[--foreground] transition-colors"
+                  className="text-sm text-(--muted-foreground) hover:text-(--foreground) transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -82,7 +82,7 @@ export function Header() {
                 <Link
                   href={siteConfig.cta.href}
                   onClick={() => setIsOpen(false)}
-                  className="inline-flex items-center justify-center h-10 px-6 text-sm font-medium bg-[--signal] text-[--signal-foreground] transition-colors hover:bg-[--signal]/90 mt-2"
+                  className="inline-flex items-center justify-center h-10 px-6 text-sm font-medium bg-(--signal) text-(--signal-foreground) transition-colors hover:bg-(--signal)/90 mt-2"
                 >
                   {siteConfig.cta.label}
                 </Link>

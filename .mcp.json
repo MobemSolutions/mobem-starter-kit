@@ -1,11 +1,8 @@
 {
   "mcpServers": {
     "figma": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "figma-developer-mcp", "--stdio"],
-      "env": {
-        "FIGMA_API_KEY": "figd_X1dj5PBx4gtLTKweBBEYQlgntjf9k-yM8fC7l1Ya"
-      }
+      "command": "node",
+      "args": ["scripts/mcp-figma.js"]
     }
   }
 }

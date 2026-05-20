@@ -15,12 +15,22 @@ Demande de lancer `/design` d'abord.
 Vérifie que `src/app/globals.css` contient les CSS custom properties `--background`, `--foreground`, `--signal`.
 Si non : **STOP**. Le `/design` n'a pas été completé.
 
+### 3. Hero — cohérence brief / traitement visuel
+Si la section demandée est le Hero, poser cette question avant de coder :
+
+Le brief implique-t-il une imagerie ? (artisan en action, chantier, produit physique, lieu, équipe)
+- **Oui** → prévoir un emplacement image. Trouver une URL Unsplash fiable : récupérer la page photo individuelle, extraire la vraie URL CDN longue, vérifier via vision. Ne jamais écrire une URL Unsplash non vérifiée.
+- **Non** (service immatériel, studio, cabinet, approche éditoriale assumée) → hero typographique acceptable et parfois supérieur — meilleure performance LCP, parti pris clair.
+
+Si incertain : demander avant de coder.
+
 ## Ordre de lecture obligatoire
 
 1. `docs/product.md` — north star, sections, contenu réel
 2. `docs/design.md` — palette, typographie, radius, motion dials
 3. `SKILL.md` — grille, motion, anti-patterns techniques
 4. `.agents/skills/impeccable/reference/craft.md` — avant chaque composant
+5. `.agents/skills/full-output-enforcement/SKILL.md` — règles de sortie complète (aucun placeholder, aucune troncature)
 
 ## Règles d'animation
 
@@ -56,7 +66,12 @@ const item = {
 ### Règles motion — non-négociables
 - `viewport={{ once: true }}` systématique sur tous les `whileInView`
 - Animer UNIQUEMENT `opacity` et `transform` (y, x, scale) — jamais width/height/padding
-- Respecter `prefers-reduced-motion` : wrapper les animations dans `useReducedMotion()`
+- `useReducedMotion()` obligatoire dans chaque composant animé — pattern exact :
+  ```typescript
+  const reduced = useReducedMotion() ?? false
+  const fromY = reduced ? 0 : 16
+  const dur = reduced ? 0.01 : 0.4
+  ```
 - Pas de spring, pas de bounce, pas d'elastic — ease cubique uniquement
 
 ## Règles de contenu
@@ -83,6 +98,8 @@ Avant de valider chaque composant :
 - [ ] Grille 8pt respectée — espacements multiples de 8px uniquement
 - [ ] Animation below-fold : `whileInView` avec `once: true`
 - [ ] Animation hero : `animate=` au montage
+- [ ] `useReducedMotion()` présent dans chaque composant animé
+- [ ] Hero : traitement visuel cohérent avec le brief (image si le secteur l'implique, typographique si choix assumé)
 - [ ] Contenu réel — aucun placeholder générique
 - [ ] Mobile 375px : pas d'overflow horizontal
 - [ ] `alt` + `width` + `height` sur toutes les images `next/image`

@@ -7,10 +7,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border border-[--border] bg-transparent text-[--foreground]',
-        solid:   'bg-[--primary] text-[--primary-foreground]',
-        signal:  'bg-[--signal] text-[--signal-foreground]',
-        muted:   'bg-[--secondary] text-[--muted-foreground]',
+        default: 'border border-(--border) bg-transparent text-(--foreground)',
+        solid:   'bg-(--primary) text-(--primary-foreground)',
+        signal:  'bg-(--signal) text-(--signal-foreground)',
+        muted:   'bg-(--secondary) text-(--muted-foreground)',
       },
       size: {
         default: 'px-2.5 py-0.5 rounded-[var(--radius-hair)]',

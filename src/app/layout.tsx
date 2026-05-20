@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -28,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className="bg-[--background] text-[--foreground] font-sans antialiased">
+      <body className="bg-(--background) text-(--foreground) font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

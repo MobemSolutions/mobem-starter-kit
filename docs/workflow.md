@@ -20,6 +20,8 @@ Brief client
 /impeccable audit  → corrections
     ↓
 /impeccable polish → livraison
+    ↓
+[launch-runbook]   → mise en ligne
 ```
 
 **Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
@@ -46,6 +48,15 @@ Claude revient à ses defaults génériques. Si le client n'en a pas, posez-lui 
 - "Un mot pour décrire l'ambiance souhaitée : sobre, chaleureux, premium, dynamique ?"
 
 Ne lancez pas `/design` sans ces réponses.
+
+### Skills optionnels en Phase 0
+
+Si le brief est incomplet ou si le client n'a pas encore d'identité de marque clairement définie :
+
+| Skill | Quand l'utiliser | Activation |
+|-------|-----------------|------------|
+| `brand-discovery` | Brief vague, client sans positionnement clair — fait l'audit audience, concurrence, territoire de marque | "Lis `.agents/skills/brand-discovery/` et applique-le au brief" |
+| `brand-voice` | Client sans ligne éditoriale — génère les attributs de voix, les règles de ton, le vocabulaire | "Lis `.agents/skills/brand-voice/` et définis la voix de marque" |
 
 ---
 
@@ -75,15 +86,26 @@ Relisez `docs/product.md` et vérifiez :
 
 ---
 
-## Phase 1.5 — Figma (optionnel)
+## Phase 1.5 — Validation visuelle (optionnel)
 
-> À utiliser si le client a besoin de voir un visuel avant de valider la palette.
+> À utiliser si le client a besoin de voir un visuel avant de valider la direction artistique.
 
+Deux approches disponibles, non exclusives :
+
+### Option A — Maquette Figma
 **Commande :** `/figma` → Usage A
 **Prérequis :** `.mcp.json` configuré avec `FIGMA_API_KEY` (copier `.mcp.json.example`)
 
 Crée une maquette simplifiée dans Figma depuis `docs/design.md` validé.
 Le client commente directement dans Figma → retours structurés, pas de malentendus.
+
+### Option B — Images de référence
+**Skills :** `imagegen-frontend-web` · `image-to-code`
+
+Génère une image de référence par section (hero, features, footer) avant de coder.
+Utile pour aligner le client sans Figma, et pour casser les defaults IA dès le départ.
+
+**Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
 
 ---
 
@@ -101,6 +123,20 @@ Le client commente directement dans Figma → retours structurés, pas de malent
 - Propose 2 palettes OKLCH distinctes avec justification secteur
 - Présente le résumé structuré (palettes + typographie + radius)
 - Attend votre validation explicite avant d'écrire un seul fichier
+
+### Skills d'esthétique — choisir UN par projet
+
+Ces skills définissent l'orientation visuelle. Les activer **avant** `/design` pour orienter la direction artistique. Choisir celui qui correspond le mieux au secteur du client.
+
+| Skill | Esthétique | Adapté à |
+|-------|-----------|----------|
+| `minimalist-ui` | Éditorial, monochrome chaud, typographique | Artisans premium, consultants, cabinets |
+| `high-end-visual-design` | Agence 150k$+, bento asymétrique, micro-haptics | Marques premium, hôtellerie, luxe accessible |
+| `gpt-taste` | Awwwards, GSAP, éditorial large, bento sans gap | Sites vitrines ambitieux, agences créatives |
+| `industrial-brutalist-ui` | Brutalism industriel, grille suisse, CRT | Industrie, BTP, artisans techniques |
+| `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Si le client valide via Stitch plutôt que Figma |
+
+**Activation :** "Lis `.agents/skills/[nom-du-skill]/` avant de proposer la direction artistique"
 
 ### Votre validation
 Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
@@ -145,6 +181,14 @@ Pour chaque composant :
 **Un composant = un commit.** Ne jamais accumuler plusieurs composants dans la même session
 sans commit intermédiaire — vous perdez la traçabilité et le contrôle.
 
+### Skills utiles en Phase 3
+
+| Skill | Quand l'utiliser | Activation |
+|-------|-----------------|------------|
+| `full-output-enforcement` | Toujours — prévient la troncature et les placeholders dans le code généré | Activer en début de session `/build` |
+| `image-to-code` | Si vous voulez générer une image de référence avant de coder chaque section | "Lis `.agents/skills/image-to-code/` avant de coder cette section" |
+| `redesign-existing-projects` | Si le client a déjà un site à refondre — audite et cible les upgrades sans tout réécrire | "Lis `.agents/skills/redesign-existing-projects/`" |
+
 ### Après chaque page complète
 ```bash
 pnpm run impeccable
@@ -162,6 +206,17 @@ Dans Claude Code :
 ## Phase 4 — Audit & livraison
 
 **Commandes :** `/impeccable audit` · `/impeccable polish` · `/impeccable harden`
+
+### Audits spécialisés — à lancer avant livraison
+
+Activer chaque skill dans une session dédiée, dans cet ordre :
+
+| Skill | Ce qu'il vérifie | Activation |
+|-------|-----------------|------------|
+| `accessibility-audit` | WCAG 2.1 AA complet — perceivable, operable, understandable, robust | "Lis `.agents/skills/accessibility-audit/` et audite [page]" |
+| `performance-optimization` | Core Web Vitals (LCP, INP, CLS), bundle size, assets | "Lis `.agents/skills/performance-optimization/` et audite le site" |
+| `security-baseline` | HTTPS, security headers, CSP, gestion des secrets | "Lis `.agents/skills/security-baseline/` et audite le repo" |
+| `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
 
 ### Checklist technique avant livraison
 - [ ] `docs/feedback.md` complété — bugs, frictions, améliorations, ce qui a bien fonctionné
@@ -195,20 +250,66 @@ hiérarchie visuelle, micro-interactions.
 
 ---
 
+## Phase 5 — Mise en ligne
+
+**Skill :** `launch-runbook`
+
+Planifie et exécute la mise en production : vérifications pré-lancement, bascule DNS,
+monitoring post-lancement, critères de rollback.
+
+**Activation :** "Lis `.agents/skills/launch-runbook/` et génère le runbook de mise en ligne pour ce projet"
+
+---
+
 ## Référence rapide — Commandes Claude Code
+
+### Obligatoires (chaque projet)
 
 | Commande | Phase | Ce qu'elle fait |
 |----------|-------|-----------------|
 | `/strategy` | 1 | Lit le brief, remplit docs/product.md |
 | `/design` | 2 | Propose palettes, remplit docs/design.md + globals.css |
 | `/build [section]` | 3 | Code un composant selon la DA validée |
-| `/figma` | 1.5 ou 3 | **Usage A** : maquette Figma pour validation client après `/design`. **Usage B** : implémentation depuis specs Figma pendant `/build`. **Usage C** : Code Connect pour lier composants code ↔ Figma. |
-| `/impeccable teach` | 1–2 ou reprise | Crée/rafraîchit le contexte impeccable (PRODUCT.md + DESIGN.md). Inutile si `/strategy` + `/design` ont été faits — impeccable lit `docs/product.md` et `docs/design.md` automatiquement. Utile pour reprendre un projet existant sans contexte. |
-| `/impeccable shape [section]` | 3 | Planifie UX/UI avant de coder |
-| `/impeccable audit [page]` | 3–4 | Audit technique post-génération |
-| `/impeccable critique [page]` | 3–4 | Review design et hiérarchie |
+| `/impeccable audit [page]` | 3–4 | Audit technique post-génération — à lancer après chaque page |
 | `/impeccable polish` | 4 | Passe finale avant livraison |
-| `/impeccable harden` | 4 | Edge cases, erreurs, i18n |
+
+### Optionnelles (selon le projet)
+
+| Commande | Quand l'utiliser |
+|----------|-----------------|
+| `/figma` | **Usage A** : maquette Figma pour validation client après `/design`. **Usage B** : implémentation depuis specs Figma pendant `/build`. **Usage C** : Code Connect pour lier composants code ↔ Figma. |
+| `/impeccable shape [section]` | Sections complexes (landing multi-blocs, formulaire avancé) — planifie l'UX avant de coder. Inutile sur un site vitrine simple. |
+| `/impeccable critique [page]` | Second regard design si `/impeccable audit` ne suffit pas. |
+| `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
+| `/impeccable teach` | Reprise d'un projet existant sans historique de session. Inutile si `/strategy` + `/design` ont déjà été faits dans ce projet. |
+
+---
+
+## Référence — Skills passifs (activation manuelle)
+
+Ces skills n'ont pas de slash command. On les active en demandant à Claude de les lire avant de commencer une tâche.
+
+| Skill | Phase | Rôle |
+|-------|-------|------|
+| `brand-discovery` | 0 | Recherche amont — audience, concurrence, positionnement |
+| `brand-voice` | 0–1 | Voix de marque — attributs, ton, vocabulaire |
+| `minimalist-ui` | 2 | Direction artistique éditorial/monochrome |
+| `high-end-visual-design` | 2 | Direction artistique premium/agence |
+| `gpt-taste` | 2 | Direction artistique Awwwards/éditorial large |
+| `industrial-brutalist-ui` | 2 | Direction artistique industriel/brutalist |
+| `stitch-design-taste` | 2 | DESIGN.md pour validation via Google Stitch |
+| `imagegen-frontend-web` | 1.5–3 | Images de référence par section avant code |
+| `image-to-code` | 3 | Génère image de référence puis implémente |
+| `full-output-enforcement` | 3 | Prévient troncature et placeholders dans le code |
+| `redesign-existing-projects` | 3 | Audit et upgrade d'un site existant |
+| `accessibility-audit` | 4 | Audit WCAG 2.1 AA complet |
+| `performance-optimization` | 4 | Core Web Vitals, bundle, assets |
+| `security-baseline` | 4 | HTTPS, headers, CSP, secrets |
+| `seo-aeo-geo` | 4 | SEO + AEO/GEO pour AI search |
+| `launch-runbook` | 5 | Procédures de mise en production |
+| `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
+| `imagegen-frontend-mobile` | 2–3 | Écrans app mobile iOS/Android (si PWA ou app) |
+| `skill-creation-walkthrough` | meta | Créer un nouveau skill Claude |
 
 ---
 
@@ -237,3 +338,7 @@ hiérarchie visuelle, micro-interactions.
 **Accumuler des composants sans audit intermédiaire**
 → Les anti-patterns s'accumulent et deviennent coûteux à corriger.
 → Fix : `pnpm run impeccable` après chaque page.
+
+**Activer plusieurs skills d'esthétique en même temps**
+→ Les directives se contredisent et Claude produit un résultat hybride sans cohérence.
+→ Fix : choisir UN seul skill d'esthétique par projet, l'activer dès la Phase 2, s'y tenir.

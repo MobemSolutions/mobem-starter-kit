@@ -127,7 +127,11 @@ Règles :
 - `viewport={{ once: true }}` sur toutes les animations au scroll
 - NE JAMAIS animer les propriétés de layout (width, height, padding) — seulement transform et opacity
 - Pas de spring physics pour les composants UI
-- Respecter `prefers-reduced-motion` via `useReducedMotion()` de Framer
+- Respecter `prefers-reduced-motion` via `useReducedMotion()` de Framer — pattern obligatoire :
+  ```typescript
+  const reduced = useReducedMotion() ?? false
+  // fromY = reduced ? 0 : 16 — dur = reduced ? 0.2 : 0.4
+  ```
 
 ### États interactifs
 ```
@@ -166,8 +170,8 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 - Hover : légère transition de fond vers `var(--secondary)`, pas de scale ni d'ombre
 
 ### Pattern Formulaire
-- Inputs : `border border-[--input] bg-transparent` — pas de remplissage, juste la bordure
-- Messages d'erreur : `font-mono text-xs text-[--signal]` sous le champ
+- Inputs : `border border-(--input) bg-transparent` — pas de remplissage, juste la bordure
+- Messages d'erreur : `font-mono text-xs text-(--signal)` sous le champ
 - Labels : TOUJOURS visibles (pas de labels placeholder-only pour l'accessibilité)
 - Submit : bouton `variant="signal"` — le seul CTA sur le formulaire
 
@@ -186,7 +190,7 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 ### Typographie
 - Plus de 2 familles de polices par page — INTERDIT
 - `font-bold` sur le body text sans raison sémantique — INTERDIT
-- MAJUSCULES dans le body text — INTERDIT (uniquement les labels JetBrains Mono)
+- MAJUSCULES dans le body text — INTERDIT (uniquement les labels mono, uppercase avec font-mono)
 - Plusieurs graisses sur la même ligne sans but de hiérarchie — INTERDIT
 
 ### Layout
@@ -210,6 +214,8 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 - [ ] Mobile 375px testé — pas d'overflow horizontal
 - [ ] Dark mode testé — tous les tokens résolus en `.dark`
 - [ ] Toutes les animations ont `viewport={{ once: true }}` si déclenchées au scroll
+- [ ] `useReducedMotion()` présent dans chaque composant avec animation Framer Motion
+- [ ] Hero : traitement visuel cohérent avec le brief (image si secteur physique/artisan, typographique si service immatériel ou choix assumé)
 - [ ] Toutes les images ont `alt` + `width` + `height` explicites
 - [ ] Aucune couleur hardcodée — seulement des CSS custom properties
 - [ ] Aucun `any` en TypeScript — `tsc --noEmit` passe propre

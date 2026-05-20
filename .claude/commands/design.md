@@ -29,6 +29,20 @@ Demande exactement ceci :
 
 Ne génère aucune palette sans cette réponse.
 
+## Skill d'esthétique — choix avant tout
+
+Avant de lire quoi que ce soit, demande :
+
+> "Quel skill d'esthétique utiliser pour ce projet ?
+> - `minimalist-ui` — éditorial, monochrome chaud (artisans, cabinets, consultants)
+> - `high-end-visual-design` — premium/agence, bento asymétrique (marques haut de gamme)
+> - `gpt-taste` — Awwwards, éditorial large (agences créatives, portfolios ambitieux)
+> - `industrial-brutalist-ui` — brutalism industriel, grille suisse (BTP, industrie, technique)
+> - aucun — continuer avec impeccable + taste-skill uniquement"
+
+Si l'utilisateur répond avec un skill : lis `.agents/skills/[skill-choisi]/SKILL.md` en étape 4b ci-dessous.
+Si l'utilisateur répond "aucun" ou ne sait pas : continuer sans skill supplémentaire.
+
 ## Ordre de lecture obligatoire
 
 Lis dans cet ordre exact avant de proposer quoi que ce soit :
@@ -37,6 +51,7 @@ Lis dans cet ordre exact avant de proposer quoi que ce soit :
 2. `docs/context/refs.md` (ou équivalent) — références visuelles client
 3. `docs/context/brief.md` — ton, positionnement, audience
 4. `SKILL.md` — conventions techniques Mobem
+4b. Skill d'esthétique choisi (si applicable) — `.agents/skills/[nom]/SKILL.md`
 5. `.agents/skills/impeccable/SKILL.md` — règles design (typography, color, spatial)
 6. `.agents/skills/design-taste-frontend/SKILL.md` — anti-slop frontend
 
