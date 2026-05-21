@@ -49,6 +49,7 @@ Voir **[docs/workflow.md](docs/workflow.md)** — guide pas à pas, phase par ph
 | 4–4.5 | `/impeccable` · `/legal` | Audit qualité · pages légales |
 | 4.7 | `/qa` | Tests navigateur — parcours visiteur · mobile · formulaire |
 | 5 | `launch-runbook` | DNS · GBP · surveillance J+1/J+3/J+7 · handoff client |
+| 5.5 | `pnpm livraison` + release GitHub | Document HTML de livraison · tag git · handoff client envoyé |
 
 **Règle absolue :** ne jamais passer à l'étape suivante sans valider la précédente.
 Chaque phase = une session Claude Code distincte.
