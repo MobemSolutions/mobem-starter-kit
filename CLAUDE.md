@@ -152,7 +152,6 @@ Le skill `/figma` reste disponible uniquement si le client fournit des maquettes
 | `launch-runbook` | 5 | Procédures de mise en production |
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile (si PWA ou app native) |
-| `ui-ux-pro-max` | 4 | Audit UX/accessibilité — 10 catégories de règles. **Outil d'audit uniquement, pas de génération visuelle.** Ne pas utiliser en Phase 2–3. |
 | `/cms` | 3.6 | Intégration Sanity CMS — si le client veut éditer son contenu sans développeur (galerie, blog, services) |
 
 **En cas de conflit entre les skills :**

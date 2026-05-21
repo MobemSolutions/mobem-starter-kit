@@ -323,7 +323,6 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 | `performance-optimization` | Core Web Vitals (LCP, INP, CLS), bundle size, assets | "Lis `.agents/skills/performance-optimization/` et audite le site" |
 | `security-baseline` | HTTPS, security headers, CSP, gestion des secrets | "Lis `.agents/skills/security-baseline/` et audite le repo" |
 | `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
-| `ui-ux-pro-max` | UX complet — parcours utilisateur, formulaires, navigation, feedback states, mobile · **Outil d'audit uniquement, pas de génération visuelle** | "Lis `.agents/skills/ui-ux-pro-max/` et audite [page]" |
 
 ### Checklist technique avant livraison
 
@@ -558,7 +557,6 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile iOS/Android (si PWA ou app) |
 | `legal-pages` | 4.5 | Pages légales françaises — mentions légales, confidentialité, CGV |
-| `ui-ux-pro-max` | 4 | Audit UX — parcours utilisateur, formulaires, navigation, feedback states, mobile · outil d'audit uniquement |
 | `skill-creation-walkthrough` | meta | Créer un nouveau skill Claude |
 
 ---
