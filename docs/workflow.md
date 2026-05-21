@@ -8,7 +8,10 @@
 
 ```mermaid
 flowchart TD
-    A([Brief client]) --> B
+    A([Brief client]) --> SETUP
+
+    SETUP["Setup repo — vous<br/>cloner template · repo GitHub · CI · Dependabot · branch protection"]
+    SETUP --> B
 
     B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
     B --> C
@@ -49,6 +52,47 @@ flowchart TD
 Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la même session.
 
 > **CI automatique** — GitHub Actions vérifie chaque push : `pnpm build` (TypeScript) · `pnpm lint` · `pnpm audit`. Si le badge CI est rouge avant de livrer, corriger avant de continuer.
+
+---
+
+## Setup repo — Avant tout (vous, 10 min)
+
+### 1. Créer le repo depuis la template
+
+```bash
+# Cloner et réinitialiser l'historique
+git clone <url-template> mon-projet-client
+cd mon-projet-client
+Remove-Item -Recurse -Force .git          # PowerShell
+git init && git add . && git commit -m "init: boilerplate Mobem Solutions"
+
+# Installer les dépendances
+pnpm install && pnpm audit
+
+# Configurer l'environnement
+cp .env.example .env.local
+# Remplir .env.local (ne jamais commiter)
+```
+
+### 2. Configurer le repo GitHub
+
+Créer le repo sur github.com, puis :
+
+```bash
+git remote add origin https://github.com/[org]/[projet].git
+git push -u origin main
+```
+
+### 3. Checklist GitHub (5 min dans Settings)
+
+- [ ] **Vercel** — importer le repo dans le dashboard Vercel → déploiement automatique activé
+- [ ] **Dependabot alerts** — Settings → Security → Enable Dependabot alerts
+- [ ] **Branch protection** — Settings → Rules → Rulesets → créer une règle sur `main` :
+  - Restrict deletions · Block force pushes
+  - Require status checks : `Build · Lint · Audit`
+- [ ] **Branche development** — `git checkout -b development && git push origin development`
+
+> Le CI (`.github/workflows/ci.yml`) et Dependabot (`.github/dependabot.yml`) sont hérités automatiquement du template — aucune configuration supplémentaire.
 
 ---
 
