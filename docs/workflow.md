@@ -51,7 +51,13 @@ flowchart TD
 **Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
 Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la même session.
 
-> **CI automatique** — GitHub Actions vérifie chaque push : `pnpm build` (TypeScript) · `pnpm lint` · `pnpm audit`. Si le badge CI est rouge avant de livrer, corriger avant de continuer.
+> **CI automatique** — GitHub Actions vérifie chaque push sur 3 jobs :
+> - **Build · Lint · Audit** — `pnpm build` (TypeScript strict) · `pnpm lint` · `pnpm audit --audit-level moderate`
+> - **Smoke tests** — 4 tests Playwright (homepage · sitemap · robots · contact API) lancés après le build
+> - **Lighthouse CI** — scores ≥ 90 en accessibilité et SEO (bloquants) · performance ≥ 90 (avertissement)
+>
+> Si un badge CI est rouge avant de livrer, corriger avant de continuer.
+> **Husky** bloque les commits locaux si ESLint détecte des erreurs — le problème est signalé avant même d'atteindre le CI.
 
 ---
 
@@ -91,8 +97,10 @@ git push -u origin main
   - Restrict deletions · Block force pushes
   - Require status checks : `Build · Lint · Audit`
 - [ ] **Branche development** — `git checkout -b development && git push origin development`
+- [ ] **Status checks** — Settings → Rules → ajouter `Smoke tests` et `Lighthouse CI` aux checks requis sur `main`
 
-> Le CI (`.github/workflows/ci.yml`) et Dependabot (`.github/dependabot.yml`) sont hérités automatiquement du template — aucune configuration supplémentaire.
+> Le CI (`.github/workflows/ci.yml`), Dependabot et Husky (pre-commit lint) sont hérités automatiquement.
+> Husky s'active au premier `pnpm install` via le script `prepare` — aucune action requise.
 
 ---
 
@@ -124,6 +132,13 @@ Si le brief est incomplet ou si le client n'a pas encore d'identité de marque c
 |-------|-----------------|------------|
 | `brand-discovery` | Brief vague, client sans positionnement clair — fait l'audit audience, concurrence, territoire de marque | "Lis `.agents/skills/brand-discovery/` et applique-le au brief" |
 | `brand-voice` | Client sans ligne éditoriale — génère les attributs de voix, les règles de ton, le vocabulaire | "Lis `.agents/skills/brand-voice/` et définis la voix de marque" |
+
+---
+
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session avant `/strategy`. Un contexte propre garantit que les skills sont lus en entier et que le brief n'est pas dilué par la session de setup.
 
 ---
 
@@ -184,6 +199,30 @@ Utile pour aligner le client visuellement dès la Phase 2, avant d'écrire du co
 
 **Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
 
+### Option C — Maquette Figma (si client veut annoter)
+
+Utiliser le **Figma MCP** (compte Figma lié dans Intégrations claude.ai) pour générer une maquette navigable dans Figma. Le client peut y faire des commentaires directement. Une fois validée, revenir dans Claude Code avec `/figma` pour implémenter les modifications.
+
+```
+# Vérifier le compte actif
+mcp__claude_ai_Figma__whoami
+
+# Générer la maquette depuis le design system du projet
+/figma  →  "Génère une maquette Figma pour la section hero depuis docs/design.md"
+```
+
+> **Quand choisir Option C plutôt que Ruttl :**
+> - Le client est à l'aise avec les outils visuels et veut annoter directement sur les éléments
+> - Vous avez besoin d'exporter des assets (icônes, illustrations) depuis la maquette
+> - Le client fournit des maquettes Figma existantes à implémenter (design-to-code)
+>
+> **Ruttl reste le défaut** pour la validation client simple (commentaires épinglés sur preview Vercel, sans compte requis).
+
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session avant `/design`. La session `/strategy` a saturé son contexte avec le brief — repartir propre évite les influences croisées sur les décisions de palette.
+
 ---
 
 ## Phase 2 — Direction artistique
@@ -229,6 +268,11 @@ Claude écrit ensuite :
 
 **STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
 Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
+
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session avant chaque `/build [section]`. Pour les sites de plus de 4 sections, ouvrir une session par section — la qualité des outputs se dégrade nettement quand le contexte dépasse ~60k tokens.
 
 ---
 
@@ -300,6 +344,13 @@ Dans Claude Code :
 
 ---
 
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session avant `/contact-setup`. Le formulaire de contact touche à la sécurité (Zod, honeypot, rate limiting) — un contexte propre évite les oublis de validation.
+
+---
+
 ## Phase 3.5 — Formulaire de contact production-ready
 
 **Commande :** `/contact-setup`
@@ -350,6 +401,13 @@ Ne pas lancer sur un site vitrine entièrement statique — le CMS ajoute une d�
 - [ ] Au moins 1 contenu créé dans le Studio → visible sur le site
 - [ ] Client invité sur sanity.io avec le rôle Editor (pas Admin)
 - [ ] `revalidate: 3600` configuré sur les requêtes GROQ
+
+---
+
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session pour chaque skill d'audit (accessibility, performance, security, seo). Un skill d'audit lu dans un contexte frais inspecte le code sans biais de la session de développement.
 
 ---
 
@@ -462,6 +520,13 @@ hiérarchie visuelle, micro-interactions.
 
 ---
 
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session pour `/qa`. Le QA teste le site comme un utilisateur — un contexte de développement en mémoire peut biaiser vers "ça devrait marcher" plutôt que tester objectivement.
+
+---
+
 ## Phase 4.7 — Tests navigateur
 
 **Commande :** `/qa`
@@ -501,6 +566,13 @@ Les bugs **BLOQUANTS** doivent être corrigés, poussés sur la branche review, 
 - [ ] Console navigateur — zéro erreur rouge
 
 **STOP. Ne pas passer à la mise en ligne tant qu'un bug BLOQUANT est ouvert.**
+
+---
+
+---
+
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session pour la mise en ligne. Le launch-runbook couvre DNS, GBP et monitoring — des actions irréversibles qui méritent un contexte clair et sans résidus.
 
 ---
 
@@ -545,6 +617,45 @@ Les 7 premiers jours après la mise en ligne sont critiques : les caches se remp
 - [ ] Documenter les bugs mineurs restants dans `docs/feedback.md` si ce n'est pas déjà fait
 - [ ] Archiver le projet Ruttl si une session de commentaires client était active
 - [ ] Compléter et envoyer `docs/handoff.md` au client (accès Plausible, Sanity Studio si CMS, GBP, contact urgence)
+
+---
+
+## Phase 5.5 — Release & document de livraison
+
+À faire une fois le site en ligne, stable et validé J+1.
+
+### 1. Remplir le document de livraison
+
+```bash
+# Ouvrir docs/livraison-config.json et remplir toutes les valeurs
+# Puis générer le document HTML :
+pnpm livraison
+# → crée docs/livraison-[client].html
+```
+
+Ouvrir le fichier HTML dans le navigateur → **Imprimer → Enregistrer en PDF** → envoyer au client.
+
+### 2. Créer la release GitHub
+
+```bash
+# Taguer la version finale
+git tag v1.0.0
+git push origin v1.0.0
+
+# Créer la release depuis GitHub.com ou via CLI :
+gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré au client le [date]"
+```
+
+> La GitHub Action `.github/workflows/release.yml` s'exécute automatiquement :
+> elle génère le document de livraison depuis `docs/livraison-config.json` et l'attache à la release.
+
+### 3. Checklist de clôture
+
+- [ ] `docs/livraison-config.json` rempli avec les vraies valeurs
+- [ ] `docs/handoff.md` complété et envoyé au client (version interne + version client)
+- [ ] `docs/feedback.md` complété — bugs restants, frictions, améliorations pour le prochain projet
+- [ ] Projet Ruttl archivé (limite plan gratuit : 1 projet actif)
+- [ ] Accès Vercel / domaine transmis au client avec le document de livraison
 
 ---
 

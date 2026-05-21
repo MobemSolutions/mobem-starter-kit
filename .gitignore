@@ -58,4 +58,8 @@ lighthouse-report.html
 
 # Extras
 docs/img/
+
+# Delivery documents (client-specific — generated per project, not stored in template)
+docs/livraison-*.html
+docs/livraison-config.json
 .claude\settings.local.json

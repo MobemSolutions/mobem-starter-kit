@@ -175,21 +175,28 @@ const EASE = [0.25, 0.1, 0.25, 1] as const
 | `pnpm start` | Serveur de production local |
 | `pnpm lint` | ESLint |
 | `pnpm audit` | Audit de sécurité des dépendances |
+| `pnpm e2e` | Tests Playwright — smoke tests (homepage · sitemap · robots · contact API) |
+| `pnpm livraison` | Génère `docs/livraison-[client].html` depuis `docs/livraison-config.json` |
 
 ---
 
 ## CI/CD
 
-**CI** — GitHub Actions tourne automatiquement sur chaque push et PR :
-- `pnpm build` — TypeScript strict + compilation Next.js
-- `pnpm lint` — ESLint
-- `pnpm audit` — vulnérabilités dépendances (niveau modéré bloquant)
+**CI** — GitHub Actions (`ci.yml`) tourne sur chaque push et PR via 3 jobs :
 
-Voir `.github/workflows/ci.yml`.
+| Job | Ce qu'il vérifie |
+|-----|-----------------|
+| `Build · Lint · Audit` | TypeScript strict · ESLint · `pnpm audit` (modéré bloquant) |
+| `Smoke tests` | 4 tests Playwright — homepage · sitemap · robots · contact API 400 |
+| `Lighthouse CI` | Scores ≥ 90 — accessibilité + SEO (bloquants) · performance (avertissement) |
+
+**Pre-commit** — Husky bloque les commits si ESLint détecte des erreurs sur les fichiers stagés (`lint-staged`). S'installe automatiquement via `pnpm install`.
 
 **CD** — Vercel déploie automatiquement :
 - Push sur `main` → déploiement de production
 - Push sur `review/**` → URL de preview client (pour Ruttl)
+
+**Release** — `release.yml` se déclenche à chaque release GitHub publiée : génère le document de livraison HTML depuis `docs/livraison-config.json` et l'attache à la release.
 
 ---
 

@@ -10,7 +10,10 @@
     "type-check": "tsc --noEmit",
     "audit": "pnpm audit",
     "impeccable": "pnpm dlx impeccable detect src/",
-    "impec-audit": "pnpm dlx impeccable detect src/ --json"
+    "impec-audit": "pnpm dlx impeccable detect src/ --json",
+    "e2e": "playwright test",
+    "livraison": "node scripts/generate-livraison.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -30,13 +33,20 @@
       "postcss": ">=8.5.10"
     }
   },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": "eslint --fix --max-warnings=0"
+  },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "postcss": "^8.5",
     "tailwindcss": "^4.2.0",
     "typescript": "5.7.3"

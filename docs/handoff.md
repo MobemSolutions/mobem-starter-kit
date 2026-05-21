@@ -2,6 +2,13 @@
 
 > Document remis au client à la livraison. À compléter avec les vraies valeurs avant l'envoi.
 > Supprimer cette ligne et les blocs `TODO` avant d'envoyer.
+>
+> **Projet from scratch ?** Vous créez tout : compte Vercel, registrar, Google Business Profile.
+> Les `TODO:` sont des guides de ce qu'il faut *créer*, pas récupérer. Remplir au fur et à mesure du lancement (Phase 5).
+>
+> **Refonte ?** Utiliser le skill `redesign-existing-projects` en Phase 3. Les accès existants du client (hébergeur, domaine) remplacent les `TODO:` ci-dessous — ne pas créer de doublons.
+>
+> **Document de livraison HTML** (à envoyer en PDF au client) — voir `docs/livraison-config.json` + `pnpm livraison`.
 
 ---
 
