@@ -571,6 +571,10 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 → Le virtual store est corrompu ou pointe vers un ancien chemin.
 → Fix : `rm -rf node_modules && pnpm install`
 
+**CI bloqué sur `ERR_PNPM_OUTDATED_LOCKFILE`**
+→ `pnpm-lock.yaml` n'a pas été commité après un `pnpm add` ou `pnpm remove`.
+→ Fix : toujours commiter `pnpm-lock.yaml` immédiatement après toute modification de dépendances. Règle : `pnpm add X` ou `pnpm remove X` → `git add pnpm-lock.yaml` dans le même commit.
+
 **Tout faire dans une seule session CLI**
 → Le contexte des skills se dilue. Résultat : composants génériques.
 → Fix : 3 sessions distinctes, une par phase.
