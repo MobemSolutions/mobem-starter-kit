@@ -1,13 +1,13 @@
 ---
-description: Phase 2 — Direction artistique. Lit le brief + les skills, propose 3-4 palettes OKLCH, remplit docs/design.md après validation. Aucun fichier src/ avant confirmation.
+description: Phase 2 — Direction artistique. Lit le brief + les skills, propose 3-4 palettes OKLCH, remplit docs/project/design.md après validation. Aucun fichier src/ avant confirmation.
 ---
 
 # /design — Direction Artistique
 
 ## Prérequis — vérifications bloquantes
 
-### 1. docs/product.md
-Vérifie que `docs/product.md` contient du contenu réel (pas seulement le header du template).
+### 1. docs/project/product.md
+Vérifie que `docs/project/product.md` contient du contenu réel (pas seulement le header du template).
 Si le fichier est vide ou ne contient que des ⚠️ non résolus : **STOP**.
 Demande de lancer `/strategy` d'abord.
 
@@ -54,7 +54,7 @@ Lis le SKILL.md de chaque skill retenu avant de proposer quoi que ce soit.
 
 Lis dans cet ordre exact avant de proposer quoi que ce soit :
 
-1. `docs/product.md` — north star stratégique
+1. `docs/project/product.md` — north star stratégique
 2. `docs/context/refs.md` (ou équivalent) — références visuelles client
 3. `docs/context/brief.md` — ton, positionnement, audience
 4. `SKILL.md` — conventions techniques Mobem
@@ -138,9 +138,9 @@ Radius     : [valeur]     Typo       : [choix justifié]
 [liste si informations manquantes]
 ```
 
-## Écrire docs/design-proposals.json
+## Écrire docs/project/design-proposals.json
 
-Immédiatement après la présentation des palettes, avant tout STOP, écris `docs/design-proposals.json` :
+Immédiatement après la présentation des palettes, avant tout STOP, écris `docs/project/design-proposals.json` :
 
 ```json
 {
@@ -199,7 +199,7 @@ Attends la validation explicite : "go palette A" / "go palette B" / "go palette 
 
 Une fois la palette confirmée :
 
-1. Remplis `docs/design.md` avec les choix retenus
+1. Remplis `docs/project/design.md` avec les choix retenus
 2. Mets à jour `src/app/globals.css` — tokens OKLCH + `@source` déjà présent, remplacer les valeurs placeholder dans `:root` et `.dark`
 3. Mets à jour `src/app/globals.css` — remplacer les fallbacks système dans `--font-display/sans/mono` par les `var(--font-xyz)` des polices choisies
 4. Charge les polices dans `src/app/layout.tsx` via `next/font/google` — ajouter les imports, créer les variables CSS, les injecter dans `className` de `<html>`. Pour les polices display : toujours inclure `style: ['normal', 'italic']` — sans ça, les `font-style: italic` en CSS génèrent un "faux italique" par synthèse navigateur (distorsion oblique visible)

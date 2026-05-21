@@ -38,7 +38,7 @@ plomberie · chauffage · électricité · maçonnerie · couverture · carrelag
 
 ---
 
-## Données à collecter — lire docs/product.md + docs/context/
+## Données à collecter — lire docs/project/product.md + docs/context/
 
 ### Identité du professionnel
 - [ ] Nom / Prénom ou Raison sociale complète

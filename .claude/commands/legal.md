@@ -1,12 +1,12 @@
 ---
-description: Phase 4.5 — Génère les pages légales françaises adaptées au statut juridique du client. Lit docs/product.md, applique le mapping statut → contenu, liste les TODO bloquants avant mise en ligne.
+description: Phase 4.5 — Génère les pages légales françaises adaptées au statut juridique du client. Lit docs/project/product.md, applique le mapping statut → contenu, liste les TODO bloquants avant mise en ligne.
 ---
 
 # /legal — Pages Légales Françaises
 
 ## Prérequis — vérifications bloquantes
 
-Lis `docs/product.md`. Avant de générer quoi que ce soit, extrais et confirme ces 4 variables :
+Lis `docs/project/product.md`. Avant de générer quoi que ce soit, extrais et confirme ces 4 variables :
 
 ```
 Statut juridique  : [micro-entrepreneur / EI / EURL / SARL / SAS / profession libérale]
@@ -15,12 +15,12 @@ Type de clientèle : [B2C / B2B / mixte]
 Zone d'intervention : [département, région, nationale]
 ```
 
-Si l'une de ces 4 variables est absente de `docs/product.md` : **STOP**.
+Si l'une de ces 4 variables est absente de `docs/project/product.md` : **STOP**.
 Demande les informations manquantes avant de continuer.
 
 ## Ordre de lecture obligatoire
 
-1. `docs/product.md` — identité, statut, secteur, services, zone
+1. `docs/project/product.md` — identité, statut, secteur, services, zone
 2. `docs/context/contraintes.md` — contraintes légales spécifiques si présentes
 3. `.agents/skills/legal-pages/SKILL.md` — templates et règles légales
 
@@ -41,7 +41,7 @@ Règle BTP / décennale : si le secteur contient l'un de ces mots → décennale
 
 ## Étape 2 — Collecte des informations manquantes
 
-Après lecture de `docs/product.md`, liste les informations manquantes et demande-les **en une seule fois** :
+Après lecture de `docs/project/product.md`, liste les informations manquantes et demande-les **en une seule fois** :
 
 ```
 Informations manquantes pour les pages légales :
@@ -69,7 +69,7 @@ Toujours générée. Adapter selon statut :
 - Hébergeur Vercel : `Vercel Inc. — 340 Pine Street, Suite 701 — San Francisco, CA 94104, USA — vercel.com`
 
 ### 2. Politique de confidentialité → `src/app/confidentialite/page.tsx`
-Toujours générée. Adapter selon l'outil analytics détecté dans `docs/product.md` ou `docs/context/` :
+Toujours générée. Adapter selon l'outil analytics détecté dans `docs/project/product.md` ou `docs/context/` :
 - Google Analytics → mention transfert USA + opt-out obligatoire
 - Plausible / Umami / Matomo EU → "aucun cookie déposé, aucun consentement requis"
 - Vercel Analytics → mentionner (données hébergées USA)

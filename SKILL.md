@@ -1,6 +1,6 @@
 ---
 name: mobem-stack-skill
-description: Senior UI/UX Engineer for client projects built on the Mobem stack. Enforces 8pt grid, OKLCH color system, Framer Motion micro-interactions, and strict anti-patterns. All artistic direction (palette, fonts, radius, layout style) comes from docs/design.md — never assumed by default.
+description: Senior UI/UX Engineer for client projects built on the Mobem stack. Enforces 8pt grid, OKLCH color system, Framer Motion micro-interactions, and strict anti-patterns. All artistic direction (palette, fonts, radius, layout style) comes from docs/project/design.md — never assumed by default.
 ---
 
 # Mobem Stack — Engineering & Design Skill
@@ -9,11 +9,11 @@ description: Senior UI/UX Engineer for client projects built on the Mobem stack.
 
 ## PRINCIPE FONDAMENTAL
 
-**`docs/design.md` a autorité absolue sur toutes les décisions visuelles.**
+**`docs/project/design.md` a autorité absolue sur toutes les décisions visuelles.**
 
-- Palette, typographie, radius, style de composants → définis dans `docs/design.md` après validation client
+- Palette, typographie, radius, style de composants → définis dans `docs/project/design.md` après validation client
 - Ce fichier ne prescrit pas de DA par défaut — il pose les conventions techniques et les interdits
-- Si `docs/design.md` est vide : arrêter et lancer le prompt d'initialisation (`docs/prompt.md`)
+- Si `docs/project/design.md` est vide : arrêter et lancer le prompt d'initialisation (`docs/prompt.md`)
 - Ne jamais inventer une direction artistique à partir de ce fichier
 
 ---
@@ -73,9 +73,9 @@ Règles :
 - Tous les gris doivent avoir une légère teinte chaude (pas de gris neutres purs)
 - Dark mode : fond sombre chaud — jamais noir pur
 
-### Scale typographique — Structure (style défini dans docs/design.md)
+### Scale typographique — Structure (style défini dans docs/project/design.md)
 ```
-Display  → font-display → clamp(2.5rem, 6vw, 5rem)     → police/style dans docs/design.md
+Display  → font-display → clamp(2.5rem, 6vw, 5rem)     → police/style dans docs/project/design.md
 H1       → font-display → clamp(2rem, 5vw, 3.5rem)
 H2       → font-display → clamp(1.5rem, 3vw, 2.25rem)
 H3       → font-sans font-medium → 1.25rem
@@ -91,12 +91,12 @@ Règles techniques (indépendantes du style choisi) :
 - Taille des titres via `clamp()` — pas de font-size fixe
 
 ### Stack typographique par défaut
-À utiliser quand `docs/design.md` ne précise pas d'alternative :
+À utiliser quand `docs/project/design.md` ne précise pas d'alternative :
 - **Display (titres, H1, H2) :** [à déduire du brief et des références visuelles]
 - **Corps (body, UI) :** [à déduire du brief et des références visuelles]
 - **Mono (labels, tags, code) :** [à déduire du brief et des références visuelles]
 
-Si le brief client justifie d'autres polices, les définir dans `docs/design.md` et les charger dans `layout.tsx`.
+Si le brief client justifie d'autres polices, les définir dans `docs/project/design.md` et les charger dans `layout.tsx`.
 
 ### Motion — Timing standard
 
@@ -164,7 +164,7 @@ disabled → opacity-50, cursor-not-allowed
 ## PATTERNS DE COMPOSANTS — RÉFÉRENCE TECHNIQUE
 
 Ces patterns définissent la structure technique des composants.
-**Le style (radius, couleurs, typographie) vient de `docs/design.md`.**
+**Le style (radius, couleurs, typographie) vient de `docs/project/design.md`.**
 
 ### Variantes Button (CVA)
 ```
@@ -175,7 +175,7 @@ signal  → fond accent signal — LE CTA principal (1-2 max par page)
 ```
 
 ### Pattern Card
-- Radius : selon `--radius` défini dans `docs/design.md`
+- Radius : selon `--radius` défini dans `docs/project/design.md`
 - Bordure : `1px solid var(--border)` sur tous les côtés OU border-top uniquement pour les listes
 - Padding : `p-6` (24px) standard, `p-8` (32px) mis en avant
 - Pas d'imbrication card-dans-card
@@ -719,5 +719,5 @@ Règles :
 - [ ] Aucune couleur hardcodée — seulement des CSS custom properties
 - [ ] Aucun `any` en TypeScript — `tsc --noEmit` passe propre
 - [ ] Accent signal : max 1-2 par section
-- [ ] `docs/design.md` mis à jour si nouveau composant ou token ajouté
-- [ ] `docs/product.md` mis à jour si la navigation ou le périmètre change
+- [ ] `docs/project/design.md` mis à jour si nouveau composant ou token ajouté
+- [ ] `docs/project/product.md` mis à jour si la navigation ou le périmètre change

@@ -25,8 +25,8 @@ export default function Icon() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'oklch(0.18 0.02 55)', // TODO: aligner avec --background dark de globals.css
-        color: 'oklch(0.97 0.003 80)',      // TODO: aligner avec --foreground de globals.css
+        background: '#292620', // ≈ oklch(0.18 0.02 55) — Satori ne supporte pas OKLCH, remplacer par hex après /design
+        color: '#f8f5ef',      // ≈ oklch(0.97 0.003 80)
         fontSize: initials.length === 1 ? 18 : 14,
         fontWeight: 700,
         letterSpacing: '-0.02em',

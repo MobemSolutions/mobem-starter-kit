@@ -1,5 +1,5 @@
 ---
-description: Phase 1 — Stratégie produit. Lit docs/context/ et remplit docs/product.md. Aucun code, aucune palette.
+description: Phase 1 — Stratégie produit. Lit docs/context/ et remplit docs/project/product.md. Aucun code, aucune palette.
 ---
 
 # /strategy — Stratégie Produit
@@ -13,7 +13,7 @@ Demande : "Pouvez-vous déposer le brief client dans docs/context/ avant de cont
 ## Preuve de lecture obligatoire
 
 Lis `docs/context/` en entier (tous les fichiers présents).
-Si `docs/context/discovery-report.md` existe : le lire en priorité — il contient les audiences, la concurrence et les territoires de marque qui alimentent directement `docs/product.md`.
+Si `docs/context/discovery-report.md` existe : le lire en priorité — il contient les audiences, la concurrence et les territoires de marque qui alimentent directement `docs/project/product.md`.
 
 Puis, avant de remplir quoi que ce soit, réponds à ces 3 questions en une phrase chacune :
 
@@ -26,7 +26,7 @@ Indique ce qui manque et demande au client de compléter `docs/context/`.
 
 ## Mission
 
-Remplis `docs/product.md` en suivant exactement la structure du template.
+Remplis `docs/project/product.md` en suivant exactement la structure du template.
 
 Pour chaque section :
 - Déduis l'information du brief
@@ -49,7 +49,7 @@ Ne propose pas de pages "standard" sans lien avec le brief.
 
 ## Livrables
 
-### 1. docs/product.md complété
+### 1. docs/project/product.md complété
 
 ### 2. Tableau "Skill par section"
 
@@ -68,7 +68,7 @@ Justifier par la nature du contenu (impact visuel vs data-dense) et le secteur c
 
 ### 3. Décision reviews — hardcodé vs API
 
-Documenter dans `docs/product.md` § Reviews :
+Documenter dans `docs/project/product.md` § Reviews :
 - Artisans / TPE avec < 150 avis et budget < 150€/mois → **copier les vrais avis en dur** (coût zéro, SEO direct, fiabilité maximale)
 - Cas avec besoin de mise à jour régulière → API Google Places ou Trustpilot
 
@@ -76,5 +76,5 @@ Documenter dans `docs/product.md` § Reviews :
 
 **N'écris aucun code. Aucune palette. Aucun token. Aucun composant.**
 
-Présente `docs/product.md` et attends la validation explicite avant de continuer.
+Présente `docs/project/product.md` et attends la validation explicite avant de continuer.
 La commande suivante est `/design` — uniquement après validation.

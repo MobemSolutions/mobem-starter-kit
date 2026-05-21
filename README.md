@@ -41,15 +41,15 @@ Voir **[docs/workflow.md](docs/workflow.md)** — guide pas à pas, phase par ph
 | Phase | Commande | Livrable |
 |-------|----------|----------|
 | 0 | — (vous) | `docs/context/` — brief · refs · contraintes |
-| 1 | `/strategy` | `docs/product.md` — arborescence · audience · skill/section |
-| 2 | `/design` | `docs/design.md` · `globals.css` — palette OKLCH · typo · radius |
+| 1 | `/strategy` | `docs/project/product.md` — arborescence · audience · skill/section |
+| 2 | `/design` | `docs/project/design.md` · `globals.css` — palette OKLCH · typo · radius |
 | 3 | `/build` | Sections codées — OG · favicon · sitemap · FAQ · TrustBadges |
 | 3.5 | `/contact-setup` | Route API contact · Resend · honeypot · 2 emails |
 | 3.6 | `/cms` | Sanity CMS — si contenu éditable par le client |
 | 4–4.5 | `/impeccable` · `/legal` | Audit qualité · pages légales |
 | 4.7 | `/qa` | Tests navigateur — parcours visiteur · mobile · formulaire |
 | 5 | `launch-runbook` | DNS · GBP · surveillance J+1/J+3/J+7 · handoff client |
-| 5.5 | `pnpm livraison` + release GitHub | Document HTML de livraison · tag git · handoff client envoyé |
+| 5.5 | `/livraison` | `docs/delivery/livraisons/livraison-[client].docx` · scores · accès · release GitHub · handoff |
 
 **Règle absolue :** ne jamais passer à l'étape suivante sans valider la précédente.
 Chaque phase = une session Claude Code distincte.
@@ -89,11 +89,15 @@ src/
 
 docs/
 ├── workflow.md              ★ Guide complet — phase par phase
-├── product.md               Stratégie produit (rempli par /strategy)
-├── design.md                Système de design (rempli par /design)
-├── handoff.md               Guide de passation client (à compléter avant livraison)
-├── feedback.md              Bugs · frictions · améliorations du template
-└── context/                 Brief client + refs visuelles (gitignored)
+├── context/                 Brief client + refs visuelles (gitignored)
+├── project/                 Fichiers projet (générés par /strategy et /design)
+│   ├── product.md           Stratégie produit (rempli par /strategy)
+│   ├── design.md            Système de design (rempli par /design)
+│   ├── handoff.md           Guide de passation client (à compléter avant livraison)
+│   └── feedback.md          Bugs · frictions · améliorations du template
+└── delivery/                Documents de livraison
+    ├── livraison-config.json  Config du document de livraison (gitignored)
+    └── livraisons/           Documents .docx générés (gitignored)
 ```
 
 ---
@@ -104,8 +108,8 @@ docs/
 
 | Commande | Phase | Rôle |
 |----------|-------|------|
-| `/strategy` | 1 | Lit `docs/context/`, remplit `docs/product.md` |
-| `/design` | 2 | Propose palettes OKLCH, remplit `docs/design.md` + `globals.css` |
+| `/strategy` | 1 | Lit `docs/context/`, remplit `docs/project/product.md` |
+| `/design` | 2 | Propose palettes OKLCH, remplit `docs/project/design.md` + `globals.css` |
 | `/build [section]` | 3 | Code les composants selon la DA validée |
 | `/contact-setup` | 3.5 | Formulaire de contact production-ready (Resend + Zod + honeypot) |
 | `/impeccable audit` | 3–4 | Audit qualité après chaque page |
@@ -119,6 +123,7 @@ docs/
 | `/cms` | Contenu éditable par le client (galerie, blog, services) |
 | `/legal` | Pages légales françaises — mentions légales · confidentialité · CGV |
 | `/figma` | Implémentation depuis maquettes Figma existantes |
+| `/livraison` | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique |
 
 ---
 
@@ -142,7 +147,7 @@ Copier `.env.example` → `.env.local` et remplir. Ne jamais commiter `.env.loca
 
 ## Design System — Référence rapide
 
-Palette et typographie définies par `/design` dans `docs/design.md` + `globals.css`.
+Palette et typographie définies par `/design` dans `docs/project/design.md` + `globals.css`.
 Les valeurs ci-dessous sont les **placeholders** du boilerplate — les remplacer à chaque projet.
 
 ### Tokens CSS (globals.css)
@@ -177,7 +182,7 @@ const EASE = [0.25, 0.1, 0.25, 1] as const
 | `pnpm lint` | ESLint |
 | `pnpm audit` | Audit de sécurité des dépendances |
 | `pnpm e2e` | Tests Playwright — smoke tests (homepage · sitemap · robots · contact API) |
-| `pnpm livraison` | Génère `docs/livraison-[client].html` depuis `docs/livraison-config.json` |
+| `pnpm livraison` | Génère `docs/delivery/livraisons/livraison-[client].docx` depuis `docs/delivery/livraison-config.json` |
 
 ---
 
@@ -197,7 +202,7 @@ const EASE = [0.25, 0.1, 0.25, 1] as const
 - Push sur `main` → déploiement de production
 - Push sur `review/**` → URL de preview client (pour Ruttl)
 
-**Release** — `release.yml` se déclenche à chaque release GitHub publiée : génère le document de livraison HTML depuis `docs/livraison-config.json` et l'attache à la release.
+**Release** — `release.yml` se déclenche à chaque release GitHub publiée : génère le document de livraison .docx depuis `docs/delivery/livraison-config.json` et l'attache à la release.
 
 ---
 
@@ -229,4 +234,4 @@ Voir [docs/workflow.md](docs/workflow.md) pour les instructions complètes d'act
 | `CLAUDE.md` | Identité Mobem · priorités · sécurité OWASP · performance |
 | `SKILL.md` | Design system complet · patterns · anti-patterns · composants |
 
-Priorité de lecture pour les décisions design : `docs/design.md` > `SKILL.md` > `CLAUDE.md`
+Priorité de lecture pour les décisions design : `docs/project/design.md` > `SKILL.md` > `CLAUDE.md`

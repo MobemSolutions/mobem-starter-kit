@@ -1,22 +1,22 @@
 ---
-description: Phase 4.7 — Tests navigateur du parcours critique. Lit docs/product.md pour générer une checklist de test spécifique au site, puis guide le test de chaque page et du formulaire de contact.
+description: Phase 4.7 — Tests navigateur du parcours critique. Lit docs/project/product.md pour générer une checklist de test spécifique au site, puis guide le test de chaque page et du formulaire de contact.
 ---
 
 # /qa — Tests Navigateur
 
 ## Ce que fait cette commande
 
-Lit `docs/product.md` pour connaître les pages et sections du site, puis produit une checklist de test adaptée à CE projet (pas une liste générique). Guide ensuite le test du parcours visiteur complet.
+Lit `docs/project/product.md` pour connaître les pages et sections du site, puis produit une checklist de test adaptée à CE projet (pas une liste générique). Guide ensuite le test du parcours visiteur complet.
 
 À lancer sur l'URL de preview Vercel (pas en `pnpm dev`) — les comportements prod et dev diffèrent.
 
 ## Ordre de lecture
 
-1. `docs/product.md` — arborescence, sections, formulaire, CTAs réels
+1. `docs/project/product.md` — arborescence, sections, formulaire, CTAs réels
 
 ## Étape 1 — Générer la checklist spécifique au site
 
-Depuis `docs/product.md`, extraire :
+Depuis `docs/project/product.md`, extraire :
 - Toutes les pages de l'arborescence
 - Tous les CTAs identifiés (texte exact + destination)
 - Les sections avec interactions (formulaire, accordéon FAQ, cartes cliquables…)
@@ -89,7 +89,7 @@ Pour chaque bug BLOQUANT :
 3. Repousser sur la branche review → Vercel rebuild automatique
 4. Retester l'item spécifique
 
-Les bugs Mineurs : documenter dans `docs/feedback.md` pour après livraison.
+Les bugs Mineurs : documenter dans `docs/project/feedback.md` pour après livraison.
 
 ## Étape 4 — Rapport final
 

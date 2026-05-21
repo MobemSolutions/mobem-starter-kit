@@ -1,4 +1,4 @@
-// Rempli par /design après validation de la palette dans docs/design.md
+// Rempli par /design après validation de la palette dans docs/project/design.md
 // Utilisé pour les meta tags (themeColor) et les rares inline styles Framer Motion
 
 export const THEME_META = {

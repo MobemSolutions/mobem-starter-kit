@@ -1,14 +1,14 @@
 ---
-description: Phase 3 — Développement des sections. Lit docs/product.md + docs/design.md, construit les composants un par un. Aucun fichier src/ sans avoir lu ces deux fichiers.
+description: Phase 3 — Développement des sections. Lit docs/project/product.md + docs/project/design.md, construit les composants un par un. Aucun fichier src/ sans avoir lu ces deux fichiers.
 ---
 
 # /build — Développement des sections
 
 ## Prérequis — vérifications bloquantes
 
-### 1. docs/product.md + docs/design.md
+### 1. docs/project/product.md + docs/project/design.md
 Lis les deux fichiers avant d'écrire la première ligne de code.
-Si `docs/design.md` ne contient pas de palette validée (tokens OKLCH) : **STOP**.
+Si `docs/project/design.md` ne contient pas de palette validée (tokens OKLCH) : **STOP**.
 Demande de lancer `/design` d'abord.
 
 ### 2. globals.css
@@ -26,8 +26,8 @@ Si incertain : demander avant de coder.
 
 ## Ordre de lecture obligatoire
 
-1. `docs/product.md` — north star, sections, contenu réel
-2. `docs/design.md` — palette, typographie, radius, motion dials
+1. `docs/project/product.md` — north star, sections, contenu réel
+2. `docs/project/design.md` — palette, typographie, radius, motion dials
 3. `SKILL.md` — grille, motion, anti-patterns techniques
 4. `.agents/skills/impeccable/reference/craft.md` — avant chaque composant
 5. `.agents/skills/full-output-enforcement/SKILL.md` — règles de sortie complète (aucun placeholder, aucune troncature)
@@ -42,7 +42,7 @@ Quand une image est requise (hero, illustration de section) :
 3. Ouvrir la page individuelle de la photo sur unsplash.com
 4. Extraire l'URL CDN longue via WebFetch (format `https://images.unsplash.com/photo-XXXX?...`)
 5. Vérifier visuellement : télécharger avec WebFetch → lire via Read (vision) → confirmer ambiance et cadrage
-6. Sauvegarder l'ID photo (ex: `photo-1234567890`) dans un commentaire ou dans `docs/design.md` pour référence
+6. Sauvegarder l'ID photo (ex: `photo-1234567890`) dans un commentaire ou dans `docs/project/design.md` pour référence
 
 **Ne jamais écrire une URL Unsplash non vérifiée dans le code.** Les URLs courtes ou construites à la main renvoient des 404.
 
@@ -91,7 +91,7 @@ const item = {
 ## Règles de contenu
 
 - **Zéro placeholder** : aucun "Lorem ipsum", aucun "Service 1", aucun "Jean Dupont"
-- Contenu extrait de `docs/product.md` — si une info manque, laisser un `TODO:` visible
+- Contenu extrait de `docs/project/product.md` — si une info manque, laisser un `TODO:` visible
 - CTAs spécifiques au métier : `"Demander un devis"` > `"En savoir plus"`
 - Noms de sections ancrés dans le réel : `"Mes chantiers récents"` > `"Portfolio"`
 - Téléphones, adresses, horaires : utiliser les vraies données du brief ou `TODO: [téléphone]`
@@ -176,7 +176,7 @@ export default function OgImage() {
 }
 ```
 
-Adapter les couleurs et le contenu aux tokens de `docs/design.md`.
+Adapter les couleurs et le contenu aux tokens de `docs/project/design.md`.
 
 ### Favicon — `src/app/icon.tsx`
 
@@ -256,7 +256,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: BASE,               lastModified: new Date(), changeFrequency: 'monthly', priority: 1.0 },
     { url: `${BASE}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/contact`,  lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.6 },
-    // Ajouter toutes les pages de l'arborescence docs/product.md
+    // Ajouter toutes les pages de l'arborescence docs/project/product.md
   ]
 }
 ```
@@ -405,7 +405,7 @@ const faqSchema = {
 }
 ```
 
-Questions à déduire du secteur dans `docs/product.md` — jamais génériques.
+Questions à déduire du secteur dans `docs/project/product.md` — jamais génériques.
 
 ### Service (pages de prestation secondaires)
 

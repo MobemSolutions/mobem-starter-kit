@@ -1,7 +1,7 @@
 /**
  * Mobem 8pt Grid System
  * All spacing values are strict multiples of 8px.
- * Reference: docs/design.md#spacing
+ * Reference: docs/project/design.md#spacing
  */
 
 export const SPACING = {

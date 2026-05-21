@@ -15,13 +15,13 @@ Lancer `/cms` si le projet inclut du contenu que le client devra mettre à jour 
 
 ## Prérequis — vérifications bloquantes
 
-- `docs/product.md` précise quels contenus sont "éditables par le client"
+- `docs/project/product.md` précise quels contenus sont "éditables par le client"
 - Compte Sanity créé sur sanity.io (plan gratuit : 10 GB assets, 500 k req API/mois)
 - Le composant visuel de la section ciblée existe déjà (ex: `sections/realisations.tsx`)
 
 ## Ordre de lecture
 
-1. `docs/product.md` — sections éditables + types de contenu requis
+1. `docs/project/product.md` — sections éditables + types de contenu requis
 2. `CLAUDE.md` § Sécurité — gestion des secrets (SANITY_API_TOKEN = write, jamais NEXT_PUBLIC_)
 
 ---
