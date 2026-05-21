@@ -1,0 +1,35 @@
+version: 2
+
+updates:
+  # Dépendances npm/pnpm — PRs hebdomadaires
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    groups:
+      # Grouper les mises à jour mineures/patch pour réduire le bruit
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Next.js : ne pas auto-upgrader les majeurs (breaking changes importants)
+      - dependency-name: next
+        update-types: ['version-update:semver-major']
+      - dependency-name: react
+        update-types: ['version-update:semver-major']
+      - dependency-name: react-dom
+        update-types: ['version-update:semver-major']
+
+  # GitHub Actions — PRs hebdomadaires pour les actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Europe/Paris
