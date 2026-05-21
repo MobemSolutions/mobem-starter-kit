@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '22'
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9   # pnpm v11 (latest) bloque les build scripts natifs sans approbation interactive — v9 est stable sur Node 22
 
