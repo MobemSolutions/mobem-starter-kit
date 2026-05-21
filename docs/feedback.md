@@ -36,6 +36,8 @@ Exemple :
 
 Étapes qui ont ralenti sans raison, commandes qui ont mal fonctionné, docs manquantes.
 
+- 2026-05-21 · `pnpm-lock.yaml` · Lockfile désynchronisé après suppression de packages — CI bloqué sur `ERR_PNPM_OUTDATED_LOCKFILE`. Le lockfile n'avait pas été rekommité après `pnpm remove`. Fix : toujours commiter `pnpm-lock.yaml` immédiatement après tout `pnpm add` ou `pnpm remove`. À ajouter dans `docs/workflow.md` § Erreurs fréquentes.
+
 <!--
 Exemples :
 - `/design` a ignoré `docs/context/refs.md` et proposé une palette par défaut
