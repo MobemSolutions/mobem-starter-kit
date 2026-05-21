@@ -48,6 +48,8 @@ flowchart TD
 **Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
 Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la même session.
 
+> **CI automatique** — GitHub Actions vérifie chaque push : `pnpm build` (TypeScript) · `pnpm lint` · `pnpm audit`. Si le badge CI est rouge avant de livrer, corriger avant de continuer.
+
 ---
 
 ## Phase 0 — Brief (vous, avant Claude)

@@ -2,7 +2,7 @@
 
 Template repository pour les projets clients Mobem Solutions.
 Stack : **Next.js 16** · **Tailwind CSS 4** · **TypeScript strict** · **Framer Motion**
-Design : **TasteSkill** intégré nativement via `SKILL.md` · Figma MCP supporté
+Cible : artisans · professions libérales · TPE/PME locales françaises
 
 ---
 
@@ -13,17 +13,22 @@ Design : **TasteSkill** intégré nativement via `SKILL.md` · Figma MCP support
 git clone <url> mon-projet-client
 cd mon-projet-client
 
-# 2. Supprimer l'historique du boilerplate (PowerShell)
-Remove-Item -Recurse -Force .git
+# 2. Supprimer l'historique du boilerplate
+Remove-Item -Recurse -Force .git                                # PowerShell
+# rm -rf .git                                                   # bash
 git init && git add . && git commit -m "init: boilerplate Mobem Solutions"
 
 # 3. Installer les dépendances
 pnpm install && pnpm audit
 
 # 4. Configurer l'environnement
-cp .env.local.example .env.local
+cp .env.example .env.local
+# Remplir .env.local avec les vraies valeurs (ne jamais commiter)
 
-# 5. Lancer le serveur de dev
+# 5. Remplir siteConfig.ts
+# src/lib/siteConfig.ts — nom, téléphone, adresse, secteur, etc.
+
+# 6. Lancer le serveur de dev
 pnpm dev   # → http://localhost:3001
 ```
 
@@ -31,18 +36,22 @@ pnpm dev   # → http://localhost:3001
 
 ## Workflow complet
 
-Voir **[docs/workflow.md](docs/workflow.md)** — guide pas à pas, commande par commande.
+Voir **[docs/workflow.md](docs/workflow.md)** — guide pas à pas, phase par phase.
 
-```
-Brief client → docs/prompt.md → validation → code → audit → livraison
-```
+| Phase | Commande | Livrable |
+|-------|----------|----------|
+| 0 | — (vous) | `docs/context/` — brief · refs · contraintes |
+| 1 | `/strategy` | `docs/product.md` — arborescence · audience · skill/section |
+| 2 | `/design` | `docs/design.md` · `globals.css` — palette OKLCH · typo · radius |
+| 3 | `/build` | Sections codées — OG · favicon · sitemap · FAQ · TrustBadges |
+| 3.5 | `/contact-setup` | Route API contact · Resend · honeypot · 2 emails |
+| 3.6 | `/cms` | Sanity CMS — si contenu éditable par le client |
+| 4–4.5 | `/impeccable` · `/legal` | Audit qualité · pages légales |
+| 4.7 | `/qa` | Tests navigateur — parcours visiteur · mobile · formulaire |
+| 5 | `launch-runbook` | DNS · GBP · surveillance J+1/J+3/J+7 · handoff client |
 
-**Étapes clés :**
-1. Déposer le brief dans `docs/context/`
-2. Copier `docs/prompt.md` dans Claude Code
-3. Valider la stratégie + la palette OKLCH avec le client
-4. Builder section par section (une section = un commit)
-5. Audit Lighthouse ≥ 90 avant livraison
+**Règle absolue :** ne jamais passer à l'étape suivante sans valider la précédente.
+Chaque phase = une session Claude Code distincte.
 
 ---
 
@@ -50,64 +59,100 @@ Brief client → docs/prompt.md → validation → code → audit → livraison
 
 ```
 src/
-├── app/                 Next.js App Router (layouts, pages, API routes)
+├── app/
+│   ├── layout.tsx           Layout racine — metadata · skip link · ThemeProvider
+│   ├── page.tsx             Page d'accueil
+│   ├── not-found.tsx        Page 404 brandée
+│   ├── error.tsx            Error boundary (stub Sentry)
+│   ├── loading.tsx          Skeleton Suspense
+│   ├── icon.tsx             Favicon dynamique depuis siteConfig
+│   ├── opengraph-image.tsx  OG image (partage WhatsApp/LinkedIn)
+│   ├── sitemap.ts           Sitemap XML
+│   ├── robots.ts            robots.txt
+│   ├── globals.css          Tokens OKLCH · polices · dark mode
+│   └── api/contact/         Route API formulaire (Resend + Zod)
 ├── components/
-│   ├── ui/              Composants atomiques (Button, Card, Badge, Input)
-│   ├── layout/          Header, Footer
-│   ├── sections/        Sections de pages (Hero, Contact, ...)
-│   └── providers/       ThemeProvider (next-themes)
+│   ├── ui/
+│   │   ├── floating-contact.tsx   CTA fixe WhatsApp + téléphone
+│   │   ├── trust-badges.tsx       Certifications (RGE, RPPS, Barreau…)
+│   │   └── ...                    Button · Input · Card · Lightbox gallery
+│   ├── layout/              Header · Footer
+│   ├── sections/            Hero · Services · Réalisations · FAQ · Contact
+│   └── providers/           ThemeProvider (next-themes)
 ├── lib/
-│   ├── utils.ts         cn() — clsx + tailwind-merge
-│   └── constants/       Design tokens TypeScript (couleurs, espacements, typo)
-├── types/               Types partagés
-└── hooks/               Hooks React (useIsMobile, ...)
+│   ├── siteConfig.ts        ★ Source de vérité — NAP · zones · avis · certifs
+│   ├── utils.ts             cn() — clsx + tailwind-merge
+│   └── sanity/              Client Sanity + requêtes GROQ (si /cms activé)
+└── types/
+    └── plausible.d.ts       Type window.plausible pour les custom events
 
 docs/
-├── prompt.md            ★ Prompt d'initialisation client — copier-coller dans Claude Code
-├── workflow.md          Guide complet — commande par commande
-├── product.md           Stratégie produit (source de vérité — vide jusqu'à l'init)
-├── design.md            Système de design (source de vérité — vide jusqu'à l'init)
-├── context/             Brief client + références visuelles (ignoré par git)
-└── templates/           Templates vierges pour l'initialisation
+├── workflow.md              ★ Guide complet — phase par phase
+├── product.md               Stratégie produit (rempli par /strategy)
+├── design.md                Système de design (rempli par /design)
+├── handoff.md               Guide de passation client (à compléter avant livraison)
+├── feedback.md              Bugs · frictions · améliorations du template
+└── context/                 Brief client + refs visuelles (gitignored)
 ```
 
 ---
 
-## Règles IA actives
+## Commandes Claude Code
 
-| Fichier | Outil | Contenu |
-|---------|-------|---------|
-| `CLAUDE.md` | Claude Code | Identité Mobem, priorités, sécurité OWASP, performance |
-| `SKILL.md` | Tout AI IDE | Design system complet, patterns, anti-patterns |
-| `.mcp.json` | Claude Code | Serveur Figma MCP (nécessite `FIGMA_API_KEY`) |
+### Obligatoires
 
-Ces fichiers sont lus automatiquement à chaque session Claude Code.
+| Commande | Phase | Rôle |
+|----------|-------|------|
+| `/strategy` | 1 | Lit `docs/context/`, remplit `docs/product.md` |
+| `/design` | 2 | Propose palettes OKLCH, remplit `docs/design.md` + `globals.css` |
+| `/build [section]` | 3 | Code les composants selon la DA validée |
+| `/contact-setup` | 3.5 | Formulaire de contact production-ready (Resend + Zod + honeypot) |
+| `/impeccable audit` | 3–4 | Audit qualité après chaque page |
+| `/impeccable polish` | 4 | Passe finale avant livraison |
+| `/qa` | 4.7 | Tests navigateur sur URL Vercel — parcours visiteur · mobile · formulaire |
 
-**Priorité de lecture :** `docs/design.md` > `SKILL.md` > `CLAUDE.md` pour les décisions design.
+### Optionnelles
+
+| Commande | Quand |
+|----------|-------|
+| `/cms` | Contenu éditable par le client (galerie, blog, services) |
+| `/legal` | Pages légales françaises — mentions légales · confidentialité · CGV |
+| `/figma` | Implémentation depuis maquettes Figma existantes |
 
 ---
 
 ## Variables d'environnement
 
+Copier `.env.example` → `.env.local` et remplir. Ne jamais commiter `.env.local`.
+
 | Variable | Requis | Description |
 |----------|--------|-------------|
 | `NEXT_PUBLIC_SITE_URL` | Oui | URL de production (`https://client.fr`) |
-| `RESEND_API_KEY` | Non | Email transactionnel (si formulaire activé) |
-| `FIGMA_API_KEY` | Non | Sync Figma MCP ↔ code |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Non | CMS (si blog/catalogue activé) |
+| `RESEND_API_KEY` | Si formulaire | Email transactionnel — resend.com |
+| `CONTACT_EMAIL_TO` | Si formulaire | Email de destination des leads |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Si CMS | Sanity project ID |
+| `NEXT_PUBLIC_SANITY_DATASET` | Si CMS | `production` |
+| `SANITY_API_TOKEN` | Si CMS | Token write Sanity — jamais `NEXT_PUBLIC_` |
+| `UPSTASH_REDIS_REST_URL` | Optionnel | Rate limiting Upstash |
+| `UPSTASH_REDIS_REST_TOKEN` | Optionnel | Rate limiting Upstash |
+| `SENTRY_DSN` | Optionnel | Monitoring d'erreurs Sentry |
 
 ---
 
 ## Design System — Référence rapide
 
-### Typographie
-```
-Display : font-display italic  → [défini dans docs/design.md après brief client]
-Body    : font-sans            → [défini dans docs/design.md après brief client]
-Label   : font-mono            → [défini dans docs/design.md après brief client]tracking-wide
+Palette et typographie définies par `/design` dans `docs/design.md` + `globals.css`.
+Les valeurs ci-dessous sont les **placeholders** du boilerplate — les remplacer à chaque projet.
+
+### Tokens CSS (globals.css)
+```css
+--background : oklch(0.973 0.003 80)    /* Paper ivory  */
+--foreground : oklch(0.07 0 0)          /* Ink          */
+--signal     : oklch(0.605 0.203 27.5)  /* Accent CTA   */
+--border     : oklch(0.90 0 0)          /* Règle grise  */
 ```
 
-### Spacing 8pt
+### Grille 8pt
 ```
 xs:8 · sm:16 · md:24 · lg:32 · xl:48 · 2xl:64 · 3xl:96 · hero:128px
 ```
@@ -116,14 +161,7 @@ xs:8 · sm:16 · md:24 · lg:32 · xl:48 · 2xl:64 · 3xl:96 · hero:128px
 ```typescript
 const EASE = [0.25, 0.1, 0.25, 1] as const
 // Micro: 200ms · Standard: 300ms · Macro: 400ms
-```
-
-### Couleurs — Placeholders par défaut (remplacer à l'init)
-```css
---background : oklch(0.973 0.003 80)    /* Paper ivory  */
---foreground : oklch(0.07 0 0)          /* Ink          */
---signal     : oklch(0.605 0.203 27.5)  /* Accent — CTA */
---border     : oklch(0.90 0 0)          /* Règle grise  */
+// Expo Out [0.22, 1, 0.36, 1] pour les grands éléments (hero H1)
 ```
 
 ---
@@ -133,28 +171,54 @@ const EASE = [0.25, 0.1, 0.25, 1] as const
 | Commande | Description |
 |----------|-------------|
 | `pnpm dev` | Serveur de développement (port 3001) |
-| `pnpm build` | Build de production |
+| `pnpm build` | Build de production + vérification TypeScript |
 | `pnpm start` | Serveur de production local |
-| `pnpm type-check` | TypeScript strict |
 | `pnpm lint` | ESLint |
-| `pnpm audit` | Audit de sécurité npm |
+| `pnpm audit` | Audit de sécurité des dépendances |
 
 ---
 
-## Activer les fonctionnalités optionnelles
+## CI/CD
+
+**CI** — GitHub Actions tourne automatiquement sur chaque push et PR :
+- `pnpm build` — TypeScript strict + compilation Next.js
+- `pnpm lint` — ESLint
+- `pnpm audit` — vulnérabilités dépendances (niveau modéré bloquant)
+
+Voir `.github/workflows/ci.yml`.
+
+**CD** — Vercel déploie automatiquement :
+- Push sur `main` → déploiement de production
+- Push sur `review/**` → URL de preview client (pour Ruttl)
+
+---
+
+## Fonctionnalités optionnelles — installation
 
 ```bash
-# CMS Sanity
-pnpm add sanity next-sanity @sanity/image-url
+# Formulaire de contact
+pnpm add resend zod
 
-# Email Resend
-pnpm add resend @react-email/components @react-email/render
+# CMS Sanity (galerie réalisations éditable)
+pnpm add @sanity/client next-sanity @sanity/image-url
+pnpm add -D sanity
 
-# Analytics Vercel
-pnpm add @vercel/analytics @vercel/speed-insights
+# Galerie lightbox
+pnpm add yet-another-react-lightbox
 
-# Rate limiting (endpoints API publics)
+# Rate limiting (formulaire sous forte charge)
 pnpm add @upstash/ratelimit @upstash/redis
 ```
 
 Voir [docs/workflow.md](docs/workflow.md) pour les instructions complètes d'activation.
+
+---
+
+## Règles IA
+
+| Fichier | Contenu |
+|---------|---------|
+| `CLAUDE.md` | Identité Mobem · priorités · sécurité OWASP · performance |
+| `SKILL.md` | Design system complet · patterns · anti-patterns · composants |
+
+Priorité de lecture pour les décisions design : `docs/design.md` > `SKILL.md` > `CLAUDE.md`

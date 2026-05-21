@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - 'review/**'   # branches de preview client Vercel
+
+jobs:
+  ci:
+    name: Build · Lint · Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Build = TypeScript strict + Next.js compilation
+      # C'est le test le plus utile : attrape les erreurs TS avant Vercel
+      - name: Build
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
+
+      # Bloque si une dépendance a une vulnérabilité modérée ou critique
+      - name: Security audit
+        run: pnpm audit --audit-level moderate
