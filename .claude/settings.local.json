@@ -21,7 +21,16 @@
       "Bash(git commit -m ' *)",
       "Bash(gh repo *)",
       "Bash(pnpm install *)",
-      "Bash(pnpm approve-builds *)"
+      "Bash(pnpm approve-builds *)",
+      "Bash(pnpm lint *)",
+      "Bash(npx next *)",
+      "Bash(node -e \"const c = require\\('eslint-config-next'\\); console.log\\(Object.keys\\(c\\)\\)\")",
+      "Bash(node -e \"const c = require\\('eslint-config-next'\\); console.log\\(JSON.stringify\\(c.map\\(x => x.name || x.plugins ? Object.keys\\(x.plugins||{}\\) : 'no-name'\\), null, 2\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm audit *)",
+      "Bash(pnpm build *)",
+      "PowerShell(gh auth *)"
     ]
   },
   "enableAllProjectMcpServers": true,
