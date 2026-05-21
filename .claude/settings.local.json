@@ -30,7 +30,14 @@
       "Bash(pnpm add *)",
       "Bash(pnpm audit *)",
       "Bash(pnpm build *)",
-      "PowerShell(gh auth *)"
+      "PowerShell(gh auth *)",
+      "Bash(ls src/)",
+      "Bash(dir src/)",
+      "Bash(npx playwright *)",
+      "Bash(ls playwright.config*)",
+      "Bash(ls tests/)",
+      "Bash(npx husky *)",
+      "WebFetch(domain:mobem-solutions.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

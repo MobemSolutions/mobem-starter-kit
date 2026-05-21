@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  delivery:
+    name: Document de livraison
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Générer le document de livraison
+        run: node scripts/generate-livraison.mjs
+
+      - name: Attacher au release
+        run: |
+          FILENAME=$(ls docs/livraison-*.html 2>/dev/null | grep -v 'livraison\.html$' | head -1)
+          if [ -z "$FILENAME" ]; then
+            echo "❌ Aucun fichier livraison-*.html trouvé. Remplir docs/livraison-config.json avant de créer un release."
+            exit 1
+          fi
+          gh release upload "${{ github.event.release.tag_name }}" "$FILENAME" --clobber
+          echo "✅ Document attaché : $FILENAME"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
