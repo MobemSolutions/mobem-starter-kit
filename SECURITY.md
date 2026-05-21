@@ -9,7 +9,7 @@ Seule la branche `main` reçoit des correctifs de sécurité.
 
 **Ne pas ouvrir une issue publique pour un problème de sécurité.**
 
-Envoyer un email à : **arnaud.clv44@gmail.com**
+Envoyer un email à : **admin@mobem-solutions.com**
 
 Inclure :
 - Description du problème

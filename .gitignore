@@ -58,3 +58,4 @@ lighthouse-report.html
 
 # Extras
 docs/img/
+.claude\settings.local.json
