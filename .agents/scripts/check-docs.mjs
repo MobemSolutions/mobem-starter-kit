@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PreToolUse hook — vérifie que docs/design.md est rempli
+ * PreToolUse hook — vérifie que docs/project/design.md est rempli
  * avant toute écriture dans src/.
  * Avertissement uniquement (exit 0) — ne bloque pas.
  */
@@ -18,14 +18,14 @@ process.stdin.on('end', () => {
     const inSrc = filePath.includes('/src/') || filePath.includes('\\src\\')
     if (!inSrc) process.exit(0)
 
-    const designPath = 'docs/design.md'
+    const designPath = 'docs/project/design.md'
     const isPlaceholder =
       !existsSync(designPath) ||
       readFileSync(designPath, 'utf8').includes('Ce fichier est vide')
 
     if (isPlaceholder) {
       process.stderr.write(
-        '⚠️  docs/design.md est vide — lancer /design et valider la palette avant de modifier src/\n'
+        '⚠️  docs/project/design.md est vide — lancer /design et valider la palette avant de modifier src/\n'
       )
     }
   } catch {

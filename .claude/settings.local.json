@@ -37,7 +37,16 @@
       "Bash(ls playwright.config*)",
       "Bash(ls tests/)",
       "Bash(npx husky *)",
-      "WebFetch(domain:mobem-solutions.com)"
+      "WebFetch(domain:mobem-solutions.com)",
+      "Bash(curl -s https://api.github.com/repos/anthropics/skills/contents/skills/docx)",
+      "Bash(curl -s \"https://api.github.com/repos/anthropics/skills/contents/skills/docx?ref=main\")",
+      "Bash(Write-Host \"done\")",
+      "Bash(node scripts/generate-livraison-docx.mjs)",
+      "Bash(sed -i 's|de livraison HTML|de livraison .docx|g' README.md)",
+      "Bash(sed -i 's|Document de livraison HTML|Document de livraison \\(.docx\\)|g' docs/project/handoff.md)",
+      "Bash(sed -i -e 's|join\\(docsDir, '\\\\''livraison-config.json'\\\\''\\)|join\\(docsDir, '\\\\''delivery'\\\\'', '\\\\''livraison-config.json'\\\\''\\)|g' -e 's|join\\(docsDir, '\\\\''livraisons'\\\\''\\)|join\\(docsDir, '\\\\''delivery'\\\\'', '\\\\''livraisons'\\\\''\\)|g' scripts/generate-livraison-docx.mjs)",
+      "Bash(grep -v \"\\\\.docx$\")",
+      "Bash(pnpm info *)"
     ]
   },
   "enableAllProjectMcpServers": true,

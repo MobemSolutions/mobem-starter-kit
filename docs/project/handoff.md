@@ -8,7 +8,7 @@
 >
 > **Refonte ?** Utiliser le skill `redesign-existing-projects` en Phase 3. Les accès existants du client (hébergeur, domaine) remplacent les `TODO:` ci-dessous — ne pas créer de doublons.
 >
-> **Document de livraison HTML** (à envoyer en PDF au client) — voir `docs/livraison-config.json` + `pnpm livraison`.
+> **Document de livraison (.docx)** (à envoyer en PDF au client) — voir `docs/delivery/livraison-config.json` + `pnpm livraison`.
 
 ---
 

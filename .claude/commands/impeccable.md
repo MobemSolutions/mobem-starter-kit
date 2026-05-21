@@ -15,11 +15,11 @@ node .agents/skills/impeccable/scripts/load-context.mjs
 > **Note :** si un message contient `{{scripts_path}}`, remplacer par le chemin réel
 > `.agents/skills/impeccable/scripts` — c'est un placeholder non résolu du CLI impeccable.
 
-Le script cherche `docs/product.md` et `docs/design.md` (fallback automatique vers `docs/`).
+Le script cherche `docs/project/product.md` et `docs/project/design.md` (fallback automatique vers `docs/`).
 Si ces fichiers sont vides ou absents : lancer `/impeccable teach` d'abord.
 
 > **Note Mobem :** si `/strategy` + `/design` ont été complétés, le contexte est déjà dans
-> `docs/product.md` et `docs/design.md` — pas besoin de `/impeccable teach`.
+> `docs/project/product.md` et `docs/project/design.md` — pas besoin de `/impeccable teach`.
 > Utile uniquement pour reprendre un projet existant sans ces fichiers.
 
 ## `/impeccable teach` — quand l'utiliser
@@ -30,7 +30,7 @@ en interviewant l'IA sur le codebase et en posant des questions stratégiques.
 Dans la workflow Mobem :
 - `/strategy` remplace la partie PRODUCT de `teach`
 - `/design` remplace la partie DESIGN de `teach`
-- Lancer `teach` uniquement si on reprend un projet sans `docs/product.md`
+- Lancer `teach` uniquement si on reprend un projet sans `docs/project/product.md`
 
 ## Table de routing — fichiers de référence
 
@@ -62,13 +62,13 @@ Charger le(s) fichier(s) correspondant(s) selon le sous-commande invoqué :
 
 ## Fichiers de contexte supplémentaires
 
-Selon le registre détecté dans docs/product.md :
+Selon le registre détecté dans docs/project/product.md :
 - Site artisan / TPE → `.agents/skills/impeccable/reference/brand.md`
 - Application / produit digital → `.agents/skills/impeccable/reference/product.md`
 
 ## Priorité de lecture pour les décisions visuelles
 
-`docs/design.md` > `.agents/skills/impeccable/reference/[sous-commande].md` > `SKILL.md`
+`docs/project/design.md` > `.agents/skills/impeccable/reference/[sous-commande].md` > `SKILL.md`
 
 ## Sans sous-commande
 

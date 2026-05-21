@@ -1,4 +1,4 @@
-# Mobem — Workflow de création client
+# Mobem — Workflow de création site client
 
 > Guide opérationnel complet. Une section = une étape = un livrable avant de passer à la suite.
 
@@ -16,10 +16,10 @@ flowchart TD
     B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
     B --> C
 
-    C["/strategy — Phase 1<br/>product.md · arborescence · skill/section"]
+    C["/strategy — Phase 1<br/>project/product.md · arborescence · skill/section"]
     C --> D
 
-    D["/design — Phase 2<br/>design.md · globals.css · valider pnpm dev"]
+    D["/design — Phase 2<br/>project/design.md · globals.css · valider pnpm dev"]
     D --> E
 
     E["/build — Phase 3<br/>sections · OG · sitemap · FloatingContact · FAQ<br/>TrustBadges · RDV · Schema.org étendu"]
@@ -46,6 +46,8 @@ flowchart TD
 
     I["Phase 5 — launch-runbook<br/>DNS · GBP · surveillance J+1/J+3/J+7"]
     I --> J([✅ Site en ligne])
+    J --> K["/livraison — Phase 5.5<br/>docs/delivery/livraisons/livraison-[client].docx<br/>release GitHub · handoff client"]
+    K --> L([📦 Projet clôturé])
 ```
 
 **Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
@@ -124,6 +126,22 @@ Claude revient à ses defaults génériques. Si le client n'en a pas, posez-lui 
 
 Ne lancez pas `/design` sans ces réponses.
 
+### Assets client — ce que vous devez demander
+
+Demandez ces fichiers **en même temps que le brief** — les relancer en Phase 3 fait perdre du temps.
+
+| Asset | Format idéal | Priorité |
+|-------|-------------|----------|
+| Logo | SVG (sinon PNG fond transparent) | Obligatoire |
+| Photo portrait artisan / équipe | JPG ≥ 1200px, fond neutre | Obligatoire |
+| 5–10 photos de réalisations | JPG ≥ 1600px, bien éclairées | Obligatoire |
+| Photo locaux / véhicule | JPG ≥ 1200px | Recommandé |
+| Certifications / labels (RGE, RPPS…) | PNG fond blanc ou transparent | Si applicable |
+
+**Où les déposer :** `docs/context/assets/` — ce dossier est gitignored (données client confidentielles).
+
+Vous les traiterez en Phase 3 avant de lancer `/build` (voir section Phase 3 ci-dessous).
+
 ### Skills optionnels en Phase 0
 
 Si le brief est incomplet ou si le client n'a pas encore d'identité de marque clairement définie :
@@ -147,22 +165,22 @@ Si le brief est incomplet ou si le client n'a pas encore d'identité de marque c
 **Outil :** Claude Code CLI
 **Commande :** `/strategy`
 **Durée estimée :** 15–20 min
-**Livrable :** `docs/product.md` complété
+**Livrable :** `docs/project/product.md` complété
 
 ### Ce que fait la commande
 - Lit `docs/context/` en entier
 - Prouve sa lecture (cite 3 informations clés du brief)
-- Remplit `docs/product.md` : présentation, problème, objectifs, audience, périmètre, ton, métriques
+- Remplit `docs/project/product.md` : présentation, problème, objectifs, audience, périmètre, ton, métriques
 - Note `⚠️ À confirmer` pour chaque information manquante
 - Propose une arborescence de 3 à 7 pages adaptée au secteur
 
 ### Votre validation
-Relisez `docs/product.md` et vérifiez :
+Relisez `docs/project/product.md` et vérifiez :
 - [ ] L'arborescence correspond à ce que le client attend
 - [ ] Les objectifs business sont corrects
 - [ ] L'audience est bien décrite
 - [ ] Les ⚠️ sont résolus ou acceptés
-- [ ] `docs/feedback.md` mis à jour si friction ou insight notable durant cette phase
+- [ ] `docs/project/feedback.md` mis à jour si friction ou insight notable durant cette phase
 
 **STOP. Ne lancez pas `/design` avant d'avoir validé ce fichier.**
 
@@ -208,7 +226,7 @@ Utiliser le **Figma MCP** (compte Figma lié dans Intégrations claude.ai) pour 
 mcp__claude_ai_Figma__whoami
 
 # Générer la maquette depuis le design system du projet
-/figma  →  "Génère une maquette Figma pour la section hero depuis docs/design.md"
+/figma  →  "Génère une maquette Figma pour la section hero depuis docs/project/design.md"
 ```
 
 > **Quand choisir Option C plutôt que Ruttl :**
@@ -230,10 +248,10 @@ mcp__claude_ai_Figma__whoami
 **Outil :** Claude Code CLI
 **Commande :** `/design`
 **Durée estimée :** 20–30 min
-**Livrable :** `docs/design.md` complété + tokens dans `globals.css`
+**Livrable :** `docs/project/design.md` complété + tokens dans `globals.css`
 
 ### Ce que fait la commande
-- Vérifie que `docs/product.md` est rempli — sinon refuse de continuer
+- Vérifie que `docs/project/product.md` est rempli — sinon refuse de continuer
 - Vérifie que `docs/context/refs.md` existe — sinon demande les références et s'arrête
 - Lit les skills Impeccable (typography, color, spatial) avant de proposer quoi que ce soit
 - Propose 2 palettes OKLCH distinctes avec justification secteur
@@ -259,12 +277,12 @@ mcp__claude_ai_Figma__whoami
 ### Votre validation
 Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
 Claude écrit ensuite :
-- `docs/design.md`
+- `docs/project/design.md`
 - `src/app/globals.css` (tokens OKLCH + polices chargées)
 - `src/app/layout.tsx` (polices Google Fonts)
 - `src/lib/constants/colors.ts` (THEME_META)
 
-- [ ] `docs/feedback.md` mis à jour si friction ou insight notable durant cette phase
+- [ ] `docs/project/feedback.md` mis à jour si friction ou insight notable durant cette phase
 
 **STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
 Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
@@ -283,6 +301,27 @@ Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont cor
 **Durée estimée :** selon complexité
 **Livrable :** composants codés, un par commit
 
+### Préparer les images avant de coder
+
+**Avant de lancer `/build`**, placer les images client dans `public/images/client/` :
+
+```
+public/images/client/
+├── logo.svg (ou logo.png)
+├── portrait-[prenom].jpg
+├── chantier-[description]-01.jpg
+├── chantier-[description]-02.jpg
+└── ...
+```
+
+**Règles :**
+- Nommer en kebab-case descriptif — ce nom devient l'`alt` de base
+- Redimensionner en amont : hero → max 1920px · galerie → max 1200px · portrait → max 800px
+- Garder les originaux bruts dans `docs/context/assets/` (gitignored)
+- `public/images/client/` est commité dans le repo — les images font partie du livrable
+
+**Si le projet a un CMS (`/cms` activé)** : ne pas mettre les images dans `public/`. Les uploader directement dans Sanity Studio en Phase 3.6 — le CMS gère l'optimisation et le CDN.
+
 ### Ordre de développement recommandé
 ```
 1. header.tsx + footer.tsx (navigation réelle, NAP, CTA)
@@ -295,7 +334,7 @@ Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont cor
 
 ### Ce que fait la commande
 Pour chaque composant :
-- Vérifie la présence des tokens dans `docs/design.md`
+- Vérifie la présence des tokens dans `docs/project/design.md`
 - Cite la règle Impeccable la plus pertinente avant de coder
 - Cite l'anti-pattern le plus probable à éviter
 - Code le composant
@@ -320,7 +359,7 @@ Exemple de tableau produit par /strategy :
 └─────────────┴──────────────────────────┘
 ```
 
-Si le tableau est absent de `docs/product.md` : demander à Claude de le produire avant de commencer le `/build`.
+Si le tableau est absent de `docs/project/product.md` : demander à Claude de le produire avant de commencer le `/build`.
 
 ### Skills utiles en Phase 3
 
@@ -466,7 +505,7 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 - [ ] Aucune couleur hardcodée — uniquement `var(--...)`
 
 #### Contenu & Legal
-- [ ] `docs/feedback.md` complété — bugs, frictions, améliorations
+- [ ] `docs/project/feedback.md` complété — bugs, frictions, améliorations
 - [ ] Pages légales liées dans le footer (`/mentions-legales` · `/confidentialite` · `/cgv`)
 - [ ] Aucun `TODO: [BLOQUANT]` restant dans les pages légales
 
@@ -498,7 +537,7 @@ hiérarchie visuelle, micro-interactions.
 
 ### Ce que fait la commande
 
-1. **Extrait** depuis `docs/product.md` : statut juridique, secteur, B2C/B2B, zone
+1. **Extrait** depuis `docs/project/product.md` : statut juridique, secteur, B2C/B2B, zone
 2. **Applique le mapping** statut → contenu obligatoire :
 
    | Statut | TVA | Décennale | CGV |
@@ -537,7 +576,7 @@ hiérarchie visuelle, micro-interactions.
 
 ### Ce que fait la commande
 
-1. Lit `docs/product.md` pour extraire les pages, CTAs exacts, numéro de téléphone et email
+1. Lit `docs/project/product.md` pour extraire les pages, CTAs exacts, numéro de téléphone et email
 2. Génère une checklist de test **spécifique au site** — pas une liste générique
 3. Guide le test du parcours visiteur complet :
    - Parcours critique : chaque page, chaque CTA avec son texte exact et sa destination
@@ -555,7 +594,7 @@ hiérarchie visuelle, micro-interactions.
    Priorité : BLOQUANT | Majeur | Mineur
 ```
 
-Les bugs **Mineurs** sont documentés dans `docs/feedback.md` pour après livraison.
+Les bugs **Mineurs** sont documentés dans `docs/project/feedback.md` pour après livraison.
 Les bugs **BLOQUANTS** doivent être corrigés, poussés sur la branche review, et retestés avant de continuer.
 
 ### Votre validation
@@ -614,9 +653,9 @@ Les 7 premiers jours après la mise en ligne sont critiques : les caches se remp
 - [ ] Plausible : au moins quelques pages vues remontent sur le dashboard (confirme que le script est actif en prod)
 - [ ] PageSpeed Insights sur l'URL de prod — comparer avec les scores pré-lancement
 - [ ] Confirmer que le client a bien reçu des leads via le formulaire (ou signaler si aucun visiteur)
-- [ ] Documenter les bugs mineurs restants dans `docs/feedback.md` si ce n'est pas déjà fait
+- [ ] Documenter les bugs mineurs restants dans `docs/project/feedback.md` si ce n'est pas déjà fait
 - [ ] Archiver le projet Ruttl si une session de commentaires client était active
-- [ ] Compléter et envoyer `docs/handoff.md` au client (accès Plausible, Sanity Studio si CMS, GBP, contact urgence)
+- [ ] Compléter et envoyer `docs/project/handoff.md` au client (accès Plausible, Sanity Studio si CMS, GBP, contact urgence)
 
 ---
 
@@ -626,14 +665,14 @@ Les 7 premiers jours après la mise en ligne sont critiques : les caches se remp
 
 ### 1. Remplir le document de livraison
 
-```bash
-# Ouvrir docs/livraison-config.json et remplir toutes les valeurs
-# Puis générer le document HTML :
-pnpm livraison
-# → crée docs/livraison-[client].html
+```
+/livraison
 ```
 
-Ouvrir le fichier HTML dans le navigateur → **Imprimer → Enregistrer en PDF** → envoyer au client.
+La commande vérifie `docs/delivery/livraison-config.json`, signale les champs `TODO:` manquants, génère le `.docx` via `pnpm livraison`, puis rappelle les étapes de clôture.
+
+Ouvrir le fichier `.docx` avec **Word, LibreOffice ou Google Docs** → envoyer au client.
+Le document contient : fonctionnalités livrées · scores Lighthouse + Core Web Vitals · résultats des tests CI · accès hébergement/domaine/analytics · guide outils quotidiens · appendice technique avec stack et commandes.
 
 ### 2. Créer la release GitHub
 
@@ -647,13 +686,13 @@ gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré
 ```
 
 > La GitHub Action `.github/workflows/release.yml` s'exécute automatiquement :
-> elle génère le document de livraison depuis `docs/livraison-config.json` et l'attache à la release.
+> elle génère le document de livraison depuis `docs/delivery/livraison-config.json` et l'attache à la release.
 
 ### 3. Checklist de clôture
 
-- [ ] `docs/livraison-config.json` rempli avec les vraies valeurs
-- [ ] `docs/handoff.md` complété et envoyé au client (version interne + version client)
-- [ ] `docs/feedback.md` complété — bugs restants, frictions, améliorations pour le prochain projet
+- [ ] `docs/delivery/livraison-config.json` rempli avec les vraies valeurs
+- [ ] `docs/project/handoff.md` complété et envoyé au client (version interne + version client)
+- [ ] `docs/project/feedback.md` complété — bugs restants, frictions, améliorations pour le prochain projet
 - [ ] Projet Ruttl archivé (limite plan gratuit : 1 projet actif)
 - [ ] Accès Vercel / domaine transmis au client avec le document de livraison
 
@@ -665,13 +704,13 @@ gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré
 
 | Commande | Phase | Ce qu'elle fait |
 |----------|-------|-----------------|
-| `/strategy` | 1 | Lit le brief, remplit docs/product.md |
-| `/design` | 2 | Propose palettes, remplit docs/design.md + globals.css |
+| `/strategy` | 1 | Lit le brief, remplit docs/project/product.md |
+| `/design` | 2 | Propose palettes, remplit docs/project/design.md + globals.css |
 | `/build [section]` | 3 | Code un composant selon la DA validée — inclut OG image, sitemap, robots, FAQ schema |
 | `/contact-setup` | 3.5 | Route API contact + Resend + honeypot + emails + états UI |
 | `/impeccable audit [page]` | 3–4 | Audit technique post-génération — à lancer après chaque page |
 | `/impeccable polish` | 4 | Passe finale avant livraison |
-| `/qa` | 4.7 | Tests navigateur du parcours visiteur — génère la checklist depuis docs/product.md, à lancer sur l'URL Vercel |
+| `/qa` | 4.7 | Tests navigateur du parcours visiteur — génère la checklist depuis docs/project/product.md, à lancer sur l'URL Vercel |
 
 ### Optionnelles (selon le projet)
 
@@ -684,6 +723,7 @@ gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré
 | `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
 | `/impeccable teach` | Reprise d'un projet existant sans historique de session. Inutile si `/strategy` + `/design` ont déjà été faits dans ce projet. |
 | `/legal` | Génère mentions légales, politique de confidentialité, CGV — avant mise en ligne. |
+| `/livraison` | 5.5 | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique · release GitHub. |
 
 ---
 

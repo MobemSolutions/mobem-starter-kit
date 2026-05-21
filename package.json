@@ -12,7 +12,7 @@
     "impeccable": "pnpm dlx impeccable detect src/",
     "impec-audit": "pnpm dlx impeccable detect src/ --json",
     "e2e": "playwright test",
-    "livraison": "node scripts/generate-livraison.mjs",
+    "livraison": "node scripts/generate-livraison-docx.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -30,7 +30,8 @@
   },
   "pnpm": {
     "overrides": {
-      "postcss": ">=8.5.10"
+      "postcss": ">=8.5.10",
+      "tmp": ">=0.2.4"
     }
   },
   "lint-staged": {
@@ -43,6 +44,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "docx": "^9.6.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "husky": "^9.1.7",

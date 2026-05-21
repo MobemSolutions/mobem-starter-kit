@@ -11,20 +11,20 @@ Cible clients : artisans, TPE/PME locales françaises. Jamais de look SaaS ou da
 
 Quand deux sources sont en conflit, la plus spécifique l'emporte :
 
-1. `docs/design.md` *(client spécifique)* **>** `SKILL.md` *(stack générique)*
-2. `docs/product.md` *(client spécifique)* **>** `CLAUDE.md` *(règles générales)*
+1. `docs/project/design.md` *(client spécifique)* **>** `SKILL.md` *(stack générique)*
+2. `docs/project/product.md` *(client spécifique)* **>** `CLAUDE.md` *(règles générales)*
 
-Exemple : si `docs/design.md` précise `radius: 4px`, appliquer 4px même si SKILL.md indique 0px.
+Exemple : si `docs/project/design.md` précise `radius: 4px`, appliquer 4px même si SKILL.md indique 0px.
 
 ## Documentation — Logique Impeccable
 
-**Avant tout fichier dans `src/` :** lire `docs/product.md` + `docs/design.md`
-Un hook PreToolUse (`check-docs.mjs`) avertit si `docs/design.md` est encore vide.
+**Avant tout fichier dans `src/` :** lire `docs/project/product.md` + `docs/project/design.md`
+Un hook PreToolUse (`check-docs.mjs`) avertit si `docs/project/design.md` est encore vide.
 **Après chaque changement majeur :** synchroniser ces fichiers avec le code si un token, composant ou pattern a été ajouté.
 
 ## Feedback continu — Amélioration du template
 
-**Règle systématique :** après chaque commande majeure (`/strategy`, `/design`, `/build`, `/impeccable`), ajouter une entrée dans `docs/feedback.md` si l'une de ces situations s'est produite :
+**Règle systématique :** après chaque commande majeure (`/strategy`, `/design`, `/build`, `/impeccable`), ajouter une entrée dans `docs/project/feedback.md` si l'une de ces situations s'est produite :
 
 - 🔴 Quelque chose a cassé ou forcé un contournement → section **Bugs**
 - 🟡 Une étape a été confuse, lente ou mal documentée → section **Frictions workflow**
@@ -43,7 +43,7 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 ## Contenu — Règle de réalisme
 
 - **Zéro placeholder générique** : aucun "Lorem ipsum", aucune image de chat, aucun "John Doe"
-- Tout le contenu doit être cohérent avec le secteur et le brief dans `docs/product.md`
+- Tout le contenu doit être cohérent avec le secteur et le brief dans `docs/project/product.md`
 - CTAs spécifiques au métier : `"Demander un devis plomberie"` plutôt que `"En savoir plus"`
 - Noms de sections ancrés dans le réel : `"Mes chantiers"` plutôt que `"Réalisations"`
 
@@ -56,7 +56,7 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 
 **Polices interdites (signature IA trop reconnaissable) :** JetBrains Mono · Inter · Geist · Outfit · DM Sans — ces polices signalent immédiatement une génération IA et trahissent l'identité client. Choisir une police avec une vraie personnalité typographique via `/design`.
 
-Typographie et palette : définis exclusivement par `/design`, écrits dans `docs/design.md` et `src/app/globals.css`.
+Typographie et palette : définis exclusivement par `/design`, écrits dans `docs/project/design.md` et `src/app/globals.css`.
 
 ## TypeScript
 
@@ -164,4 +164,4 @@ Le skill `/figma` reste disponible uniquement si le client fournit des maquettes
 Pour les projets avec ambiguïté esthétique, tester 2–3 skills sur le hero avant de l'appliquer aux autres sections. Le test in-situ vaut mieux que la description abstraite.
 
 **Priorité de lecture pour les décisions visuelles :**
-`docs/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem
+`docs/project/design.md` > `.agents/skills/impeccable/` > `SKILL.md` Mobem

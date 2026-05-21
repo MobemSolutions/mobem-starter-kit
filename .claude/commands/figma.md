@@ -13,12 +13,12 @@ Si absent : copier `.mcp.json.example` → `.mcp.json` et renseigner la clé.
 
 ## Usage A — Validation client (Phase 2, après `/design`)
 
-**Quand :** la palette et la typographie sont validées dans `docs/design.md`, mais le client
+**Quand :** la palette et la typographie sont validées dans `docs/project/design.md`, mais le client
 a besoin de voir un visuel dans Figma avant de donner son feu vert final.
 
 **Ce que ça fait :**
-1. Lire `docs/design.md` pour extraire palette, typographie, radius, motion dials
-2. Lire `docs/product.md` pour l'arborescence et les sections clés
+1. Lire `docs/project/design.md` pour extraire palette, typographie, radius, motion dials
+2. Lire `docs/project/product.md` pour l'arborescence et les sections clés
 3. Créer un fichier Figma : page d'accueil simplifiée avec les vrais tokens (couleurs, polices, espacements)
 4. Fournir le lien Figma au client pour validation et commentaires
 
@@ -30,10 +30,10 @@ a besoin de voir un visuel dans Figma avant de donner son feu vert final.
 Présenter d'abord ce brief à l'IA Figma :
 ```
 Créer une maquette de page d'accueil pour [nom client] en utilisant :
-- Palette : [extraire de docs/design.md]
-- Typographie : [extraire de docs/design.md]
-- Sections : [extraire de docs/product.md]
-- Ton : [extraire de docs/product.md]
+- Palette : [extraire de docs/project/design.md]
+- Typographie : [extraire de docs/project/design.md]
+- Sections : [extraire de docs/project/product.md]
+- Ton : [extraire de docs/project/product.md]
 Objectif : validation client, pas production.
 ```
 

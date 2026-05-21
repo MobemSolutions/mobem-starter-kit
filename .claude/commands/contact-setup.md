@@ -7,12 +7,12 @@ description: Phase 3.5 — Setup formulaire de contact production-ready. Resend 
 ## Prérequis — vérifications bloquantes
 
 - Le composant visuel `src/components/sections/contact.tsx` existe
-- `docs/product.md` contient l'email professionnel du client
+- `docs/project/product.md` contient l'email professionnel du client
 - Accès à un compte Resend (resend.com — plan gratuit : 3 000 emails/mois)
 
 ## Ordre de lecture
 
-1. `docs/product.md` — email de destination, nom du professionnel, ton de marque
+1. `docs/project/product.md` — email de destination, nom du professionnel, ton de marque
 2. `CLAUDE.md` § Sécurité — règles routes API, rate limiting
 
 ## Étape 1 — Dépendances
