@@ -100,9 +100,15 @@ git push -u origin main
   - Require status checks : `Build · Lint · Audit`
 - [ ] **Branche development** — `git checkout -b development && git push origin development`
 - [ ] **Status checks** — Settings → Rules → ajouter `Smoke tests` et `Lighthouse CI` aux checks requis sur `main`
+- [ ] **Secret `LHCI_GITHUB_APP_TOKEN`** — Settings → Secrets and variables → Actions → New secret
+  Sans ce secret, Lighthouse CI tourne mais ne peut pas poster les résultats comme check sur les PRs.
+  Générer le token depuis [github.com/apps/lighthouse-ci](https://github.com/apps/lighthouse-ci) → installer sur le repo.
 
-> Le CI (`.github/workflows/ci.yml`), Dependabot et Husky (pre-commit lint) sont hérités automatiquement.
-> Husky s'active au premier `pnpm install` via le script `prepare` — aucune action requise.
+> **Ce qui est hérité automatiquement depuis la template :**
+> `.github/workflows/ci.yml` · `.github/workflows/release.yml` · `.github/dependabot.yml` (config des PRs Dependabot hebdomadaires) · `.lighthouserc.js` · Husky (pre-commit lint, s'active au premier `pnpm install`)
+>
+> **Ce qui ne s'hérite pas et demande une action manuelle :**
+> Vercel · Branch protection · Dependabot security alerts · Status checks requis · Secret LHCI · Branche development
 
 ---
 
