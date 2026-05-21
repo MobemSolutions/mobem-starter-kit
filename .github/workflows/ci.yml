@@ -18,7 +18,7 @@ jobs:
 
       # Node 22 EN PREMIER — pnpm v11 requiert Node >= 22.13
       # setup-node doit précéder pnpm/action-setup, sinon pnpm tourne sous Node 20 (défaut runner)
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
 
