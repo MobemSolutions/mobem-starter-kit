@@ -18,7 +18,7 @@ updates:
           - patch
     ignore:
       # Next.js : ne pas auto-upgrader les majeurs (breaking changes importants)
-      - dependency-name: next
+      - dependency-name: "*"
         update-types: ['version-update:semver-major']
       - dependency-name: react
         update-types: ['version-update:semver-major']
