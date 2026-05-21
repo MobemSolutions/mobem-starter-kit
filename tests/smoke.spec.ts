@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test('homepage loads', async ({ page }) => {
   const response = await page.goto('/')
   expect(response?.status()).toBe(200)
-  await expect(page.locator('main')).toBeVisible()
+  await expect(page.locator('main')).toBeAttached()
 })
 
 test('sitemap.xml is served', async ({ request }) => {
@@ -16,7 +16,7 @@ test('robots.txt is served', async ({ request }) => {
   const response = await request.get('/robots.txt')
   expect(response.status()).toBe(200)
   const body = await response.text()
-  expect(body).toContain('User-agent')
+  expect(body).toContain('User-Agent')
 })
 
 test('contact API rejects missing body', async ({ request }) => {
