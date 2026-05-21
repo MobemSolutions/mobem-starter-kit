@@ -6,7 +6,7 @@
     "dev": "next dev --port 3001 --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src/",
     "type-check": "tsc --noEmit",
     "audit": "pnpm audit",
     "impeccable": "pnpm dlx impeccable detect src/",

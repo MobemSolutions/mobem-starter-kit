@@ -9,12 +9,9 @@ import { MOTION } from '@/lib/constants'
 import { siteConfig } from '@/lib/config/site'
 
 export function Header() {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [menuOpen, setMenuOpen] = React.useState(false)
   const isMobile = useIsMobile()
-
-  React.useEffect(() => {
-    if (!isMobile) setIsOpen(false)
-  }, [isMobile])
+  const isOpen = isMobile && menuOpen
 
   return (
     <header className="sticky top-0 z-40 border-b border-(--border) bg-(--background)">
@@ -51,7 +48,7 @@ export function Header() {
 
         <button
           className="md:hidden p-2 text-(--foreground)"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setMenuOpen(!isOpen)}
           aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -72,7 +69,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                   className="text-sm text-(--muted-foreground) hover:text-(--foreground) transition-colors"
                 >
                   {item.label}
@@ -81,7 +78,7 @@ export function Header() {
               {siteConfig.cta.label && (
                 <Link
                   href={siteConfig.cta.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                   className="inline-flex items-center justify-center h-10 px-6 text-sm font-medium bg-(--signal) text-(--signal-foreground) transition-colors hover:bg-(--signal)/90 mt-2"
                 >
                   {siteConfig.cta.label}
