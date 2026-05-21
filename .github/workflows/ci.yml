@@ -16,14 +16,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 22 EN PREMIER — pnpm v11 requiert Node >= 22.13
+      # setup-node doit précéder pnpm/action-setup, sinon pnpm tourne sous Node 20 (défaut runner)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - uses: pnpm/action-setup@v4
         with:
           version: latest
 
-      - uses: actions/setup-node@v4
+      - name: Get pnpm store directory
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
         with:
-          node-version: '22'
-          cache: 'pnpm'
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
