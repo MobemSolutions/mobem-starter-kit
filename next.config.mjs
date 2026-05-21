@@ -16,6 +16,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.sanity.io' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
+      // Doctolib — bouton officiel (si intégration Doctolib)
+      { protocol: 'https', hostname: 'pro.doctolib.fr' },
     ],
   },
   async headers() {
@@ -41,8 +43,11 @@ const nextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self'",
-              // frame-src : Google Maps embed obligatoire sur sites artisans
+              // frame-src : Google Maps + Calendly si /rdv (décommenter si besoin)
               "frame-src https://maps.google.com https://www.google.com",
+              // Calendly — décommenter si intégration widget inline ou popup :
+              // "frame-src https://maps.google.com https://www.google.com https://calendly.com",
+              // script-src + style-src + connect-src à étendre aussi (voir SKILL.md § CALENDLY)
               "frame-ancestors 'none'",
             ].join('; '),
           },

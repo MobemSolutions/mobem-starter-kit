@@ -156,7 +156,12 @@ const onSubmit = async (data: FormData) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  setStatus(res.ok ? 'success' : 'error')
+  if (res.ok) {
+    setStatus('success')
+    window.plausible?.('Formulaire soumis') // Plausible custom event
+  } else {
+    setStatus('error')
+  }
 }
 ```
 

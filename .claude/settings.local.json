@@ -15,9 +15,11 @@
       "Bash(Select-Object Name)",
       "Bash(gh api *)",
       "WebFetch(domain:api.github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "figma"
   ],
@@ -33,6 +35,5 @@
         ]
       }
     ]
-  },
-  "enableAllProjectMcpServers": true
+  }
 }

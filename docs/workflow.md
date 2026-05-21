@@ -6,29 +6,43 @@
 
 ## Vue d'ensemble
 
-```
-Brief client
-    ↓
-[Vous] Constituer docs/context/          ← étape humaine, bloquante
-    ↓
-/strategy   → docs/product.md validé     ← session CLI #1
-    ↓
-/design     → docs/design.md validé      ← session CLI #2
-    ↓
-/build      → composant par composant    ← session CLI #3+
-            → OG image · sitemap · robots · FAQ schema (systématiques)
-    ↓
-/contact-setup → route API + Resend + honeypot   ← session CLI #3.5
-    ↓
-/impeccable audit  → corrections
-    ↓
-/legal      → pages légales adaptées au statut
-    ↓
-/impeccable polish → passe finale
-    ↓
-[Vous] PageSpeed Insights sur URL prod · Plausible vérifié
-    ↓
-[launch-runbook]   → mise en ligne
+```mermaid
+flowchart TD
+    A([Brief client]) --> B
+
+    B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
+    B --> C
+
+    C["/strategy — Phase 1<br/>product.md · arborescence · skill/section"]
+    C --> D
+
+    D["/design — Phase 2<br/>design.md · globals.css · valider pnpm dev"]
+    D --> E
+
+    E["/build — Phase 3<br/>sections · OG · sitemap · FloatingContact · FAQ<br/>TrustBadges · RDV · Schema.org étendu"]
+    E --> F
+
+    F["/contact-setup — Phase 3.5<br/>Resend · Zod · honeypot · 2 emails"]
+    F --> CMSQ
+
+    CMSQ{"Contenu<br/>éditable ?"}
+    CMSQ -->|non| G
+    CMSQ -->|oui| CMS
+
+    CMS["/cms — Phase 3.6<br/>Sanity · GROQ · Studio client"]
+    CMS --> G
+
+    G(["✋ Validation client — optionnel<br/>git push review/... → Vercel → Ruttl<br/>retours → reprendre /build"])
+    G --> H
+
+    H["Phase 4–4.5 — /impeccable · /legal<br/>PageSpeed · a11y · SEO/GEO · légal<br/>score < 90 → reprendre /build"]
+    H --> QA
+
+    QA["Phase 4.7 — /qa<br/>Tests navigateur · mobile 375px<br/>bug bloquant → reprendre /build"]
+    QA --> I
+
+    I["Phase 5 — launch-runbook<br/>DNS · GBP · surveillance J+1/J+3/J+7"]
+    I --> J([✅ Site en ligne])
 ```
 
 **Règle absolue : ne jamais passer à l'étape suivante sans valider la précédente.**
@@ -97,7 +111,7 @@ Relisez `docs/product.md` et vérifiez :
 
 > À utiliser si le client a besoin de voir un visuel avant de valider la direction artistique.
 
-### Option A — Vercel Preview + MarkUp.io *(recommandé)*
+### Option A — Vercel Preview + Ruttl *(recommandé)*
 
 Vercel crée automatiquement une URL de preview pour chaque branche Git. Pas d'export manuel — les Server Components, routes API et Server Actions fonctionnent normalement.
 
@@ -109,11 +123,12 @@ git push origin review/[section-ou-phase]
 ```
 
 1. Copier l'URL de preview Vercel (visible dans le dashboard ou dans le commentaire GitHub/PR)
-2. Ouvrir [markup.io](https://markup.io) → coller l'URL → partager le lien de review au client
+2. Ouvrir [ruttl.com](https://ruttl.com) → "New Project" → coller l'URL → partager le lien au client
 3. Le client clique sur n'importe quel élément pour laisser un commentaire épinglé — sans compte requis
 4. Intégrer les retours, pousser sur la même branche → la preview se met à jour automatiquement
 
 **Prérequis :** projet connecté à Vercel (`vercel link` ou import depuis le dashboard Vercel).
+**Plan gratuit Ruttl :** 1 projet actif à la fois. Archiver le projet précédent avant d'en créer un nouveau.
 
 ### Option B — Images de référence
 **Skills :** `imagegen-frontend-web` · `image-to-code`
@@ -140,17 +155,19 @@ Utile pour aligner le client visuellement dès la Phase 2, avant d'écrire du co
 - Présente le résumé structuré (palettes + typographie + radius)
 - Attend votre validation explicite avant d'écrire un seul fichier
 
-### Skills d'esthétique — choisir UN par projet
+### Skills d'esthétique — 1 skill par type de section
 
-Ces skills définissent l'orientation visuelle. Les activer **avant** `/design` pour orienter la direction artistique. Choisir celui qui correspond le mieux au secteur du client.
+`/design` propose un mapping skill → type de section. Ne pas choisir un seul skill pour tout le projet si les sections ont des natures différentes.
 
-| Skill | Esthétique | Adapté à |
-|-------|-----------|----------|
+| Skill | Esthétique | Idéal pour |
+|-------|-----------|------------|
 | `minimalist-ui` | Éditorial, monochrome chaud, typographique | Artisans premium, consultants, cabinets |
-| `high-end-visual-design` | Agence 150k$+, bento asymétrique, micro-haptics | Marques premium, hôtellerie, luxe accessible |
-| `gpt-taste` | Awwwards, GSAP, éditorial large, bento sans gap | Sites vitrines ambitieux, agences créatives |
-| `industrial-brutalist-ui` | Brutalism industriel, grille suisse, CRT | Industrie, BTP, artisans techniques |
-| `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Si le client valide via Stitch plutôt que Figma |
+| `high-end-visual-design` | Agence, bento asymétrique, micro-haptics | Marques premium, hôtellerie, luxe accessible |
+| `gpt-taste` | Awwwards, éditorial large, bento sans gap | Pages d'impact visuel (hero, about, CTA) |
+| `industrial-brutalist-ui` | Brutalism industriel, grille suisse | Pages data-dense (tarifs, prestations, listes) · BTP |
+| `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Validation DA via Google Stitch |
+
+**Règle :** un seul skill par section — jamais deux skills sur la même section. Mélanger gpt-taste (pages visuelles) + industrial-brutalist (pages data-dense) est autorisé et souvent souhaitable.
 
 **Activation :** "Lis `.agents/skills/[nom-du-skill]/` avant de proposer la direction artistique"
 
@@ -197,13 +214,31 @@ Pour chaque composant :
 **Un composant = un commit.** Ne jamais accumuler plusieurs composants dans la même session
 sans commit intermédiaire — vous perdez la traçabilité et le contrôle.
 
+### Skill par section — appliquer le tableau de /strategy
+
+`/strategy` produit un tableau "Skill par section" (hero · services · prestations · contact…). Avant de coder chaque section, vérifier quel skill y est associé et l'activer si ce n'est pas déjà fait dans la session.
+
+```
+Exemple de tableau produit par /strategy :
+┌─────────────┬──────────────────────────┐
+│ Section     │ Skill                    │
+├─────────────┼──────────────────────────┤
+│ Hero, About │ gpt-taste                │
+│ Services    │ gpt-taste                │
+│ Prestations │ industrial-brutalist-ui  │
+│ Contact     │ gpt-taste                │
+└─────────────┴──────────────────────────┘
+```
+
+Si le tableau est absent de `docs/product.md` : demander à Claude de le produire avant de commencer le `/build`.
+
 ### Skills utiles en Phase 3
 
 | Skill | Quand l'utiliser | Activation |
 |-------|-----------------|------------|
 | `full-output-enforcement` | Toujours — prévient la troncature et les placeholders dans le code généré | Activer en début de session `/build` |
-| `image-to-code` | Si vous voulez générer une image de référence avant de coder chaque section | "Lis `.agents/skills/image-to-code/` avant de coder cette section" |
-| `redesign-existing-projects` | Si le client a déjà un site à refondre — audite et cible les upgrades sans tout réécrire | "Lis `.agents/skills/redesign-existing-projects/`" |
+| `image-to-code` | Générer une image de référence avant de coder chaque section | "Lis `.agents/skills/image-to-code/` avant de coder cette section" |
+| `redesign-existing-projects` | Client avec un site existant à refondre | "Lis `.agents/skills/redesign-existing-projects/`" |
 
 ### Après chaque page complète
 ```bash
@@ -246,6 +281,32 @@ Dans Claude Code :
 
 ---
 
+## Phase 3.6 — CMS (si contenu éditable par le client)
+
+**Commande :** `/cms`
+**Durée estimée :** 30–45 min
+**Livrable :** galerie réalisations connectée à Sanity · Studio invité au client
+
+À lancer **uniquement** si le client veut mettre à jour son contenu sans faire appel au développeur (galerie de chantiers, blog de conseils, liste de services avec tarifs).
+
+Ne pas lancer sur un site vitrine entièrement statique — le CMS ajoute une dépendance externe inutile si le contenu ne change jamais.
+
+### Ce que fait la commande
+
+1. Configure `@sanity/client` + `next-sanity` avec les variables d'environnement sécurisées
+2. Crée les schémas Sanity adaptés au secteur (réalisations · services · témoignages · articles selon le besoin)
+3. Remplace les données statiques dans les composants par des requêtes GROQ typées (Server Components)
+4. Déploie le Studio Sanity hébergé → invite le client avec le rôle Editor
+
+### Votre validation
+
+- [ ] `SANITY_API_TOKEN` dans `.env.local` (jamais `NEXT_PUBLIC_`)
+- [ ] Au moins 1 contenu créé dans le Studio → visible sur le site
+- [ ] Client invité sur sanity.io avec le rôle Editor (pas Admin)
+- [ ] `revalidate: 3600` configuré sur les requêtes GROQ
+
+---
+
 ## Phase 4 — Audit & livraison
 
 **Commandes :** `/impeccable audit` · `/impeccable polish` · `/impeccable harden`
@@ -260,6 +321,7 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 | `performance-optimization` | Core Web Vitals (LCP, INP, CLS), bundle size, assets | "Lis `.agents/skills/performance-optimization/` et audite le site" |
 | `security-baseline` | HTTPS, security headers, CSP, gestion des secrets | "Lis `.agents/skills/security-baseline/` et audite le repo" |
 | `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
+| `ui-ux-pro-max` | UX complet — parcours utilisateur, formulaires, navigation, feedback states, mobile · **Outil d'audit uniquement, pas de génération visuelle** | "Lis `.agents/skills/ui-ux-pro-max/` et audite [page]" |
 
 ### Checklist technique avant livraison
 
@@ -355,14 +417,89 @@ hiérarchie visuelle, micro-interactions.
 
 ---
 
+## Phase 4.7 — Tests navigateur
+
+**Commande :** `/qa`
+**Durée estimée :** 20–30 min
+**Livrable :** checklist de test remplie + rapport QA
+
+À lancer sur l'URL de preview Vercel (pas en `pnpm dev`) — les comportements prod et dev diffèrent, les emails Resend ne partent qu'en prod.
+
+### Ce que fait la commande
+
+1. Lit `docs/product.md` pour extraire les pages, CTAs exacts, numéro de téléphone et email
+2. Génère une checklist de test **spécifique au site** — pas une liste générique
+3. Guide le test du parcours visiteur complet :
+   - Parcours critique : chaque page, chaque CTA avec son texte exact et sa destination
+   - Formulaire de contact : soumission réelle → email reçu côté pro ET côté visiteur
+   - Liens : `tel:`, `mailto:`, footer légal, aucun 404
+   - Mobile 375px : overflow, menu burger, formulaire au doigt
+   - Console navigateur : zéro erreur rouge
+   - Dark mode (si implémenté) : tous les tokens résolus
+
+### Format des bugs trouvés
+
+```
+❌ [Page / Section] — [description du problème]
+   Reproduction : [étapes exactes]
+   Priorité : BLOQUANT | Majeur | Mineur
+```
+
+Les bugs **Mineurs** sont documentés dans `docs/feedback.md` pour après livraison.
+Les bugs **BLOQUANTS** doivent être corrigés, poussés sur la branche review, et retestés avant de continuer.
+
+### Votre validation
+
+- [ ] Zéro bug BLOQUANT ouvert
+- [ ] Formulaire testé sur l'URL de prod — 2 emails reçus (pro + visiteur)
+- [ ] Mobile 375px — pas d'overflow horizontal
+- [ ] Console navigateur — zéro erreur rouge
+
+**STOP. Ne pas passer à la mise en ligne tant qu'un bug BLOQUANT est ouvert.**
+
+---
+
 ## Phase 5 — Mise en ligne
 
 **Skill :** `launch-runbook`
+**Durée estimée :** 30–60 min
 
-Planifie et exécute la mise en production : vérifications pré-lancement, bascule DNS,
-monitoring post-lancement, critères de rollback.
+Planifie et exécute la mise en production : vérifications pré-lancement, bascule DNS, monitoring post-lancement, critères de rollback.
 
 **Activation :** "Lis `.agents/skills/launch-runbook/` et génère le runbook de mise en ligne pour ce projet"
+
+### Actions spécifiques sites artisans — à inclure dans le runbook
+
+**Google Business Profile (obligatoire pour le local pack) :**
+- Vérifier que le profil GBP existe et est revendiqué par le client
+- Mettre à jour l'URL du site dans le GBP avec le nouveau domaine
+- Vérifier la cohérence NAP (Nom · Adresse · Téléphone) entre GBP, site et schema JSON-LD
+- Ajouter les photos récentes si absentes (photo de l'artisan au travail, véhicule, réalisations)
+
+Un artisan sans GBP vérifié n'apparaît pas dans le local pack Google — même avec un site parfait.
+
+### Fenêtre de surveillance — J+1 à J+7
+
+Les 7 premiers jours après la mise en ligne sont critiques : les caches se remplissent, l'indexation commence, et les premiers vrais visiteurs testent le formulaire. Ne pas fermer ce projet avant J+7.
+
+**J+1 — Console et erreurs**
+- [ ] Ouvrir le site sur l'URL de production, vérifier la console (F12) : zéro erreur rouge
+- [ ] Vérifier les logs Vercel (Dashboard → Deployments → Functions) : aucune erreur 500 sur `/api/contact`
+- [ ] Si `SENTRY_DSN` configuré : ouvrir le dashboard Sentry et confirmer que le projet reçoit des événements (au moins le premier chargement de page)
+- [ ] Tester le formulaire de contact une dernière fois depuis un appareil mobile réel (pas DevTools)
+
+**J+3 — Indexation**
+- [ ] Google Search Console : soumettre le sitemap (`/sitemap.xml`) si ce n'est pas encore fait
+- [ ] Vérifier que la page d'accueil est en cours d'indexation (Inspection d'URL → "URL est sur Google")
+- [ ] Vérifier la cohérence NAP entre le site, le schema JSON-LD, et la fiche GBP
+
+**J+7 — Métriques et bilan**
+- [ ] Plausible : au moins quelques pages vues remontent sur le dashboard (confirme que le script est actif en prod)
+- [ ] PageSpeed Insights sur l'URL de prod — comparer avec les scores pré-lancement
+- [ ] Confirmer que le client a bien reçu des leads via le formulaire (ou signaler si aucun visiteur)
+- [ ] Documenter les bugs mineurs restants dans `docs/feedback.md` si ce n'est pas déjà fait
+- [ ] Archiver le projet Ruttl si une session de commentaires client était active
+- [ ] Compléter et envoyer `docs/handoff.md` au client (accès Plausible, Sanity Studio si CMS, GBP, contact urgence)
 
 ---
 
@@ -378,12 +515,14 @@ monitoring post-lancement, critères de rollback.
 | `/contact-setup` | 3.5 | Route API contact + Resend + honeypot + emails + états UI |
 | `/impeccable audit [page]` | 3–4 | Audit technique post-génération — à lancer après chaque page |
 | `/impeccable polish` | 4 | Passe finale avant livraison |
+| `/qa` | 4.7 | Tests navigateur du parcours visiteur — génère la checklist depuis docs/product.md, à lancer sur l'URL Vercel |
 
 ### Optionnelles (selon le projet)
 
 | Commande | Quand l'utiliser |
 |----------|-----------------|
-| `/figma` | Implémentation depuis specs Figma pendant `/build` si le client fournit des maquettes Figma. La validation client se fait désormais via export HTML + outil de commentaires en ligne (voir Phase 1.5). |
+| `/cms` | 3.6 | Sanity CMS — si le client veut mettre à jour son contenu sans développeur (galerie réalisations, blog, services) |
+| `/figma` | Implémentation depuis specs Figma si le client fournit des maquettes existantes. La validation client se fait via Vercel Preview + Ruttl (voir Phase 1.5 Option A). |
 | `/impeccable shape [section]` | Sections complexes (landing multi-blocs, formulaire avancé) — planifie l'UX avant de coder. Inutile sur un site vitrine simple. |
 | `/impeccable critique [page]` | Second regard design si `/impeccable audit` ne suffit pas. |
 | `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
@@ -417,6 +556,7 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile iOS/Android (si PWA ou app) |
 | `legal-pages` | 4.5 | Pages légales françaises — mentions légales, confidentialité, CGV |
+| `ui-ux-pro-max` | 4 | Audit UX — parcours utilisateur, formulaires, navigation, feedback states, mobile · outil d'audit uniquement |
 | `skill-creation-walkthrough` | meta | Créer un nouveau skill Claude |
 
 ---

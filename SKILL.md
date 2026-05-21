@@ -293,6 +293,214 @@ Pré-requis CSP dans `next.config.mjs` : `frame-src https://maps.google.com http
 
 ---
 
+## PRISE DE RDV — CALENDLY + DOCTOLIB
+
+### Quand utiliser quoi
+
+| Secteur | Solution |
+|---------|----------|
+| Notaire, avocat, RGE, architecte d'intérieur, expert-comptable | Calendly |
+| Médecin, kiné, dentiste, clinique esthétique | Doctolib (priorité) ou Calendly |
+| Restaurant, hôtel | TheFork / OpenTable (embed ou lien) |
+
+Renseigner `siteConfig.reservationUrl` pour alimenter le schema `potentialAction` (ReserveAction).
+
+### Calendly — intégration Next.js
+
+Deux modes : **popup** (bouton CTA dans le hero ou contact) ou **inline** (page `/rdv` dédiée).
+
+**Bouton popup :**
+```tsx
+'use client'
+
+import Script from 'next/script'
+import { siteConfig } from '@/lib/siteConfig'
+
+export function CalendlyButton({ label = 'Prendre rendez-vous' }: { label?: string }) {
+  const url = siteConfig.reservationUrl
+  if (!url) return null
+
+  return (
+    <>
+      <button
+        onClick={() => {
+          // @ts-ignore — Calendly injecté via Script
+          window.Calendly?.initPopupWidget({ url })
+          window.plausible?.('RDV Calendly')
+        }}
+        className="inline-flex items-center gap-2 rounded bg-(--signal) px-6 py-3 font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      >
+        {label}
+      </button>
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="lazyOnload"
+      />
+      {/* Styles Calendly — optionnel, personnalisables */}
+      <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+    </>
+  )
+}
+```
+
+**Widget inline (`src/app/rdv/page.tsx`) :**
+```tsx
+'use client'
+
+import Script from 'next/script'
+import { siteConfig } from '@/lib/siteConfig'
+
+export default function PageRdv() {
+  return (
+    <>
+      <div
+        className="calendly-inline-widget min-h-[700px] w-full"
+        data-url={siteConfig.reservationUrl}
+      />
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="afterInteractive"
+      />
+    </>
+  )
+}
+```
+
+**CSP requis dans `next.config.mjs` si Calendly activé :**
+```javascript
+// Ajouter à script-src :   https://assets.calendly.com
+// Ajouter à frame-src :    https://calendly.com
+// Ajouter à style-src :    https://assets.calendly.com
+// Ajouter à connect-src :  https://calendly.com
+```
+
+### Doctolib — bouton officiel
+
+```tsx
+import Image from 'next/image'
+import { siteConfig } from '@/lib/siteConfig'
+
+export function DoctolibButton() {
+  const url = siteConfig.reservationUrl
+  if (!url) return null
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => window.plausible?.('RDV Doctolib')}
+      aria-label="Prendre rendez-vous sur Doctolib"
+    >
+      <Image
+        src="https://pro.doctolib.fr/external_button/fr_button_v1.png"
+        alt="Prendre RDV sur Doctolib"
+        width={267}
+        height={52}
+        unoptimized
+      />
+    </a>
+  )
+}
+```
+
+`pro.doctolib.fr` est déjà autorisé via `img-src https:` dans la CSP. Aucune modification requise.
+
+Règles :
+- **Un seul CTA RDV par page** — ne pas mélanger Calendly + FloatingContact + formulaire sur la même page
+- Le bouton RDV remplace ou complète le formulaire de contact — ne pas supprimer le formulaire (fallback important)
+- Traquer avec `window.plausible?.('RDV [Outil]')` pour mesurer la conversion
+
+---
+
+## TRUST BADGES — CERTIFICATIONS ET LABELS
+
+Composant systématique pour tous les clients avec certifications professionnelles (RGE, RPPS, Barreau, labels qualité).
+Alimenté par `siteConfig.certifications` — vide si tableau vide.
+
+### Placement recommandé
+
+- **Header** : badges compacts à côté du logo (variant `compact`)
+- **Footer** : badges en ligne avant les liens légaux (variant `row`)
+- **Section héro** : sous le titre, avant le CTA (variant `row`)
+- **Page /a-propos** : avec logos officiels téléchargés dans `public/badges/`
+
+### Pattern composant
+
+`src/components/ui/trust-badges.tsx`
+
+```tsx
+import { siteConfig } from '@/lib/siteConfig'
+import Image from 'next/image'
+import { cn } from '@/lib/utils'
+
+// Mapping slug → label lisible
+// Logos officiels : télécharger dans public/badges/[slug].png
+const CERT_LABELS: Record<string, string> = {
+  'rge':         'Reconnu Garant de l\'Environnement',
+  'qualipac':    'QualiPAC',
+  'qualibat':    'RGE Qualibat',
+  'qualisol':    'QualiSOL',
+  'qualifelec':  'QualiＦELEC',
+  'qualit-enr':  'Qualit\'EnR',
+}
+
+type Props = {
+  variant?: 'row' | 'compact'
+  className?: string
+}
+
+export function TrustBadges({ variant = 'row', className }: Props) {
+  if (!siteConfig.certifications.length) return null
+
+  return (
+    <ul
+      role="list"
+      aria-label="Certifications professionnelles"
+      className={cn('flex flex-wrap items-center', variant === 'row' ? 'gap-4' : 'gap-2', className)}
+    >
+      {siteConfig.certifications.map(cert => {
+        const slug  = cert.toLowerCase().replace(/[^a-z0-9]/g, '-')
+        const label = CERT_LABELS[slug] ?? cert
+
+        return (
+          <li key={cert}>
+            {/* Si le logo existe dans public/badges/ → afficher l'image, sinon le texte */}
+            <span
+              className={cn(
+                'inline-flex items-center border border-(--border) font-mono uppercase tracking-wide text-(--muted-foreground)',
+                variant === 'row'     ? 'px-3 py-1 text-xs'  : 'px-2 py-0.5 text-[10px]'
+              )}
+              title={label}
+            >
+              {cert}
+            </span>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+```
+
+### Logos officiels — où les trouver
+
+| Certification | Source |
+|--------------|--------|
+| RGE (générique) | [ademe.fr/logos-rge](https://www.ademe.fr) — télécharger et placer dans `public/badges/rge.png` |
+| QualiPAC | qualit-enr.org |
+| Qualibat | qualibat.com |
+| RPPS (médecins) | Ne pas afficher le logo — afficher le numéro en texte : `certifications: ['RPPS: 10XXXXXXXXX']` |
+| Barreau | Pas de logo standard — afficher : `certifications: ['Barreau de Paris']` |
+| Doctolib Verified | Badge automatique sur le profil Doctolib — ne pas reproduire sur le site |
+
+Règles :
+- Utiliser uniquement les logos officiels téléchargés sur les sites des organismes — jamais reconstruits
+- Les numéros d'identification (RPPS, SIRET) s'affichent en texte dans le badge, pas comme logos
+- Maximum 4–5 badges visibles — au-delà, utiliser une section "Certifications" dédiée avec description
+
+---
+
 ## AI TELLS — PATTERNS INTERDITS
 
 ### Visuel & CSS
@@ -326,8 +534,182 @@ Pré-requis CSP dans `next.config.mjs` : `frame-src https://maps.google.com http
 
 ---
 
+## PLAUSIBLE — TRACKING CUSTOM EVENTS
+
+Déclarer le type global **une seule fois** dans le projet :
+
+`src/types/plausible.d.ts`
+```typescript
+declare global {
+  interface Window {
+    plausible?: (event: string, options?: { props?: Record<string, string> }) => void
+  }
+}
+export {}
+```
+
+### Événements standards — à tracker sur chaque site artisan
+
+```typescript
+// Soumission formulaire (dans contact.tsx, après setStatus('success'))
+window.plausible?.('Formulaire soumis')
+
+// Clic téléphone (sur tout <a href="tel:...">)
+onClick={() => window.plausible?.('Appel téléphonique')}
+
+// Clic email (sur tout <a href="mailto:...">)
+onClick={() => window.plausible?.('Email cliqué')}
+
+// CTA principal (hero, section services)
+onClick={() => window.plausible?.('CTA cliqué', { props: { label: 'Demander un devis' } })}
+
+// WhatsApp (FloatingContact)
+onClick={() => window.plausible?.('WhatsApp cliqué')}
+```
+
+Règles :
+- `window.plausible?.()` (optional chaining) — silencieux si Plausible n'est pas chargé (dev local, AdBlock)
+- Noms d'événements en français avec majuscule — cohérent entre tous les projets
+- Ne pas tracker les interactions sans valeur business (hover, scroll depth, etc.)
+
+---
+
+## FLOATING CONTACT — CTA FIXE WHATSAPP + TÉL
+
+Systématique sur tous les sites artisans. Visible sur toutes les pages.
+Le numéro WhatsApp vient de `siteConfig.social.whatsapp` — vide = bouton absent.
+
+`src/components/ui/floating-contact.tsx`
+```tsx
+'use client'
+
+import { Phone } from 'lucide-react'
+import { siteConfig } from '@/lib/siteConfig'
+
+export function FloatingContact() {
+  const tel = siteConfig.contact.phone
+  const wa  = siteConfig.social.whatsapp
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-center">
+      {wa && (
+        <a
+          href={`https://wa.me/${wa}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contacter sur WhatsApp"
+          onClick={() => window.plausible?.('WhatsApp cliqué')}
+          className="flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        >
+          <svg viewBox="0 0 24 24" className="size-7 fill-current" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
+      )}
+      <a
+        href={`tel:${tel}`}
+        aria-label={`Appeler le ${siteConfig.contact.phoneDisplay}`}
+        onClick={() => window.plausible?.('Appel téléphonique')}
+        className="flex size-14 items-center justify-center rounded-full bg-(--signal) text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+      >
+        <Phone className="size-6" aria-hidden="true" />
+      </a>
+    </div>
+  )
+}
+```
+
+Ajouter dans `src/app/layout.tsx` à l'intérieur du `<ThemeProvider>`, après `{children}` :
+```tsx
+import { FloatingContact } from '@/components/ui/floating-contact'
+// ...
+<FloatingContact />
+```
+
+Règles :
+- `size-14` (56px) — assez grand pour le tap mobile
+- `z-50` — au-dessus de tout contenu mais sous les modals (`z-[100]`)
+- Le bouton WhatsApp est conditionnellement absent si `siteConfig.social.whatsapp` est vide
+- Couleur WhatsApp : `#25D366` (couleur officielle de la marque — exception au système de couleurs)
+- Couleur tél : `--signal` — cohérent avec les CTAs du site
+
+---
+
+## GALERIE RÉALISATIONS — LIGHTBOX
+
+Package recommandé : `yet-another-react-lightbox` (YARL) — 5 KB gzippé, accessible, compatible next/image.
+
+```bash
+pnpm add yet-another-react-lightbox
+pnpm audit
+```
+
+Pattern galerie + lightbox :
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import Lightbox from 'yet-another-react-lightbox'
+import 'yet-another-react-lightbox/styles.css'
+
+type Realisation = {
+  src: string
+  width: number
+  height: number
+  alt: string
+}
+
+export function RealisationsGallery({ items }: { items: Realisation[] }) {
+  const [open, setOpen]   = useState(false)
+  const [index, setIndex] = useState(0)
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-px md:grid-cols-3" style={{ background: 'var(--border)' }}>
+        {items.map((item, i) => (
+          <button
+            key={i}
+            onClick={() => { setIndex(i); setOpen(true) }}
+            className="group relative aspect-[4/3] overflow-hidden"
+            style={{ background: 'var(--background)' }}
+            aria-label={`Voir la réalisation : ${item.alt}`}
+          >
+            <Image
+              src={item.src}
+              alt={item.alt}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          </button>
+        ))}
+      </div>
+
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        index={index}
+        slides={items}
+      />
+    </>
+  )
+}
+```
+
+Règles :
+- `aspect-[4/3]` sur les vignettes — ratio cohérent, pas d'images étirées
+- `fill` + `sizes` sur next/image — pas de dimensions fixes (responsive)
+- La grille compartimentée (`gap-px` + background parent) donne les dividers razor-thin sans CSS de bordure
+- `group-hover:scale-105` sur l'image, pas sur le bouton (évite le layout shift)
+- Toujours inclure le plugin `Thumbnails` si plus de 10 photos : `import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails'`
+
+---
+
 ## CHECKLIST AVANT LIVRAISON
 
+- [ ] Skip-to-content link présent dans `layout.tsx` (`href="#main-content"`) + `id="main-content"` sur le `<main>` de chaque page
 - [ ] Mobile 375px testé — pas d'overflow horizontal
 - [ ] Dark mode testé — tous les tokens résolus en `.dark`
 - [ ] Toutes les animations ont `viewport={{ once: true }}` si déclenchées au scroll

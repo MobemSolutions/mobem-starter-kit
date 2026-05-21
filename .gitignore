@@ -55,3 +55,6 @@ docs/context/*
 # Lighthouse reports
 lighthouse.json
 lighthouse-report.html
+
+# Extras
+docs/img/

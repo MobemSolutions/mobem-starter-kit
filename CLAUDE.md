@@ -111,11 +111,11 @@ pas le rôle, (4) un package npm n'existe pas ou semble suspect.
 Pour chaque finding, indique la criticité et le fix exact.
 ```
 
-## Validation client — Vercel Preview + MarkUp.io
+## Validation client — Vercel Preview + Ruttl
 
-La validation client se fait via **Vercel Preview Deployments + MarkUp.io**. Pas de Figma MCP dans le workflow standard, pas de `output: 'export'` (incompatible avec les Server Components et routes API).
+La validation client se fait via **Vercel Preview Deployments + Ruttl** (ruttl.com, plan gratuit 1 projet actif). Pas de Figma MCP dans le workflow standard, pas de `output: 'export'` (incompatible avec les Server Components et routes API).
 
-Workflow : `git push origin review/[branche]` → URL preview Vercel auto → coller dans MarkUp.io → lien client sans compte requis.
+Workflow : `git push origin review/[branche]` → URL preview Vercel auto → coller dans Ruttl → lien client sans compte requis. Archiver le projet Ruttl précédent avant d'en créer un nouveau (limite plan gratuit).
 
 Le skill `/figma` reste disponible uniquement si le client fournit des maquettes Figma existantes à implémenter (design-to-code). Dans ce cas : utiliser le mode OAuth `mcp__claude_ai_Figma__*` (compte Figma lié dans Intégrations claude.ai). Vérifier le compte actif avec `mcp__claude_ai_Figma__whoami` en début de session.
 
@@ -152,7 +152,8 @@ Le skill `/figma` reste disponible uniquement si le client fournit des maquettes
 | `launch-runbook` | 5 | Procédures de mise en production |
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |
 | `imagegen-frontend-mobile` | 2–3 | Écrans app mobile (si PWA ou app native) |
-| `ui-ux-pro-max` | 4 | Audit UX/accessibilité — 10 catégories de règles (React Native orienté). **Outil d'audit, pas de génération visuelle.** Ne pas utiliser en Phase 2–3. |
+| `ui-ux-pro-max` | 4 | Audit UX/accessibilité — 10 catégories de règles. **Outil d'audit uniquement, pas de génération visuelle.** Ne pas utiliser en Phase 2–3. |
+| `/cms` | 3.6 | Intégration Sanity CMS — si le client veut éditer son contenu sans développeur (galerie, blog, services) |
 
 **En cas de conflit entre les skills :**
 - `SKILL.md` Mobem prime pour les conventions techniques (grille, motion, tokens CSS)

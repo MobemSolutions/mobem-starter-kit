@@ -135,6 +135,7 @@ Avant de valider chaque composant :
 - [ ] Animation below-fold : `whileInView` avec `once: true`
 - [ ] Animation hero : `animate=` au montage
 - [ ] `useReducedMotion()` présent dans chaque composant animé
+- [ ] `id="main-content"` sur le `<main>` de chaque page (cible du skip link dans layout.tsx)
 - [ ] Hero : traitement visuel cohérent avec le brief (image si le secteur l'implique, typographique si choix assumé)
 - [ ] Contenu réel — aucun placeholder générique
 - [ ] Mobile 375px : pas d'overflow horizontal
@@ -144,7 +145,7 @@ Avant de valider chaque composant :
 
 ## Fichiers systématiques — à créer avant les sections
 
-Ces 4 fichiers sont toujours créés, quel que soit le projet. Infrastructure SEO/partage de base.
+Ces 7 fichiers + 1 composant sont toujours créés, quel que soit le projet. Infrastructure SEO/partage de base + conversion + accessibilité.
 
 ### OG Image — `src/app/opengraph-image.tsx`
 
@@ -176,6 +177,72 @@ export default function OgImage() {
 ```
 
 Adapter les couleurs et le contenu aux tokens de `docs/design.md`.
+
+### Favicon — `src/app/icon.tsx`
+
+Génère le favicon (32×32) dynamiquement depuis `siteConfig.name`. Sans ce fichier, le favicon reste celui du template Next.js par défaut.
+
+```tsx
+import { ImageResponse } from 'next/og'
+import { siteConfig } from '@/lib/siteConfig'
+
+export const runtime = 'edge'
+export const size = { width: 32, height: 32 }
+export const contentType = 'image/png'
+
+export default function Icon() {
+  const initials = siteConfig.name
+    .split(' ')
+    .filter(w => !['&','et','de','du','la','le','les'].includes(w.toLowerCase()))
+    .slice(0, 2).map(w => w[0]).join('').toUpperCase().slice(0, 2)
+
+  return new ImageResponse(
+    <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center',
+      justifyContent:'center', background:'oklch(0.18 0.02 55)', // TODO: tokens design
+      color:'oklch(0.97 0.003 80)', fontSize: initials.length === 1 ? 18 : 14, fontWeight:700 }}>
+      {initials}
+    </div>,
+    { ...size }
+  )
+}
+```
+
+**Après `/design` :** mettre à jour les couleurs background et color pour correspondre aux tokens OKLCH du projet.
+
+### Loading — `src/app/loading.tsx`
+
+Skeleton affiché pendant les Suspense boundaries (navigation, streaming SSR). Complète le trio avec `not-found.tsx` et `error.tsx`.
+
+Utilise `animate-pulse` + tokens `--secondary` et `--border`. Adapter la structure au layout réel du site (nb de colonnes, hauteur hero, etc.).
+
+### FloatingContact — `src/components/ui/floating-contact.tsx`
+
+CTA fixe WhatsApp + téléphone, visible sur toutes les pages. Systématique sur les sites artisans — conversion directe sans formulaire.
+
+Voir le pattern complet dans `SKILL.md` § "FLOATING CONTACT".
+
+Ajouter dans `src/app/layout.tsx` après `{children}` :
+```tsx
+import { FloatingContact } from '@/components/ui/floating-contact'
+// ...
+<FloatingContact />
+```
+
+Prérequis : `siteConfig.contact.phone` renseigné. `siteConfig.social.whatsapp` optionnel — le bouton WhatsApp est absent si vide.
+Déclarer le type Plausible : créer `src/types/plausible.d.ts` (voir `SKILL.md` § "PLAUSIBLE").
+
+### Plausible — `src/types/plausible.d.ts`
+
+Déclarer le type global une seule fois pour éviter les erreurs TypeScript sur `window.plausible` :
+
+```typescript
+declare global {
+  interface Window {
+    plausible?: (event: string, options?: { props?: Record<string, string> }) => void
+  }
+}
+export {}
+```
 
 ### Sitemap — `src/app/sitemap.ts`
 
@@ -231,10 +298,45 @@ export const metadata: Metadata = {
 
 ### LocalBusiness (page d'accueil)
 
+Utiliser le type le plus précis disponible — meilleurs rich results que le type générique `LocalBusiness` :
+
+| Secteur | `@type` Schema.org |
+|---------|-------------------|
+| **Artisans BTP** | |
+| Plombier, chauffagiste | `Plumber` |
+| Électricien | `Electrician` |
+| Installateur RGE (solaire, PAC, isolation) | `HVACBusiness` ou `Electrician` + `certifications: ['RGE']` |
+| Maçon, entrepreneur BTP | `HomeAndConstructionBusiness` |
+| Couvreur | `RoofingContractor` |
+| Menuisier, charpentier | `Carpenter` |
+| Peintre bâtiment | `HousePainter` |
+| Serrurier | `Locksmith` |
+| Jardinier, paysagiste | `LandscapeService` |
+| **Professions libérales** | |
+| Notaire | `Notary` |
+| Avocat, juriste | `Attorney` |
+| Cabinet juridique | `LegalService` |
+| Médecin généraliste ou spécialiste | `Physician` |
+| Kinésithérapeute | `PhysicalTherapist` |
+| Dentiste | `Dentist` |
+| Clinique esthétique médicale | `HealthAndBeautyBusiness` |
+| Expert-comptable | `AccountingService` |
+| Architecte d'intérieur | `InteriorDesigner` |
+| **Restauration & hôtellerie** | |
+| Restaurant | `Restaurant` |
+| Hôtel | `Hotel` |
+| Chambre d'hôtes, B&B | `BedAndBreakfast` |
+| **Autres** | |
+| Salon de coiffure, spa | `HairSalon` |
+| PME industrielle, entreprise | `Organization` |
+| Secteur non listé | `LocalBusiness` |
+
+Le type est défini dans `siteConfig.schemaType` — mettre à jour après `/strategy`.
+
 ```typescript
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness', // ou 'Plumber', 'Electrician', 'HomeAndConstructionBusiness'…
+  '@type': siteConfig.schemaType,
   name: siteConfig.name,
   description: siteConfig.description,
   url: siteConfig.url,
@@ -251,7 +353,19 @@ const schema = {
     latitude: siteConfig.geo.lat,   // TODO: ajouter dans siteConfig
     longitude: siteConfig.geo.lng,
   },
-  areaServed: siteConfig.zones, // tableau de villes couvertes
+  areaServed: siteConfig.zones,
+  // Certifications (RGE, RPPS, Barreau…) → étoiles dans les SERPs sur certains types
+  ...(siteConfig.certifications.length > 0 && {
+    award: siteConfig.certifications,
+  }),
+  // Prise de RDV (Calendly, Doctolib, TheFork…)
+  ...(siteConfig.reservationUrl && {
+    potentialAction: {
+      '@type': 'ReserveAction',
+      target: { '@type': 'EntryPoint', urlTemplate: siteConfig.reservationUrl },
+      result:  { '@type': 'Reservation', name: 'Prise de rendez-vous' },
+    },
+  }),
   // Si avis hardcodés présents → ajouter AggregateRating
   ...(siteConfig.reviews.length > 0 && {
     aggregateRating: {
@@ -293,15 +407,38 @@ const faqSchema = {
 
 Questions à déduire du secteur dans `docs/product.md` — jamais génériques.
 
+### Service (pages de prestation secondaires)
+
+Sur chaque page dédiée à une prestation (`/plomberie-urgence`, `/installation-chaudiere`…), ajouter un schema `Service` pour les rich results de page secondaire :
+
+```typescript
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: '[type de service — ex: Plomberie urgence]', // TODO
+  name: '[titre de la page]',
+  description: '[description du service]',
+  provider: {
+    '@type': siteConfig.schemaType,
+    name: siteConfig.name,
+    url:  siteConfig.url,
+  },
+  areaServed: siteConfig.zones,
+  url: `${siteConfig.url}/[slug-de-la-page]`,
+}
+```
+
+Valider sur Google Rich Results Test après déploiement.
+
 ---
 
 ## Ordre de développement recommandé
 
-0. Fichiers systématiques (OG image · sitemap · robots · metadata layout)
+0. Fichiers systématiques (OG image · favicon · loading · sitemap · robots · metadata layout · FloatingContact · plausible.d.ts)
 1. Layout (header + footer) — squelette de navigation réelle
 2. Hero — première impression, CTA principal
 3. Services / Prestations — cœur du métier
-4. Réalisations / Chantiers — preuves sociales
+4. Réalisations / Chantiers — preuves sociales + galerie lightbox si demandé (voir SKILL.md § "GALERIE")
 5. À propos — humanisation
 6. FAQ — rich snippets + GEO (systématique sur sites artisans)
 7. Contact / Devis — conversion finale
