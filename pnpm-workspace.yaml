@@ -1,2 +1,7 @@
 packages:
   - '.'
+
+# pnpm v11 : allowlist des packages autorisés à exécuter des scripts d'installation natifs
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
