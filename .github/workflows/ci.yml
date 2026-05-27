@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - development
       - 'review/**'   # branches de preview client Vercel
 
 jobs:
