@@ -2,15 +2,12 @@
 @source "../src/**/*.{ts,tsx}";
 
 @theme {
-  /* ── 8pt Spacing Scale ──────────────────────────────── */
-  --spacing-xs:   0.5rem;   /* 8px  */
-  --spacing-sm:   1rem;     /* 16px */
-  --spacing-md:   1.5rem;   /* 24px */
-  --spacing-lg:   2rem;     /* 32px */
-  --spacing-xl:   3rem;     /* 48px */
-  --spacing-2xl:  4rem;     /* 64px */
-  --spacing-3xl:  6rem;     /* 96px */
-  --spacing-hero: 8rem;     /* 128px */
+  /* ── Section Spacing — tokens métier (jamais --spacing-xs/sm/md/lg/xl/2xl) ── */
+  /* Collision silencieuse avec Tailwind v4 : max-w-md → 24px au lieu de 28rem  */
+  --section-sm:   3rem;    /* 48px  — petite section, padding interne */
+  --section-md:   4rem;    /* 64px  — section standard                */
+  --section-lg:   6rem;    /* 96px  — grande section                  */
+  --section-hero: 8rem;    /* 128px — hero pleine hauteur             */
 
   /* ── Font Families — définis par /design dans layout.tsx ── */
   --font-sans:    system-ui, sans-serif;

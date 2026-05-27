@@ -53,6 +53,19 @@ Exemples :
 
 Composants, patterns ou règles à ajouter/modifier dans le template.
 
+- 2026-05-27 · `src/components/sections/` · Sprint 2 — 5 nouveaux composants : `TrustBadges` (3 variants : chips/cards/inline), `AidesPubliques` (server component), `ROITeaser` (counters animés useInView), `BeforeAfter` (cas clients chiffrés + citations), `BookingCTA` (multi-mode : doctolib/calendly/thefork/form/phone/whatsapp). Tous typés TypeScript strict, build propre.
+- 2026-05-27 · `.agents/skills/sector-templates/SKILL.md` · Sprint 2 — Nouveau skill avec templates complets pour les 3 secteurs Tier 1 (notaire, santé, RGE) + Tier 2 artisan BTP. Inclut : ordre des sections, siteConfig recommandé, JSON-LD à injecter, CTAs sectoriels, anti-patterns, FAQ types, règles déontologiques.
+- 2026-05-27 · `src/lib/siteConfig.ts` · Sprint 1 étude de marché — ajout de `SectorType`, `BookingMode`, `RoiArg`, `AidePublique` + champs `roiArgs`, `aidesPubliques`, `bookingMode`, `careerPageEnabled`. L'ancien `sector: string` est maintenant un union type exhaustif des Tier 1/2/3. Backward-compatible.
+- 2026-05-27 · `src/lib/schema/index.ts` · Nouveau — 6 générateurs JSON-LD sectoriels (LegalService, MedicalBusiness, HomeAndConstruction, FoodEstablishment, LodgingBusiness, LocalBusiness) + `generateSpeakableSchema()` pour GEO + `generateFAQSchema()` + données de référence `ROI_ARGS_PAR_SECTEUR` et `AIDES_PUBLIQUES_PAR_SECTEUR`. À appeler via `generateSchemaFromConfig(siteConfig)` dans layout.tsx.
+- 2026-05-27 · `.agents/skills/qualification-client/SKILL.md` · Nouveau skill — filtres de qualification 5 étapes + matrice sectorielle Tier 1/2/3 + arguments ROI par secteur + réponses aux 5 objections + pipeline commercial 5 étapes + aides publiques par secteur. Activer en Phase 0.5 avant toute session `/strategy`.
+- 2026-05-27 · `docs/workflow.md` · Phase 0.5 ajoutée (qualification client), Phase 4 GEO rendu obligatoire (chemin critique), Phase 5 enrichie avec capture métriques J+0 (construction cas clients) + template email avis Google.
+- 2026-05-27 · `CLAUDE.md` · JSON-LD mis à jour vers schémas sectoriels (`generateSchemaFromConfig`), `speakable` GEO ajouté, skill `qualification-client` ajouté en Phase 0.5, `seo-aeo-geo` rendu obligatoire.
+- 2026-05-27 · `src/app/[secteur]/` · Sprint 3 — Route dynamique sectorielle : `sector-data.ts` (interface `SectorPageData`, `SECTOR_SLUGS`, 3 exemples complets : kinésithérapeute/notaire/installateur-PAC) + `page.tsx` (generateStaticParams, generateMetadata, JSON-LD FAQ+speakable, layout éditorial asymétrique anti-IA). Build statique propre, 3 URLs générées.
+- 2026-05-27 · `src/app/audit-digital/page.tsx` · Sprint 3 — Landing page Audit Digital 360° (porte d'entrée commerciale recommandée étude de marché). Structure : hero inversé avec chiffre 94% isolé, grille 2×3 des 6 axes analysés, 3 étapes numérotées, ROITeaser 3 engagements, FAQ, BookingCTA form. Page statique, JSON-LD FAQ+speakable.
+- 2026-05-28 · `src/app/sitemap.ts` · Sprint 4 — Sitemap mis à jour : importe `SECTOR_SLUGS` dynamiquement, inclut `/audit-digital` (priority 0.9), `/marque-employeur` (0.7) et toutes les pages sectorielles (0.8). Ajouter un slug dans `SECTOR_SLUGS` le met automatiquement dans le sitemap.
+- 2026-05-28 · `tests/smoke.spec.ts` · Sprint 4 — 14 nouveaux smoke tests Playwright : chargement 200 + JSON-LD présent + H1 non-vide pour les 3 slugs `/[secteur]`, chargement `/audit-digital` et `/marque-employeur`, vérification sitemap. Couvre le chemin critique de chaque page Sprint 3.
+- 2026-05-27 · `src/app/marque-employeur/page.tsx` · Sprint 3 — Template marque employeur (niche "la moins saturée" per étude de marché : 87% PME peinent à recruter). Valeurs authentiques, témoignages avec friction, postes ouverts avec détail métier, FAQ recrutement, CTA candidature. Adapté pour usage Mobem et clonage client.
+
 <!--
 Exemples :
 - Ajouter un composant `<Testimonial />` dans les sections de base —

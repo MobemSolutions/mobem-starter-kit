@@ -191,3 +191,14 @@ This doc can stand alone or feed into `brand-style-guide`.
 
 - [`references/voice-document-template.md`](references/voice-document-template.md) - Fillable template.
 - [`references/voice-frameworks.md`](references/voice-frameworks.md) - Detailed walkthrough of the Nielsen Norman 4 dimensions, Jung archetypes, and the "we are X not Y" approach.
+
+---
+
+## Étape suivante — workflow Mobem
+
+Une fois le document de voix produit (`docs/context/voice.md`) :
+
+**→ Lancer `/strategy` (Phase 1)**
+
+`/strategy` lit tout `docs/context/` — y compris ce document — et remplit `docs/project/product.md`.
+Ne pas sauter vers `/design` : la stratégie produit doit être validée avant toute direction artistique.

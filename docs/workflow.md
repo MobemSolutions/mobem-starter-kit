@@ -10,7 +10,7 @@
 flowchart TD
     A([Brief client]) --> SETUP
 
-    SETUP["Setup repo — vous<br/>cloner template · repo GitHub · CI · Dependabot · branch protection"]
+    SETUP["Setup repo — vous<br/>Use this template GitHub · clone · pnpm install · CI · branch protection"]
     SETUP --> B
 
     B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
@@ -20,7 +20,10 @@ flowchart TD
     C --> D
 
     D["/design — Phase 2<br/>project/design.md · globals.css · valider pnpm dev"]
-    D --> E
+    D --> VALIDA
+
+    VALIDA(["Phase 2.5 — optionnel<br/>Présentation client · Vercel Preview + Ruttl<br/>ou images de référence · ou Figma"])
+    VALIDA --> E
 
     E["/build — Phase 3<br/>sections · OG · sitemap · FloatingContact · FAQ<br/>TrustBadges · RDV · Schema.org étendu"]
     E --> F
@@ -67,31 +70,20 @@ Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la m�
 
 ### 1. Créer le repo depuis la template
 
-```bash
-# Cloner et réinitialiser l'historique
-git clone <url-template> mon-projet-client
-cd mon-projet-client
-Remove-Item -Recurse -Force .git          # PowerShell
-git init && git add . && git commit -m "init: boilerplate Mobem Solutions"
+Sur **github.com**, ouvrir le repo template Mobem → **"Use this template"** → **"Create a new repository"**.
+Nommer le repo (ex : `client-nom-site`), le mettre en **Private**, valider.
 
-# Installer les dépendances
+Puis en local :
+
+```bash
+git clone https://github.com/[org]/[projet].git
+cd [projet]
 pnpm install && pnpm audit
-
-# Configurer l'environnement
 cp .env.example .env.local
-# Remplir .env.local (ne jamais commiter)
+# Remplir .env.local avec les vraies valeurs (ne jamais commiter)
 ```
 
-### 2. Configurer le repo GitHub
-
-Créer le repo sur github.com, puis :
-
-```bash
-git remote add origin https://github.com/[org]/[projet].git
-git push -u origin main
-```
-
-### 3. Checklist GitHub (5 min dans Settings)
+### 2. Checklist GitHub (5 min dans Settings)
 
 - [ ] **Vercel** — importer le repo dans le dashboard Vercel → déploiement automatique activé
 - [ ] **Dependabot alerts** — Settings → Security → Enable Dependabot alerts
@@ -144,9 +136,17 @@ Demandez ces fichiers **en même temps que le brief** — les relancer en Phase 
 | Photo locaux / véhicule | JPG ≥ 1200px | Recommandé |
 | Certifications / labels (RGE, RPPS…) | PNG fond blanc ou transparent | Si applicable |
 
-**Où les déposer :** `docs/context/assets/` — ce dossier est gitignored (données client confidentielles).
+**Flux en deux étapes :**
 
-Vous les traiterez en Phase 3 avant de lancer `/build` (voir section Phase 3 ci-dessous).
+```
+docs/context/assets/       ← originaux bruts reçus du client (gitignored — confidentiels, jamais commités)
+        ↓ redimensionner + renommer en kebab-case avant de coder
+public/images/client/      ← copies optimisées utilisées dans le code (commitées — font partie du livrable)
+```
+
+Les originaux restent dans `docs/context/assets/` pour y revenir si besoin (recadrage, autre format).
+Les images dans `public/` sont ce que Next.js sert — elles doivent être commitées pour s'afficher.
+Vous ferez cette étape en Phase 3 avant de lancer `/build` (voir section Phase 3 ci-dessous).
 
 ### Skills optionnels en Phase 0
 
@@ -156,6 +156,45 @@ Si le brief est incomplet ou si le client n'a pas encore d'identité de marque c
 |-------|-----------------|------------|
 | `brand-discovery` | Brief vague, client sans positionnement clair — fait l'audit audience, concurrence, territoire de marque | "Lis `.agents/skills/brand-discovery/` et applique-le au brief" |
 | `brand-voice` | Client sans ligne éditoriale — génère les attributs de voix, les règles de ton, le vocabulaire | "Lis `.agents/skills/brand-voice/` et définis la voix de marque" |
+
+---
+
+## Phase 0.5 — Qualification client (NOUVEAU — avant `/strategy`)
+
+> **⏱ 5 minutes.** Cette phase évite d'investir 4h de développement sur un mauvais client.
+> Source : étude de marché Mobem V3, Parties 4–7 (filtres de qualification et matrice sectorielle).
+
+**Commande :** "Lis `.agents/skills/qualification-client/SKILL.md` et qualifie ce prospect"
+
+### Checklist rapide (5 filtres universels)
+
+| # | Critère | Comment vérifier | Si NON |
+|---|---------|-----------------|--------|
+| 1 | Ancienneté **3+ ans** | `societe.com` ou Google | Refuser ou différer |
+| 2 | **Avis Google** (min. 5 avis) | Google Maps | Client passif — difficile à convaincre |
+| 3 | **Décideur = la personne en face** | Demander directement | Reporter au décideur réel |
+| 4 | Site **absent ou daté** (avant 2019) | Ouvrir l'URL | Si site récent : qualifier sur SEO/acquisition uniquement |
+| 5 | Secteur **Tier 1 ou Tier 2** | Voir matrice dans le skill | Tier 3/4 : préparation spécifique |
+
+### Secteurs prioritaires (Tier 1 — 0 à 6 mois)
+
+| Secteur | Score | Ticket création | Argument ROI |
+|---------|-------|----------------|--------------|
+| Notaires / juristes | 9.1/10 | 4 500–8 000€ | 1 dossier en + = 1 500–5 000€ d'honoraires |
+| Installateurs RGE | 8.9/10 | 3 000–6 000€ | 1 chantier PAC = +12 000€ CA |
+| Santé libérale | 8.8/10 | 3 000–5 500€ | Économie Doctolib 150–300€/mois |
+
+> ⚠️ **Artisans BTP généraux** : rétrogradés en Tier 2 (72% en fragilité financière, CMA 2026). Filtres renforcés requis : 10+ ans d'ancienneté, 4.0+ étoiles Google sur 15+ avis, carnet de commandes 2+ mois.
+
+### Ce que `/strategy` doit intégrer (issu de cette qualification)
+
+Le `docs/project/product.md` produit par `/strategy` doit inclure une section **Données sectorielles** :
+- Secteur identifié + Tier (1/2/3)
+- `siteConfig.sector` recommandé (valeur SectorType)
+- Arguments ROI retenus (2 max, sourcés)
+- Aides publiques applicables (voir `getAidesForSector()` dans `src/lib/schema/index.ts`)
+- Mode de booking (`bookingMode` dans siteConfig)
+- Certifications à afficher dans TrustBadges
 
 ---
 
@@ -192,58 +231,6 @@ Relisez `docs/project/product.md` et vérifiez :
 
 ---
 
-## Phase 1.5 — Validation visuelle (optionnel)
-
-> À utiliser si le client a besoin de voir un visuel avant de valider la direction artistique.
-
-### Option A — Vercel Preview + Ruttl *(recommandé)*
-
-Vercel crée automatiquement une URL de preview pour chaque branche Git. Pas d'export manuel — les Server Components, routes API et Server Actions fonctionnent normalement.
-
-**Étapes :**
-```bash
-git checkout -b review/[section-ou-phase]
-git push origin review/[section-ou-phase]
-# → Vercel génère automatiquement : https://[projet]-git-review-[...].vercel.app
-```
-
-1. Copier l'URL de preview Vercel (visible dans le dashboard ou dans le commentaire GitHub/PR)
-2. Ouvrir [ruttl.com](https://ruttl.com) → "New Project" → coller l'URL → partager le lien au client
-3. Le client clique sur n'importe quel élément pour laisser un commentaire épinglé — sans compte requis
-4. Intégrer les retours, pousser sur la même branche → la preview se met à jour automatiquement
-
-**Prérequis :** projet connecté à Vercel (`vercel link` ou import depuis le dashboard Vercel).
-**Plan gratuit Ruttl :** 1 projet actif à la fois. Archiver le projet précédent avant d'en créer un nouveau.
-
-### Option B — Images de référence
-**Skills :** `imagegen-frontend-web` · `image-to-code`
-
-Génère une image de référence par section (hero, features, footer) avant de coder.
-Utile pour aligner le client visuellement dès la Phase 2, avant d'écrire du code.
-
-**Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
-
-### Option C — Maquette Figma (si client veut annoter)
-
-Utiliser le **Figma MCP** (compte Figma lié dans Intégrations claude.ai) pour générer une maquette navigable dans Figma. Le client peut y faire des commentaires directement. Une fois validée, revenir dans Claude Code avec `/figma` pour implémenter les modifications.
-
-```
-# Vérifier le compte actif
-mcp__claude_ai_Figma__whoami
-
-# Générer la maquette depuis le design system du projet
-/figma  →  "Génère une maquette Figma pour la section hero depuis docs/project/design.md"
-```
-
-> **Quand choisir Option C plutôt que Ruttl :**
-> - Le client est à l'aise avec les outils visuels et veut annoter directement sur les éléments
-> - Vous avez besoin d'exporter des assets (icônes, illustrations) depuis la maquette
-> - Le client fournit des maquettes Figma existantes à implémenter (design-to-code)
->
-> **Ruttl reste le défaut** pour la validation client simple (commentaires épinglés sur preview Vercel, sans compte requis).
-
----
-
 > **⚡ NOUVELLE SESSION CLAUDE CODE**
 > Ouvrir une nouvelle session avant `/design`. La session `/strategy` a saturé son contexte avec le brief — repartir propre évite les influences croisées sur les décisions de palette.
 
@@ -263,6 +250,15 @@ mcp__claude_ai_Figma__whoami
 - Propose 2 palettes OKLCH distinctes avec justification secteur
 - Présente le résumé structuré (palettes + typographie + radius)
 - Attend votre validation explicite avant d'écrire un seul fichier
+
+### Règle anti-IA en Phase 2
+
+Avant toute proposition de palette ou de typographie, lire `.agents/skills/anti-ia-design/` et valider que :
+- La police choisie n'est pas dans la liste des polices bannies (Inter, Geist, Outfit, DM Sans, Poppins, Nunito…)
+- La palette ne choisit pas un bleu électrique ou un orange générique par défaut
+- La direction artistique n'est pas "propre et moderne" (formulation IA universelle) mais caractérisée par un mot précis et sectoriel
+
+Si `/design` propose une palette ou une police générique, la refuser et demander une alternative avec justification sectorielle.
 
 ### Skills d'esthétique — 1 skill par type de section
 
@@ -292,6 +288,59 @@ Claude écrit ensuite :
 
 **STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
 Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
+
+---
+
+## Phase 2.5 — Présentation au client (optionnel)
+
+> À utiliser si le client a besoin de valider la direction artistique avant que vous commenciez à coder.
+> `/design` a produit la palette, la typographie et les tokens — vous avez quelque chose à montrer.
+
+### Option A — Vercel Preview + Ruttl *(recommandé)*
+
+Vercel crée automatiquement une URL de preview pour chaque branche Git. Pas d'export manuel — les Server Components, routes API et Server Actions fonctionnent normalement.
+
+**Étapes :**
+```bash
+git checkout -b review/[section-ou-phase]
+git push origin review/[section-ou-phase]
+# → Vercel génère automatiquement : https://[projet]-git-review-[...].vercel.app
+```
+
+1. Copier l'URL de preview Vercel (visible dans le dashboard ou dans le commentaire GitHub/PR)
+2. Ouvrir [ruttl.com](https://ruttl.com) → "New Project" → coller l'URL → partager le lien au client
+3. Le client clique sur n'importe quel élément pour laisser un commentaire épinglé — sans compte requis
+4. Intégrer les retours, pousser sur la même branche → la preview se met à jour automatiquement
+
+**Prérequis :** projet connecté à Vercel (`vercel link` ou import depuis le dashboard Vercel).
+**Plan gratuit Ruttl :** 1 projet actif à la fois. Archiver le projet précédent avant d'en créer un nouveau.
+
+### Option B — Images de référence
+**Skills :** `imagegen-frontend-web` · `image-to-code`
+
+Génère une image de référence par section (hero, features, footer) avant de coder.
+Utile pour aligner le client visuellement sur les propositions de `/design`, avant d'écrire du code.
+
+**Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
+
+### Option C — Maquette Figma (si client veut annoter)
+
+Utiliser le **Figma MCP** (compte Figma lié dans Intégrations claude.ai) pour générer une maquette navigable dans Figma. Le client peut y faire des commentaires directement. Une fois validée, revenir dans Claude Code avec `/figma` pour implémenter les modifications.
+
+```
+# Vérifier le compte actif
+mcp__claude_ai_Figma__whoami
+
+# Générer la maquette depuis le design system du projet
+/figma  →  "Génère une maquette Figma pour la section hero depuis docs/project/design.md"
+```
+
+> **Quand choisir Option C plutôt que Ruttl :**
+> - Le client est à l'aise avec les outils visuels et veut annoter directement sur les éléments
+> - Vous avez besoin d'exporter des assets (icônes, illustrations) depuis la maquette
+> - Le client fournit des maquettes Figma existantes à implémenter (design-to-code)
+>
+> **Ruttl reste le défaut** pour la validation client simple (commentaires épinglés sur preview Vercel, sans compte requis).
 
 ---
 
@@ -466,10 +515,15 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 
 | Skill | Ce qu'il vérifie | Activation |
 |-------|-----------------|------------|
+| `anti-ia-design` | **OBLIGATOIRE EN PREMIER — chemin critique.** Parcourir la checklist 8 catégories : polices IA, symétrie pathologique, gradients, stock photos, animations bounce, copy générique, stats inventées, structure exhaustive. Chaque point rouge = correction avant livraison. | "Lis `.agents/skills/anti-ia-design/` et audite chaque section" |
 | `accessibility-audit` | WCAG 2.1 AA complet — perceivable, operable, understandable, robust | "Lis `.agents/skills/accessibility-audit/` et audite [page]" |
 | `performance-optimization` | Core Web Vitals (LCP, INP, CLS), bundle size, assets | "Lis `.agents/skills/performance-optimization/` et audite le site" |
 | `security-baseline` | HTTPS, security headers, CSP, gestion des secrets | "Lis `.agents/skills/security-baseline/` et audite le repo" |
-| `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
+| `seo-aeo-geo` | **OBLIGATOIRE — chemin critique.** SEO classique + GEO (ChatGPT/Perplexity/Gemini). Vérifier : schémas JSON-LD sectoriels valides, propriété `speakable` présente, méta titres locaux (ex: "Kinésithérapeute Nantes"), requêtes longue traîne sectorielles. | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
+
+> 📌 **Rappel GEO** : l'étude de marché Mobem 2026 identifie le GEO comme différenciateur commercial central.
+> 79% d'adoption IA dans le marketing/pub (DFM.fr 2025). Les clients qui voient leur site apparaître dans Perplexity ou ChatGPT renouvellent. Ceux qui ne le voient pas partent.
+> Le skill `seo-aeo-geo` doit valider : `generateSpeakableSchema()` sur les pages clés + schéma sectoriel correct dans `siteConfig.schemaType`.
 
 ### Checklist technique avant livraison
 
@@ -630,15 +684,47 @@ Planifie et exécute la mise en production : vérifications pré-lancement, basc
 
 **Activation :** "Lis `.agents/skills/launch-runbook/` et génère le runbook de mise en ligne pour ce projet"
 
-### Actions spécifiques sites artisans — à inclure dans le runbook
+### Actions spécifiques — à inclure dans le runbook
 
 **Google Business Profile (obligatoire pour le local pack) :**
 - Vérifier que le profil GBP existe et est revendiqué par le client
 - Mettre à jour l'URL du site dans le GBP avec le nouveau domaine
 - Vérifier la cohérence NAP (Nom · Adresse · Téléphone) entre GBP, site et schema JSON-LD
-- Ajouter les photos récentes si absentes (photo de l'artisan au travail, véhicule, réalisations)
+- Ajouter les photos récentes si absentes (photo du professionnel au travail, locaux, réalisations)
+- Compléter les **services** et **attributs** dans GBP (ex: "Pose pompe à chaleur", "Conventionné secteur 1")
+- Activer les **messages** si le client veut recevoir des demandes directement depuis Google Maps
 
-Un artisan sans GBP vérifié n'apparaît pas dans le local pack Google — même avec un site parfait.
+Un professionnel sans GBP vérifié n'apparaît pas dans le local pack Google — même avec un site parfait.
+
+**Capture des métriques J+0 (construction des cas clients) :**
+> L'étude de marché Mobem 2026 confirme : "Un prospect qui voit des preuves signe 3× plus facilement."
+> Ces métriques sont les preuves. Les capturer dès le lancement.
+
+- [ ] Screenshot de l'état du site **avant** intervention (si refonte) — garder dans `docs/context/assets/before/`
+- [ ] Google Search Console : capture d'écran des impressions/clics J+0 (base de référence)
+- [ ] Plausible Analytics : noter le trafic de départ (même si 0) — la progression sera l'argument commercial
+- [ ] GBP : noter le nombre de vues/appels/itinéraires actuels avant le changement d'URL
+- [ ] Si formulaire actif : noter le nombre de leads reçus semaine 1 dans `docs/project/feedback.md`
+
+Ces données serviront à construire le cas client chiffré ("X leads en 2 mois") utilisé dans la prospection des prochains clients du même secteur.
+
+**Demande des 5 premiers avis Google (template email client) :**
+> 5 avis Google = seuil de qualification Tier 1. Les avis générés dès la semaine 1 accélèrent le SEO local.
+> Envoyer ce template au client dans le document de livraison (Phase 5.5) :
+
+```
+Objet : Merci de partager votre expérience en 2 minutes 🙏
+
+Bonjour [Prénom],
+
+Vous avez récemment fait appel à mes services. Votre retour compte énormément.
+Pourriez-vous laisser un avis Google en 2 minutes ?
+
+👉 [LIEN DIRECT AVIS GOOGLE — copier depuis GBP → Demander des avis → Créer un lien]
+
+Merci d'avance,
+[Nom du client]
+```
 
 ### Fenêtre de surveillance — J+1 à J+7
 
@@ -803,3 +889,23 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 **Activer plusieurs skills d'esthétique en même temps sur la même section**
 → Les directives se contredisent et Claude produit un résultat hybride sans cohérence.
 → Fix : un seul skill par type de contenu (ex : gpt-taste sur les pages visuelles, industrial-brutalist sur les pages data-dense). Ne jamais en mélanger deux sur la même section.
+
+**`pnpm dev` donne "next not reconnu"**
+→ `pnpm install` n'a pas été lancé. L'erreur ne mentionne pas les dépendances manquantes — elle dit juste que `next` n'est pas une commande reconnue.
+→ Fix : toujours `pnpm install && pnpm audit` en premier, avant `pnpm dev`. **Étape 1, pas optionnelle.**
+
+**`shadcn init` bloque en attente d'entrée clavier**
+→ `pnpm dlx shadcn@latest init` attend une confirmation interactive — inaccessible dans certains terminaux.
+→ Fix : `yes | pnpm dlx shadcn@latest init` pour exécution non-interactive.
+
+**Après `shadcn init`, Geist s'injecte dans `layout.tsx`**
+→ shadcn réécrit `layout.tsx` et ajoute `next/font/google` avec Geist. La police du client est écrasée.
+→ Fix : vérifier `src/app/layout.tsx` immédiatement après tout `shadcn init`. Supprimer les imports Geist et restaurer `next/font/google` avec les polices du projet.
+
+**Le brief PDF devient inaccessible mid-session**
+→ Sur Windows, `pdftoppm` est absent. Si le PDF est fourni dans `docs/context/brief.pdf`, il n'est lisible que si `/strategy` est lancé dans la **même session** où le PDF a été lu. En session suivante, le PDF est inaccessible.
+→ Fix : convertir le brief PDF en `brief.md` ou `brief.txt` avant de lancer `/strategy`. Copier-coller le texte est plus fiable que de dépendre du parsing PDF sur Windows.
+
+**Couleurs codées en dur après validation du `/design`**
+→ Un composant construit après `/design` utilise `text-[oklch(0.605,0.203,27.5)]` au lieu de `text-(--signal)`. La prochaine refonte de palette nécessite de patcher page par page.
+→ Fix : jamais de valeur OKLCH en dur dans les composants. Toujours passer par les tokens CSS définis dans `globals.css`. Une couleur qui n'est pas un token n'est pas une couleur Mobem.

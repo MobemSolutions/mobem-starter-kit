@@ -195,3 +195,14 @@ Appendices:
 
 - [`references/discovery-report-template.md`](references/discovery-report-template.md) - Full discovery report template.
 - [`references/interview-guide.md`](references/interview-guide.md) - Audience interview guide with question prompts.
+
+---
+
+## Étape suivante — workflow Mobem
+
+Une fois le rapport de discovery produit (`docs/context/discovery-report.md`) :
+
+**→ Lancer `/strategy` (Phase 1)**
+
+`/strategy` lit tout `docs/context/` — y compris ce rapport — et remplit `docs/project/product.md`.
+Ne pas sauter vers `/design` : la stratégie produit doit être validée avant toute direction artistique.

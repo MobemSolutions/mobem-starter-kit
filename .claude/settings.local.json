@@ -46,7 +46,8 @@
       "Bash(sed -i 's|Document de livraison HTML|Document de livraison \\(.docx\\)|g' docs/project/handoff.md)",
       "Bash(sed -i -e 's|join\\(docsDir, '\\\\''livraison-config.json'\\\\''\\)|join\\(docsDir, '\\\\''delivery'\\\\'', '\\\\''livraison-config.json'\\\\''\\)|g' -e 's|join\\(docsDir, '\\\\''livraisons'\\\\''\\)|join\\(docsDir, '\\\\''delivery'\\\\'', '\\\\''livraisons'\\\\''\\)|g' scripts/generate-livraison-docx.mjs)",
       "Bash(grep -v \"\\\\.docx$\")",
-      "Bash(pnpm info *)"
+      "Bash(pnpm info *)",
+      "PowerShell(Move-Item *)"
     ]
   },
   "enableAllProjectMcpServers": true,
