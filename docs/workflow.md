@@ -815,7 +815,7 @@ gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré
 | `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
 | `/impeccable teach` | Reprise d'un projet existant sans historique de session. Inutile si `/strategy` + `/design` ont déjà été faits dans ce projet. |
 | `/legal` | Génère mentions légales, politique de confidentialité, CGV — avant mise en ligne. |
-| `/livraison` | 5.5 | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique · release GitHub. |
+| `/livraison` | 5.5 | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique · release GitHub.|
 
 ---
 
