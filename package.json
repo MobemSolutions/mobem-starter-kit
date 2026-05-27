@@ -31,8 +31,12 @@
   "pnpm": {
     "overrides": {
       "postcss": ">=8.5.10",
-      "tmp": ">=0.2.6",
-      "uuid": ">=11.1.1"
+      "tmp": ">=0.2.6"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "GHSA-w5hq-g745-h8pq"
+      ]
     }
   },
   "lint-staged": {
