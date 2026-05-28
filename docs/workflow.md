@@ -14,7 +14,10 @@ flowchart TD
     SETUP --> B
 
     B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
-    B --> C
+    B --> C0
+
+    C0["Phase 0.5 — vous<br/>Qualification client · 5 filtres · Tier 1/2/3<br/>skill qualification-client"]
+    C0 --> C
 
     C["/strategy — Phase 1<br/>project/product.md · arborescence · skill/section"]
     C --> D
