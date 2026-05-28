@@ -23,6 +23,8 @@ flowchart TD
     C --> D
 
     D["/design — Phase 2<br/>project/design.md · globals.css · valider pnpm dev"]
+    D -. "réf. visuelle optionnelle" .-> FDPREF
+    FDPREF(["frontend-design-pro demo<br/>Swiss · Brutal · Vibrant · OLED<br/>⚠ exclure Glassmorphism · Gradient · Clay"])
     D --> VALIDA
 
     VALIDA(["Phase 2.5 — optionnel<br/>Présentation client · Vercel Preview + Ruttl<br/>ou images de référence · ou Figma"])
@@ -276,6 +278,24 @@ Si `/design` propose une palette ou une police générique, la refuser et demand
 | `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Validation DA via Google Stitch |
 
 **Règle :** un seul skill par section — jamais deux skills sur la même section. Mélanger gpt-taste (pages visuelles) + industrial-brutalist (pages data-dense) est autorisé et souvent souhaitable.
+
+### Référence visuelle — frontend-design-pro demo
+
+[claudekit.github.io/frontend-design-pro-demo](https://claudekit.github.io/frontend-design-pro-demo/) propose 11 directions esthétiques avec demos HTML interactives et master prompts. **4 styles sont compatibles avec les règles Mobem**, les 7 autres sont à exclure :
+
+| Style | Compatible Mobem | Skill Mobem correspondant |
+|-------|-----------------|--------------------------|
+| Minimalisme Swiss | ✅ | `minimalist-ui` |
+| Brutalisme | ✅ | `industrial-brutalist-ui` |
+| Vibrant Block Maximalism | ✅ | `gpt-taste` |
+| Dark OLED Luxury | ✅ | `high-end-visual-design` |
+| Glassmorphisme | ❌ — banni `CLAUDE.md` | — |
+| Aurora / Mesh Gradient | ❌ — gradients bannis | — |
+| Neumorphisme, Clay, 3D, Cyberpunk, Organic | ❌ — hors cible artisans | — |
+
+**Usage :** ouvrir la démo live pour calibrer visuellement la direction avant de l'expliquer à Claude. Ne pas installer le plugin (injecterait les styles bannis dans le contexte).
+
+> **Protocole image (valeur principale) :** le SKILL.md de ce repo impose des prompts structurés `[IMAGE PROMPT START]...[IMAGE PROMPT END]` pour Flux/Midjourney — jamais d'URL fictive. Appliquer ce protocole lors de l'activation de `imagegen-frontend-web`.
 
 **Activation :** "Lis `.agents/skills/[nom-du-skill]/` avant de proposer la direction artistique"
 
@@ -835,7 +855,7 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 | `gpt-taste` | 2 | Direction artistique Awwwards/éditorial large |
 | `industrial-brutalist-ui` | 2 | Direction artistique industriel/brutalist |
 | `stitch-design-taste` | 2 | DESIGN.md pour validation via Google Stitch |
-| `imagegen-frontend-web` | 1.5–3 | Images de référence par section avant code |
+| `imagegen-frontend-web` | 1.5–3 | Images de référence par section avant code — utiliser le protocole prompt `[IMAGE PROMPT START]...[IMAGE PROMPT END]` (voir réf. frontend-design-pro) |
 | `image-to-code` | 3 | Génère image de référence puis implémente |
 | `full-output-enforcement` | 3 | Prévient troncature et placeholders dans le code |
 | `redesign-existing-projects` | 3 | Audit et upgrade d'un site existant |
