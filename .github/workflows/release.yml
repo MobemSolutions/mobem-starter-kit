@@ -16,14 +16,17 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install dependencies
+        run: npm install docx
+
       - name: Générer le document de livraison
-        run: node scripts/generate-livraison.mjs
+        run: node scripts/generate-livraison-docx.mjs
 
       - name: Attacher au release
         run: |
-          FILENAME=$(ls docs/livraison-*.html 2>/dev/null | grep -v 'livraison\.html$' | head -1)
+          FILENAME=$(ls docs/delivery/livraisons/livraison-*.docx 2>/dev/null | head -1)
           if [ -z "$FILENAME" ]; then
-            echo "❌ Aucun fichier livraison-*.html trouvé. Remplir docs/livraison-config.json avant de créer un release."
+            echo "❌ Aucun fichier livraison-*.docx trouvé. Remplir docs/delivery/livraison-config.json avant de créer un release."
             exit 1
           fi
           gh release upload "${{ github.event.release.tag_name }}" "$FILENAME" --clobber

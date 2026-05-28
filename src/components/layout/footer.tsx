@@ -6,7 +6,7 @@ const YEAR = new Date().getFullYear()
 export function Footer() {
   return (
     <footer className="border-t border-(--border)">
-      <div className="mx-auto max-w-[1280px] px-6 py-(--spacing-2xl)">
+      <div className="mx-auto max-w-[1280px] px-6 py-(--section-md)">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="max-w-xs">
             <p className="text-sm font-medium">{siteConfig.name}</p>
@@ -36,7 +36,7 @@ export function Footer() {
         </div>
 
         {siteConfig.name && (
-          <div className="mt-(--spacing-2xl) border-t border-(--border) pt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="mt-(--section-md) border-t border-(--border) pt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <p className="text-xs text-(--muted-foreground)">
               © {YEAR} {siteConfig.name}. Tous droits réservés.
             </p>

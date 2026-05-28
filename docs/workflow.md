@@ -10,17 +10,25 @@
 flowchart TD
     A([Brief client]) --> SETUP
 
-    SETUP["Setup repo — vous<br/>cloner template · repo GitHub · CI · Dependabot · branch protection"]
+    SETUP["Setup repo — vous<br/>Use this template GitHub · clone · pnpm install · CI · branch protection"]
     SETUP --> B
 
     B["Phase 0 — vous<br/>docs/context/ · brief · refs · contraintes"]
-    B --> C
+    B --> C0
+
+    C0["Phase 0.5 — vous<br/>Qualification client · 5 filtres · Tier 1/2/3<br/>skill qualification-client"]
+    C0 --> C
 
     C["/strategy — Phase 1<br/>project/product.md · arborescence · skill/section"]
     C --> D
 
     D["/design — Phase 2<br/>project/design.md · globals.css · valider pnpm dev"]
-    D --> E
+    D -. "réf. visuelle optionnelle" .-> FDPREF
+    FDPREF(["frontend-design-pro demo<br/>Swiss · Brutal · Vibrant · OLED<br/>⚠ exclure Glassmorphism · Gradient · Clay"])
+    D --> VALIDA
+
+    VALIDA(["Phase 2.5 — optionnel<br/>Présentation client · Vercel Preview + Ruttl<br/>ou images de référence · ou Figma"])
+    VALIDA --> E
 
     E["/build — Phase 3<br/>sections · OG · sitemap · FloatingContact · FAQ<br/>TrustBadges · RDV · Schema.org étendu"]
     E --> F
@@ -67,31 +75,20 @@ Chaque phase est une session Claude Code distincte. Ne pas tout faire dans la m�
 
 ### 1. Créer le repo depuis la template
 
-```bash
-# Cloner et réinitialiser l'historique
-git clone <url-template> mon-projet-client
-cd mon-projet-client
-Remove-Item -Recurse -Force .git          # PowerShell
-git init && git add . && git commit -m "init: boilerplate Mobem Solutions"
+Sur **github.com**, ouvrir le repo template Mobem → **"Use this template"** → **"Create a new repository"**.
+Nommer le repo (ex : `client-nom-site`), le mettre en **Private**, valider.
 
-# Installer les dépendances
+Puis en local :
+
+```bash
+git clone https://github.com/[org]/[projet].git
+cd [projet]
 pnpm install && pnpm audit
-
-# Configurer l'environnement
 cp .env.example .env.local
-# Remplir .env.local (ne jamais commiter)
+# Remplir .env.local avec les vraies valeurs (ne jamais commiter)
 ```
 
-### 2. Configurer le repo GitHub
-
-Créer le repo sur github.com, puis :
-
-```bash
-git remote add origin https://github.com/[org]/[projet].git
-git push -u origin main
-```
-
-### 3. Checklist GitHub (5 min dans Settings)
+### 2. Checklist GitHub (5 min dans Settings)
 
 - [ ] **Vercel** — importer le repo dans le dashboard Vercel → déploiement automatique activé
 - [ ] **Dependabot alerts** — Settings → Security → Enable Dependabot alerts
@@ -100,9 +97,15 @@ git push -u origin main
   - Require status checks : `Build · Lint · Audit`
 - [ ] **Branche development** — `git checkout -b development && git push origin development`
 - [ ] **Status checks** — Settings → Rules → ajouter `Smoke tests` et `Lighthouse CI` aux checks requis sur `main`
+- [ ] **Secret `LHCI_GITHUB_APP_TOKEN`** — Settings → Secrets and variables → Actions → New secret
+  Sans ce secret, Lighthouse CI tourne mais ne peut pas poster les résultats comme check sur les PRs.
+  Générer le token depuis [github.com/apps/lighthouse-ci](https://github.com/apps/lighthouse-ci) → installer sur le repo.
 
-> Le CI (`.github/workflows/ci.yml`), Dependabot et Husky (pre-commit lint) sont hérités automatiquement.
-> Husky s'active au premier `pnpm install` via le script `prepare` — aucune action requise.
+> **Ce qui est hérité automatiquement depuis la template :**
+> `.github/workflows/ci.yml` · `.github/workflows/release.yml` · `.github/dependabot.yml` (config des PRs Dependabot hebdomadaires) · `.lighthouserc.js` · Husky (pre-commit lint, s'active au premier `pnpm install`)
+>
+> **Ce qui ne s'hérite pas et demande une action manuelle :**
+> Vercel · Branch protection · Dependabot security alerts · Status checks requis · Secret LHCI · Branche development
 
 ---
 
@@ -138,9 +141,17 @@ Demandez ces fichiers **en même temps que le brief** — les relancer en Phase 
 | Photo locaux / véhicule | JPG ≥ 1200px | Recommandé |
 | Certifications / labels (RGE, RPPS…) | PNG fond blanc ou transparent | Si applicable |
 
-**Où les déposer :** `docs/context/assets/` — ce dossier est gitignored (données client confidentielles).
+**Flux en deux étapes :**
 
-Vous les traiterez en Phase 3 avant de lancer `/build` (voir section Phase 3 ci-dessous).
+```
+docs/context/assets/       ← originaux bruts reçus du client (gitignored — confidentiels, jamais commités)
+        ↓ redimensionner + renommer en kebab-case avant de coder
+public/images/client/      ← copies optimisées utilisées dans le code (commitées — font partie du livrable)
+```
+
+Les originaux restent dans `docs/context/assets/` pour y revenir si besoin (recadrage, autre format).
+Les images dans `public/` sont ce que Next.js sert — elles doivent être commitées pour s'afficher.
+Vous ferez cette étape en Phase 3 avant de lancer `/build` (voir section Phase 3 ci-dessous).
 
 ### Skills optionnels en Phase 0
 
@@ -150,6 +161,45 @@ Si le brief est incomplet ou si le client n'a pas encore d'identité de marque c
 |-------|-----------------|------------|
 | `brand-discovery` | Brief vague, client sans positionnement clair — fait l'audit audience, concurrence, territoire de marque | "Lis `.agents/skills/brand-discovery/` et applique-le au brief" |
 | `brand-voice` | Client sans ligne éditoriale — génère les attributs de voix, les règles de ton, le vocabulaire | "Lis `.agents/skills/brand-voice/` et définis la voix de marque" |
+
+---
+
+## Phase 0.5 — Qualification client (NOUVEAU — avant `/strategy`)
+
+> **⏱ 5 minutes.** Cette phase évite d'investir 4h de développement sur un mauvais client.
+> Source : étude de marché Mobem V3, Parties 4–7 (filtres de qualification et matrice sectorielle).
+
+**Commande :** "Lis `.agents/skills/qualification-client/SKILL.md` et qualifie ce prospect"
+
+### Checklist rapide (5 filtres universels)
+
+| # | Critère | Comment vérifier | Si NON |
+|---|---------|-----------------|--------|
+| 1 | Ancienneté **3+ ans** | `societe.com` ou Google | Refuser ou différer |
+| 2 | **Avis Google** (min. 5 avis) | Google Maps | Client passif — difficile à convaincre |
+| 3 | **Décideur = la personne en face** | Demander directement | Reporter au décideur réel |
+| 4 | Site **absent ou daté** (avant 2019) | Ouvrir l'URL | Si site récent : qualifier sur SEO/acquisition uniquement |
+| 5 | Secteur **Tier 1 ou Tier 2** | Voir matrice dans le skill | Tier 3/4 : préparation spécifique |
+
+### Secteurs prioritaires (Tier 1 — 0 à 6 mois)
+
+| Secteur | Score | Ticket création | Argument ROI |
+|---------|-------|----------------|--------------|
+| Notaires / juristes | 9.1/10 | 4 500–8 000€ | 1 dossier en + = 1 500–5 000€ d'honoraires |
+| Installateurs RGE | 8.9/10 | 3 000–6 000€ | 1 chantier PAC = +12 000€ CA |
+| Santé libérale | 8.8/10 | 3 000–5 500€ | Économie Doctolib 150–300€/mois |
+
+> ⚠️ **Artisans BTP généraux** : rétrogradés en Tier 2 (72% en fragilité financière, CMA 2026). Filtres renforcés requis : 10+ ans d'ancienneté, 4.0+ étoiles Google sur 15+ avis, carnet de commandes 2+ mois.
+
+### Ce que `/strategy` doit intégrer (issu de cette qualification)
+
+Le `docs/project/product.md` produit par `/strategy` doit inclure une section **Données sectorielles** :
+- Secteur identifié + Tier (1/2/3)
+- `siteConfig.sector` recommandé (valeur SectorType)
+- Arguments ROI retenus (2 max, sourcés)
+- Aides publiques applicables (voir `getAidesForSector()` dans `src/lib/schema/index.ts`)
+- Mode de booking (`bookingMode` dans siteConfig)
+- Certifications à afficher dans TrustBadges
 
 ---
 
@@ -186,9 +236,88 @@ Relisez `docs/project/product.md` et vérifiez :
 
 ---
 
-## Phase 1.5 — Validation visuelle (optionnel)
+> **⚡ NOUVELLE SESSION CLAUDE CODE**
+> Ouvrir une nouvelle session avant `/design`. La session `/strategy` a saturé son contexte avec le brief — repartir propre évite les influences croisées sur les décisions de palette.
 
-> À utiliser si le client a besoin de voir un visuel avant de valider la direction artistique.
+---
+
+## Phase 2 — Direction artistique
+
+**Outil :** Claude Code CLI
+**Commande :** `/design`
+**Durée estimée :** 20–30 min
+**Livrable :** `docs/project/design.md` complété + tokens dans `globals.css`
+
+### Ce que fait la commande
+- Vérifie que `docs/project/product.md` est rempli — sinon refuse de continuer
+- Vérifie que `docs/context/refs.md` existe — sinon demande les références et s'arrête
+- Lit les skills Impeccable (typography, color, spatial) avant de proposer quoi que ce soit
+- Propose 2 palettes OKLCH distinctes avec justification secteur
+- Présente le résumé structuré (palettes + typographie + radius)
+- Attend votre validation explicite avant d'écrire un seul fichier
+
+### Règle anti-IA en Phase 2
+
+Avant toute proposition de palette ou de typographie, lire `.agents/skills/anti-ia-design/` et valider que :
+- La police choisie n'est pas dans la liste des polices bannies (Inter, Geist, Outfit, DM Sans, Poppins, Nunito…)
+- La palette ne choisit pas un bleu électrique ou un orange générique par défaut
+- La direction artistique n'est pas "propre et moderne" (formulation IA universelle) mais caractérisée par un mot précis et sectoriel
+
+Si `/design` propose une palette ou une police générique, la refuser et demander une alternative avec justification sectorielle.
+
+### Skills d'esthétique — 1 skill par type de section
+
+`/design` propose un mapping skill → type de section. Ne pas choisir un seul skill pour tout le projet si les sections ont des natures différentes.
+
+| Skill | Esthétique | Idéal pour |
+|-------|-----------|------------|
+| `minimalist-ui` | Éditorial, monochrome chaud, typographique | Artisans premium, consultants, cabinets |
+| `high-end-visual-design` | Agence, bento asymétrique, micro-haptics | Marques premium, hôtellerie, luxe accessible |
+| `gpt-taste` | Awwwards, éditorial large, bento sans gap | Pages d'impact visuel (hero, about, CTA) |
+| `industrial-brutalist-ui` | Brutalism industriel, grille suisse | Pages data-dense (tarifs, prestations, listes) · BTP |
+| `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Validation DA via Google Stitch |
+
+**Règle :** un seul skill par section — jamais deux skills sur la même section. Mélanger gpt-taste (pages visuelles) + industrial-brutalist (pages data-dense) est autorisé et souvent souhaitable.
+
+### Référence visuelle — frontend-design-pro demo
+
+[claudekit.github.io/frontend-design-pro-demo](https://claudekit.github.io/frontend-design-pro-demo/) propose 11 directions esthétiques avec demos HTML interactives et master prompts. **4 styles sont compatibles avec les règles Mobem**, les 7 autres sont à exclure :
+
+| Style | Compatible Mobem | Skill Mobem correspondant |
+|-------|-----------------|--------------------------|
+| Minimalisme Swiss | ✅ | `minimalist-ui` |
+| Brutalisme | ✅ | `industrial-brutalist-ui` |
+| Vibrant Block Maximalism | ✅ | `gpt-taste` |
+| Dark OLED Luxury | ✅ | `high-end-visual-design` |
+| Glassmorphisme | ❌ — banni `CLAUDE.md` | — |
+| Aurora / Mesh Gradient | ❌ — gradients bannis | — |
+| Neumorphisme, Clay, 3D, Cyberpunk, Organic | ❌ — hors cible artisans | — |
+
+**Usage :** ouvrir la démo live pour calibrer visuellement la direction avant de l'expliquer à Claude. Ne pas installer le plugin (injecterait les styles bannis dans le contexte).
+
+> **Protocole image (valeur principale) :** le SKILL.md de ce repo impose des prompts structurés `[IMAGE PROMPT START]...[IMAGE PROMPT END]` pour Flux/Midjourney — jamais d'URL fictive. Appliquer ce protocole lors de l'activation de `imagegen-frontend-web`.
+
+**Activation :** "Lis `.agents/skills/[nom-du-skill]/` avant de proposer la direction artistique"
+
+### Votre validation
+Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
+Claude écrit ensuite :
+- `docs/project/design.md`
+- `src/app/globals.css` (tokens OKLCH + polices chargées)
+- `src/app/layout.tsx` (polices Google Fonts)
+- `src/lib/constants/colors.ts` (THEME_META)
+
+- [ ] `docs/project/feedback.md` mis à jour si friction ou insight notable durant cette phase
+
+**STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
+Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
+
+---
+
+## Phase 2.5 — Présentation au client (optionnel)
+
+> À utiliser si le client a besoin de valider la direction artistique avant que vous commenciez à coder.
+> `/design` a produit la palette, la typographie et les tokens — vous avez quelque chose à montrer.
 
 ### Option A — Vercel Preview + Ruttl *(recommandé)*
 
@@ -213,7 +342,7 @@ git push origin review/[section-ou-phase]
 **Skills :** `imagegen-frontend-web` · `image-to-code`
 
 Génère une image de référence par section (hero, features, footer) avant de coder.
-Utile pour aligner le client visuellement dès la Phase 2, avant d'écrire du code.
+Utile pour aligner le client visuellement sur les propositions de `/design`, avant d'écrire du code.
 
 **Activation :** "Lis `.agents/skills/imagegen-frontend-web/` et génère une référence visuelle pour la section [X]"
 
@@ -235,57 +364,6 @@ mcp__claude_ai_Figma__whoami
 > - Le client fournit des maquettes Figma existantes à implémenter (design-to-code)
 >
 > **Ruttl reste le défaut** pour la validation client simple (commentaires épinglés sur preview Vercel, sans compte requis).
-
----
-
-> **⚡ NOUVELLE SESSION CLAUDE CODE**
-> Ouvrir une nouvelle session avant `/design`. La session `/strategy` a saturé son contexte avec le brief — repartir propre évite les influences croisées sur les décisions de palette.
-
----
-
-## Phase 2 — Direction artistique
-
-**Outil :** Claude Code CLI
-**Commande :** `/design`
-**Durée estimée :** 20–30 min
-**Livrable :** `docs/project/design.md` complété + tokens dans `globals.css`
-
-### Ce que fait la commande
-- Vérifie que `docs/project/product.md` est rempli — sinon refuse de continuer
-- Vérifie que `docs/context/refs.md` existe — sinon demande les références et s'arrête
-- Lit les skills Impeccable (typography, color, spatial) avant de proposer quoi que ce soit
-- Propose 2 palettes OKLCH distinctes avec justification secteur
-- Présente le résumé structuré (palettes + typographie + radius)
-- Attend votre validation explicite avant d'écrire un seul fichier
-
-### Skills d'esthétique — 1 skill par type de section
-
-`/design` propose un mapping skill → type de section. Ne pas choisir un seul skill pour tout le projet si les sections ont des natures différentes.
-
-| Skill | Esthétique | Idéal pour |
-|-------|-----------|------------|
-| `minimalist-ui` | Éditorial, monochrome chaud, typographique | Artisans premium, consultants, cabinets |
-| `high-end-visual-design` | Agence, bento asymétrique, micro-haptics | Marques premium, hôtellerie, luxe accessible |
-| `gpt-taste` | Awwwards, éditorial large, bento sans gap | Pages d'impact visuel (hero, about, CTA) |
-| `industrial-brutalist-ui` | Brutalism industriel, grille suisse | Pages data-dense (tarifs, prestations, listes) · BTP |
-| `stitch-design-taste` | Génère un DESIGN.md pour Google Stitch | Validation DA via Google Stitch |
-
-**Règle :** un seul skill par section — jamais deux skills sur la même section. Mélanger gpt-taste (pages visuelles) + industrial-brutalist (pages data-dense) est autorisé et souvent souhaitable.
-
-**Activation :** "Lis `.agents/skills/[nom-du-skill]/` avant de proposer la direction artistique"
-
-### Votre validation
-Répondez "go palette A" ou "go palette B" (ou demandez des ajustements).
-Claude écrit ensuite :
-- `docs/project/design.md`
-- `src/app/globals.css` (tokens OKLCH + polices chargées)
-- `src/app/layout.tsx` (polices Google Fonts)
-- `src/lib/constants/colors.ts` (THEME_META)
-
-- [ ] `docs/project/feedback.md` mis à jour si friction ou insight notable durant cette phase
-
-**STOP. Ne lancez pas `/build` avant d'avoir vu le rendu dans le navigateur.**
-Lancez `pnpm dev` et vérifiez visuellement que les couleurs et polices sont correctes.
 
 ---
 
@@ -460,10 +538,15 @@ Activer chaque skill dans une session dédiée, dans cet ordre :
 
 | Skill | Ce qu'il vérifie | Activation |
 |-------|-----------------|------------|
+| `anti-ia-design` | **OBLIGATOIRE EN PREMIER — chemin critique.** Parcourir la checklist 8 catégories : polices IA, symétrie pathologique, gradients, stock photos, animations bounce, copy générique, stats inventées, structure exhaustive. Chaque point rouge = correction avant livraison. | "Lis `.agents/skills/anti-ia-design/` et audite chaque section" |
 | `accessibility-audit` | WCAG 2.1 AA complet — perceivable, operable, understandable, robust | "Lis `.agents/skills/accessibility-audit/` et audite [page]" |
 | `performance-optimization` | Core Web Vitals (LCP, INP, CLS), bundle size, assets | "Lis `.agents/skills/performance-optimization/` et audite le site" |
 | `security-baseline` | HTTPS, security headers, CSP, gestion des secrets | "Lis `.agents/skills/security-baseline/` et audite le repo" |
-| `seo-aeo-geo` | SEO classique + optimisation pour AI search (Perplexity, ChatGPT, AI Overviews) | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
+| `seo-aeo-geo` | **OBLIGATOIRE — chemin critique.** SEO classique + GEO (ChatGPT/Perplexity/Gemini). Vérifier : schémas JSON-LD sectoriels valides, propriété `speakable` présente, méta titres locaux (ex: "Kinésithérapeute Nantes"), requêtes longue traîne sectorielles. | "Lis `.agents/skills/seo-aeo-geo/` et audite le contenu" |
+
+> 📌 **Rappel GEO** : l'étude de marché Mobem 2026 identifie le GEO comme différenciateur commercial central.
+> 79% d'adoption IA dans le marketing/pub (DFM.fr 2025). Les clients qui voient leur site apparaître dans Perplexity ou ChatGPT renouvellent. Ceux qui ne le voient pas partent.
+> Le skill `seo-aeo-geo` doit valider : `generateSpeakableSchema()` sur les pages clés + schéma sectoriel correct dans `siteConfig.schemaType`.
 
 ### Checklist technique avant livraison
 
@@ -624,15 +707,47 @@ Planifie et exécute la mise en production : vérifications pré-lancement, basc
 
 **Activation :** "Lis `.agents/skills/launch-runbook/` et génère le runbook de mise en ligne pour ce projet"
 
-### Actions spécifiques sites artisans — à inclure dans le runbook
+### Actions spécifiques — à inclure dans le runbook
 
 **Google Business Profile (obligatoire pour le local pack) :**
 - Vérifier que le profil GBP existe et est revendiqué par le client
 - Mettre à jour l'URL du site dans le GBP avec le nouveau domaine
 - Vérifier la cohérence NAP (Nom · Adresse · Téléphone) entre GBP, site et schema JSON-LD
-- Ajouter les photos récentes si absentes (photo de l'artisan au travail, véhicule, réalisations)
+- Ajouter les photos récentes si absentes (photo du professionnel au travail, locaux, réalisations)
+- Compléter les **services** et **attributs** dans GBP (ex: "Pose pompe à chaleur", "Conventionné secteur 1")
+- Activer les **messages** si le client veut recevoir des demandes directement depuis Google Maps
 
-Un artisan sans GBP vérifié n'apparaît pas dans le local pack Google — même avec un site parfait.
+Un professionnel sans GBP vérifié n'apparaît pas dans le local pack Google — même avec un site parfait.
+
+**Capture des métriques J+0 (construction des cas clients) :**
+> L'étude de marché Mobem 2026 confirme : "Un prospect qui voit des preuves signe 3× plus facilement."
+> Ces métriques sont les preuves. Les capturer dès le lancement.
+
+- [ ] Screenshot de l'état du site **avant** intervention (si refonte) — garder dans `docs/context/assets/before/`
+- [ ] Google Search Console : capture d'écran des impressions/clics J+0 (base de référence)
+- [ ] Plausible Analytics : noter le trafic de départ (même si 0) — la progression sera l'argument commercial
+- [ ] GBP : noter le nombre de vues/appels/itinéraires actuels avant le changement d'URL
+- [ ] Si formulaire actif : noter le nombre de leads reçus semaine 1 dans `docs/project/feedback.md`
+
+Ces données serviront à construire le cas client chiffré ("X leads en 2 mois") utilisé dans la prospection des prochains clients du même secteur.
+
+**Demande des 5 premiers avis Google (template email client) :**
+> 5 avis Google = seuil de qualification Tier 1. Les avis générés dès la semaine 1 accélèrent le SEO local.
+> Envoyer ce template au client dans le document de livraison (Phase 5.5) :
+
+```
+Objet : Merci de partager votre expérience en 2 minutes 🙏
+
+Bonjour [Prénom],
+
+Vous avez récemment fait appel à mes services. Votre retour compte énormément.
+Pourriez-vous laisser un avis Google en 2 minutes ?
+
+👉 [LIEN DIRECT AVIS GOOGLE — copier depuis GBP → Demander des avis → Créer un lien]
+
+Merci d'avance,
+[Nom du client]
+```
 
 ### Fenêtre de surveillance — J+1 à J+7
 
@@ -723,7 +838,7 @@ gh release create v1.0.0 --title "v1.0.0 — Mise en ligne" --notes "Site livré
 | `/impeccable harden` | Projets avec formulaires, i18n, ou edge cases à traiter. |
 | `/impeccable teach` | Reprise d'un projet existant sans historique de session. Inutile si `/strategy` + `/design` ont déjà été faits dans ce projet. |
 | `/legal` | Génère mentions légales, politique de confidentialité, CGV — avant mise en ligne. |
-| `/livraison` | 5.5 | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique · release GitHub. |
+| `/livraison` | 5.5 | Génère `docs/delivery/livraisons/livraison-[client].docx` — scores · accès · outils · appendice technique · release GitHub.|
 
 ---
 
@@ -740,7 +855,7 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 | `gpt-taste` | 2 | Direction artistique Awwwards/éditorial large |
 | `industrial-brutalist-ui` | 2 | Direction artistique industriel/brutalist |
 | `stitch-design-taste` | 2 | DESIGN.md pour validation via Google Stitch |
-| `imagegen-frontend-web` | 1.5–3 | Images de référence par section avant code |
+| `imagegen-frontend-web` | 1.5–3 | Images de référence par section avant code — utiliser le protocole prompt `[IMAGE PROMPT START]...[IMAGE PROMPT END]` (voir réf. frontend-design-pro) |
 | `image-to-code` | 3 | Génère image de référence puis implémente |
 | `full-output-enforcement` | 3 | Prévient troncature et placeholders dans le code |
 | `redesign-existing-projects` | 3 | Audit et upgrade d'un site existant |
@@ -797,3 +912,23 @@ Ces skills n'ont pas de slash command. On les active en demandant à Claude de l
 **Activer plusieurs skills d'esthétique en même temps sur la même section**
 → Les directives se contredisent et Claude produit un résultat hybride sans cohérence.
 → Fix : un seul skill par type de contenu (ex : gpt-taste sur les pages visuelles, industrial-brutalist sur les pages data-dense). Ne jamais en mélanger deux sur la même section.
+
+**`pnpm dev` donne "next not reconnu"**
+→ `pnpm install` n'a pas été lancé. L'erreur ne mentionne pas les dépendances manquantes — elle dit juste que `next` n'est pas une commande reconnue.
+→ Fix : toujours `pnpm install && pnpm audit` en premier, avant `pnpm dev`. **Étape 1, pas optionnelle.**
+
+**`shadcn init` bloque en attente d'entrée clavier**
+→ `pnpm dlx shadcn@latest init` attend une confirmation interactive — inaccessible dans certains terminaux.
+→ Fix : `yes | pnpm dlx shadcn@latest init` pour exécution non-interactive.
+
+**Après `shadcn init`, Geist s'injecte dans `layout.tsx`**
+→ shadcn réécrit `layout.tsx` et ajoute `next/font/google` avec Geist. La police du client est écrasée.
+→ Fix : vérifier `src/app/layout.tsx` immédiatement après tout `shadcn init`. Supprimer les imports Geist et restaurer `next/font/google` avec les polices du projet.
+
+**Le brief PDF devient inaccessible mid-session**
+→ Sur Windows, `pdftoppm` est absent. Si le PDF est fourni dans `docs/context/brief.pdf`, il n'est lisible que si `/strategy` est lancé dans la **même session** où le PDF a été lu. En session suivante, le PDF est inaccessible.
+→ Fix : convertir le brief PDF en `brief.md` ou `brief.txt` avant de lancer `/strategy`. Copier-coller le texte est plus fiable que de dépendre du parsing PDF sur Windows.
+
+**Couleurs codées en dur après validation du `/design`**
+→ Un composant construit après `/design` utilise `text-[oklch(0.605,0.203,27.5)]` au lieu de `text-(--signal)`. La prochaine refonte de palette nécessite de patcher page par page.
+→ Fix : jamais de valeur OKLCH en dur dans les composants. Toujours passer par les tokens CSS définis dans `globals.css`. Une couleur qui n'est pas un token n'est pas une couleur Mobem.

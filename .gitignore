@@ -51,6 +51,7 @@ pnpm-debug.log*
 docs/context/*
 !docs/context/README.md
 !docs/context/refs.md
+!docs/context/contraintes.md
 
 # Lighthouse reports
 lighthouse.json
@@ -58,8 +59,11 @@ lighthouse-report.html
 
 # Extras
 docs/img/
+public/docs
 
 # Delivery documents (client-specific — generated per project, not stored in template)
 docs/delivery/livraisons/*.docx
 docs/delivery/livraison-config.json
 .claude\settings.local.json
+
+

@@ -54,6 +54,24 @@ Grille 8pt stricte — multiples de 8px uniquement : 8 · 16 · 24 · 32 · 48 �
 
 **JAMAIS :** gradients · glassmorphism · pure black · gray-on-color · cartes imbriquées · bounce/elastic
 
+**Tokens CSS — nommage :**
+- **Jamais** `--spacing-xs/sm/md/lg/xl/2xl/3xl` dans `@theme` — collision silencieuse avec les utilitaires Tailwind v4 (`max-w-md` résout en 24px au lieu de 28rem, tout le texte wrape mot par mot)
+- Nommer les tokens de section en tokens métier : `--section-sm`, `--section-md`, `--section-lg`, `--section-hero`
+
+**Tailwind v4 — `max-w-*` :**
+- Jamais sur un `<p>` directement — toujours sur un `<div>` wrapper
+- `<div className="max-w-2xl"><p>...</p></div>` — jamais `<p className="max-w-2xl">`
+
+**After shadcn init :**
+- Vérifier que `layout.tsx` n'a pas été réécrit pour injecter Geist — corriger si nécessaire
+- shadcn init requiert `yes | pnpm dlx shadcn@latest init` pour exécution non-interactive
+
+**Couleurs post-/design :**
+- Jamais coder les couleurs en dur dans les composants après validation client — toujours via les tokens CSS (`text-(--signal)`, pas `text-[oklch(0.605,0.203,27.5)]`)
+
+**Strings françaises avec apostrophes :**
+- Dans les fichiers de données TypeScript, toujours utiliser les double quotes pour les strings contenant des apostrophes — les single-quotes crashent Turbopack (`d'une` dans `'...'` = erreur de parsing)
+
 **Polices interdites (signature IA trop reconnaissable) :** JetBrains Mono · Inter · Geist · Outfit · DM Sans — ces polices signalent immédiatement une génération IA et trahissent l'identité client. Choisir une police avec une vraie personnalité typographique via `/design`.
 
 Typographie et palette : définis exclusivement par `/design`, écrits dans `docs/project/design.md` et `src/app/globals.css`.
@@ -70,7 +88,8 @@ Typographie et palette : définis exclusivement par `/design`, écrits dans `doc
 - `next/image` avec dimensions et alt obligatoires
 - `next/font/google` avec `display: 'swap'`
 - Metadata complète (`title`, `description`, `openGraph`) dans chaque `page.tsx`
-- JSON-LD LocalBusiness sur les pages artisans
+- JSON-LD **sectoriel** via `generateSchemaFromConfig(siteConfig)` (`src/lib/schema/index.ts`) — pas seulement LocalBusiness générique
+- Propriété `speakable` via `generateSpeakableSchema()` sur les pages stratégiques (GEO : visibilité ChatGPT/Perplexity)
 
 **Cibles Lighthouse avant livraison client (build de production) :**
 - Performance ≥ 90 · Accessibility ≥ 90 · Best Practices ≥ 90 · SEO ≥ 90
@@ -128,11 +147,14 @@ Le skill `/figma` reste disponible uniquement si le client fournit des maquettes
 | `SKILL.md` (Mobem) | Conventions techniques, anti-patterns, grille, motion | Toujours |
 | `.agents/skills/impeccable/` | Règles design — typography, color, spatial, UX writing | Toujours, relu avant chaque composant |
 | `.agents/skills/design-taste-frontend/` | Anti-slop frontend — Three Dials | Toujours |
+| `.agents/skills/anti-ia-design/` | **Checklist anti-IA** — 8 catégories de signaux à détecter et éliminer : polices, symétrie, gradients, stock photos, animations bounce, copy générique, stats inventées, structure exhaustive | Toujours — checklist finale obligatoire avant livraison |
 
 ### Skills passifs (activation manuelle par phase)
 
 | Skill | Phase | Activer quand |
 |-------|-------|---------------|
+| `qualification-client` | 0.5 | **Toujours avant `/strategy`** — filtres de qualification, ROI par secteur, objections, pipeline |
+| `sector-templates` | 3 | **Au début de `/build`** — patterns par secteur Tier 1/2 : ordre sections, CTAs, JSON-LD, palette, anti-patterns |
 | `brand-discovery` | 0 | Brief vague, client sans positionnement clair |
 | `brand-voice` | 0–1 | Client sans ligne éditoriale définie |
 | `minimalist-ui` | 2 | Direction éditorial/monochrome (artisans, cabinets) |
@@ -147,7 +169,7 @@ Le skill `/figma` reste disponible uniquement si le client fournit des maquettes
 | `accessibility-audit` | 4 | Audit WCAG 2.1 AA avant livraison |
 | `performance-optimization` | 4 | Audit Core Web Vitals, bundle, assets |
 | `security-baseline` | 4 | Audit HTTPS, headers, CSP, secrets |
-| `seo-aeo-geo` | 4 | Optimisation SEO + AI search (Perplexity, ChatGPT) |
+| `seo-aeo-geo` | 4 | **Étape obligatoire avant livraison** — Optimisation SEO + GEO (ChatGPT/Perplexity/Gemini — différenciateur commercial 2026) |
 | `legal-pages` | 4.5 | Pages légales françaises — mentions légales, confidentialité, CGV |
 | `launch-runbook` | 5 | Procédures de mise en production |
 | `brandkit` | tout | Génération d'identité visuelle (logo, brand board) |

@@ -14,11 +14,11 @@ export default function DesignPreviewPage() {
 
   let proposals: Proposal[] = []
   try {
-    const raw = readFileSync(join(process.cwd(), 'docs/design-proposals.json'), 'utf-8')
+    const raw = readFileSync(join(process.cwd(), 'docs/project/design-proposals.json'), 'utf-8')
     const data = JSON.parse(raw) as { proposals: Proposal[] }
     proposals = data.proposals ?? []
   } catch {
-    // docs/design-proposals.json absent — /design pas encore lancé
+    // docs/project/design-proposals.json absent — /design pas encore lancé
   }
 
   return <DesignPreview proposals={proposals} />

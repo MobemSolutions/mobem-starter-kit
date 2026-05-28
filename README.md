@@ -18,7 +18,7 @@ Remove-Item -Recurse -Force .git                                # PowerShell
 # rm -rf .git                                                   # bash
 git init && git add . && git commit -m "init: boilerplate Mobem Solutions"
 
-# 3. Installer les dépendances
+# 3. Installer les dépendances  ← NE PAS SAUTER — sans ça, pnpm dev dit "next not found"
 pnpm install && pnpm audit
 
 # 4. Configurer l'environnement
@@ -43,6 +43,7 @@ Voir **[docs/workflow.md](docs/workflow.md)** — guide pas à pas, phase par ph
 | 0 | — (vous) | `docs/context/` — brief · refs · contraintes |
 | 1 | `/strategy` | `docs/project/product.md` — arborescence · audience · skill/section |
 | 2 | `/design` | `docs/project/design.md` · `globals.css` — palette OKLCH · typo · radius |
+| 2.5 | — (optionnel) | Présentation DA au client — Vercel Preview + Ruttl · images de réf · Figma |
 | 3 | `/build` | Sections codées — OG · favicon · sitemap · FAQ · TrustBadges |
 | 3.5 | `/contact-setup` | Route API contact · Resend · honeypot · 2 emails |
 | 3.6 | `/cms` | Sanity CMS — si contenu éditable par le client |
@@ -158,10 +159,11 @@ Les valeurs ci-dessous sont les **placeholders** du boilerplate — les remplace
 --border     : oklch(0.90 0 0)          /* Règle grise  */
 ```
 
-### Grille 8pt
+### Tokens de section (globals.css)
 ```
-xs:8 · sm:16 · md:24 · lg:32 · xl:48 · 2xl:64 · 3xl:96 · hero:128px
+--section-sm:48px · --section-md:64px · --section-lg:96px · --section-hero:128px
 ```
+> ⚠ Ne jamais nommer `--spacing-xs/sm/md/lg/xl/2xl` — collision silencieuse avec Tailwind v4.
 
 ### Motion
 ```typescript
