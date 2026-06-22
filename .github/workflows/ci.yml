@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Node 22 EN PREMIER — pnpm v11 requiert Node >= 22.13
       # setup-node doit précéder pnpm/action-setup, sinon pnpm tourne sous Node 20 (défaut runner)
@@ -58,7 +58,7 @@ jobs:
     needs: ci
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -95,7 +95,7 @@ jobs:
     needs: ci
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
